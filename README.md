@@ -1,6 +1,6 @@
 # oms_mobile
 
-A new Flutter project.
+A Flutter project focus on restaurant processes.
 
 ## Getting Started
 
