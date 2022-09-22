@@ -38,6 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^3.0.1
   syncfusion_flutter_datepicker: ^20.2.49
+  badges: ^2.0.3
 
 dev_dependencies:
   flutter_test:
