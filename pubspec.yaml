@@ -39,6 +39,7 @@ dependencies:
   google_fonts: ^3.0.1
   syncfusion_flutter_datepicker: ^20.2.49
   badges: ^2.0.3
+  flutter_expandable_fab: ^1.5.2
 
 dev_dependencies:
   flutter_test:

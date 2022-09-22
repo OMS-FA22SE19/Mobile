@@ -1,7 +1,11 @@
 // ignore_for_file: prefer_const_constructors, camel_case_types
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:oms_mobile/Home/home_screen.dart';
+import 'package:oms_mobile/Menu%20Order/search_page.dart';
 import 'package:oms_mobile/Table%20reservation/date_picker.dart';
+import 'package:oms_mobile/Table%20reservation/table_reservation.dart';
 
 class tablePicker extends StatefulWidget {
   const tablePicker({super.key});
@@ -14,6 +18,39 @@ class _tablePickerState extends State<tablePicker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.greenAccent,
+        centerTitle: true,
+        title: Text('Menu',
+            style: GoogleFonts.bebasNeue(
+              fontSize: 25,
+            )),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => tableReservation()),
+              );
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_rounded,
+              size: 30,
+            )),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => homeScreen()),
+                );
+              },
+              icon: Icon(
+                Icons.home_rounded,
+                size: 30,
+              )),
+        ],
+      ),
       backgroundColor: Colors.grey[200],
       body: SafeArea(
         child: Center(
