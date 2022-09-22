@@ -300,41 +300,31 @@ class _menuFoodState extends State<menuFood> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FloatingActionButton.large(
-                    child: Badge(
-                      badgeContent: Text(
-                        '$counter',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
-                      ),
-                      badgeColor: Colors.teal,
-                      child: Icon(
-                        size: 70,
-                        Icons.shopping_bag_rounded,
-                        color: Colors.white,
-                      ),
-                    ),
-                    backgroundColor: Colors.greenAccent,
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => menuCart()),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            )
           ]),
         ),
       )),
+      floatingActionButton: FloatingActionButton.large(
+        child: Badge(
+          badgeContent: Text(
+            '$counter',
+            style: GoogleFonts.cabin(
+                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          badgeColor: Colors.teal,
+          child: Icon(
+            size: 70,
+            Icons.shopping_bag_rounded,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.greenAccent,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => menuCart()),
+          );
+        },
+      ),
     );
   }
 }
