@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
+import 'package:oms_mobile/Menu%20Order/menu_food_detaiil.dart';
 import 'package:oms_mobile/User%20History/history_page.dart';
 
 import '../Table reservation/table_reservation.dart';
@@ -19,7 +20,7 @@ class _homeScreenState extends State<homeScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: DefaultTabController(
-        length: 3,
+        length: 2,
         child: Scaffold(
           drawer: Drawer(
             child: ListView(
@@ -161,24 +162,171 @@ class _homeScreenState extends State<homeScreen> {
               indicatorSize: TabBarIndicatorSize.label,
               tabs: [
                 Tab(
-                  text: "Recommended",
-                  icon: Icon(Icons.restaurant_rounded),
+                  text: "Reservations",
+                  icon: Icon(Icons.table_bar_rounded),
                 ),
-                Tab(
-                  text: "News",
-                  icon: Icon(Icons.restaurant_rounded),
-                ),
-                Tab(text: "Promotions", icon: Icon(Icons.attach_money_rounded)),
+                Tab(text: "Recommend", icon: Icon(Icons.restaurant_rounded)),
               ],
             ),
           ),
           backgroundColor: Colors.grey[200],
-          body: SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(children: []),
-              ),
-            ),
+          body: TabBarView(
+            children: [
+              //
+              //
+              //
+              //
+              //TAB 1
+              SingleChildScrollView(
+                  child: Column(
+                children: [
+                  SizedBox(height: 10),
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 180,
+                          width: MediaQuery.of(context).size.width - 20,
+                          decoration: BoxDecoration(
+                            color: Colors.greenAccent,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.table_restaurant_rounded,
+                                    size: 80,
+                                    color: Colors.white,
+                                  ),
+                                  Text(
+                                    'YOUR RESERVATION',
+                                    maxLines: 2,
+                                    style: GoogleFonts.cabin(
+                                        fontSize: 20, color: Colors.white),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'DATE:    22/22/2222',
+                                        maxLines: 2,
+                                        style: GoogleFonts.cabin(
+                                            fontSize: 17, color: Colors.white),
+                                      ),
+                                      SizedBox(
+                                        width: 30,
+                                      ),
+                                      Text(
+                                        'TIME:    22:22',
+                                        maxLines: 2,
+                                        style: GoogleFonts.cabin(
+                                            fontSize: 17, color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'SEATS:    4 Peoples',
+                                        maxLines: 2,
+                                        style: GoogleFonts.cabin(
+                                            fontSize: 17, color: Colors.white),
+                                      ),
+                                      SizedBox(
+                                        width: 30,
+                                      ),
+                                      Text(
+                                        'TYPE:    Outdoor',
+                                        maxLines: 2,
+                                        style: GoogleFonts.cabin(
+                                            fontSize: 17, color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ]),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              )),
+              //
+              //
+              //
+              //
+              //TAB 2
+              SingleChildScrollView(
+                  child: Column(
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => menuFoodDetail(
+                                  name: "asc",
+                                  image:
+                                      "https://img.freepik.com/premium-photo/big-hamburger-with-double-beef-french-fries_252907-8.jpg?w=2000",
+                                )),
+                      );
+                    },
+                    child: Container(
+                      height: 250,
+                      width: 250,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.greenAccent,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(children: [
+                          Icon(
+                            Icons.fastfood_outlined,
+                            size: 120,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            'Main Course',
+                            style: GoogleFonts.cabin(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          Text(
+                            'Rate: 4.5 / 5',
+                            style: GoogleFonts.cabin(
+                                fontSize: 18, color: Colors.white),
+                          ),
+                          Text(
+                            "Price: \$\$\$\$",
+                            style: GoogleFonts.cabin(
+                                fontSize: 18, color: Colors.white),
+                          ),
+                        ]),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                ],
+              )),
+            ],
           ),
         ),
       ),
