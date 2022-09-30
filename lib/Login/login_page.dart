@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:oms_mobile/test.dart';
 import '../Home/home_screen.dart';
 
 class loginScreen extends StatefulWidget {
@@ -131,11 +132,19 @@ class _loginScreenState extends State<loginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('Not a customer? '),
-                    Text(
-                      'Register now!',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Test()),
+                        );
+                      },
+                      child: Text(
+                        'Register now!',
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],

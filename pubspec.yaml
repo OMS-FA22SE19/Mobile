@@ -40,6 +40,8 @@ dependencies:
   syncfusion_flutter_datepicker: ^20.2.49
   badges: ^2.0.3
   flutter_expandable_fab: ^1.5.2
+  http: ^0.13.5
+  dio: ^4.0.6
 
 dev_dependencies:
   flutter_test:
