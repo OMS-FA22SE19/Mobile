@@ -7,10 +7,13 @@ import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_cart.dart';
 import 'package:oms_mobile/Menu%20Order/menu_food_detaiil.dart';
 import 'package:oms_mobile/Menu%20Order/search_page.dart';
+import 'package:oms_mobile/Models/food.dart';
+import 'package:oms_mobile/services/remote_service.dart';
 
 class menuFood extends StatefulWidget {
-  const menuFood({super.key});
+  const menuFood({super.key, required this.id});
 
+  final int id;
   @override
   State<menuFood> createState() => _menuFoodState();
 }
@@ -31,6 +34,24 @@ class _menuFoodState extends State<menuFood> {
       counter = counter - 1;
       if (counter < 0) counter = 0;
     });
+  }
+
+  List<food>? foods;
+  var isLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    foods = await RemoteService().getFoods();
+    if (foods != null) {
+      setState(() {
+        isLoaded = true;
+      });
+    }
   }
 
   @override
@@ -70,239 +91,76 @@ class _menuFoodState extends State<menuFood> {
         ],
       ),
       backgroundColor: Colors.grey[200],
-      body: SafeArea(
-          child: SingleChildScrollView(
-        child: Center(
-          child: Column(children: [
-            SizedBox(
-              height: 20,
-            ),
-
-            //no amount
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
+      body: Visibility(
+        visible: isLoaded,
+        // child: Center(
+        //   child: Container(
+        //     width: 300,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: foods?.length,
+          padding: EdgeInsets.all(10),
+          // scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => menuFood(
+                            id: 1,
+                          )),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Container(
+                  height: 120,
+                  width: 300,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.greenAccent,
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.redAccent,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: Row(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => menuFoodDetail(
-                                        name: 'Hambuger',
-                                        image: image,
-                                      )),
-                            );
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image(
-                              image: NetworkImage(image),
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.fill,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Icon(
+                            Icons.fastfood_outlined,
+                            size: 80,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Flexible(
+                            child: Text(
+                              foods![index].name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.cabin(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              Text(
-                                'Hamburger',
-                                style: GoogleFonts.lato(
-                                    fontSize: 25,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.white),
-                              ),
-                              Text(
-                                '10 mins',
-                                style: GoogleFonts.lato(
-                                    fontSize: 20,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.white),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => menuCart()),
-                                  );
-                                },
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  height: 40,
-                                  width: 80,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12)),
-                                  child: Text(
-                                    'CHOOSE',
-                                    style: TextStyle(
-                                      color: Colors.greenAccent,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                          SizedBox(
+                            width: 20,
                           ),
-                        )
-                      ],
-                    ),
+                        ]),
                   ),
                 ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            //amount
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: Colors.greenAccent,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Row(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => menuFoodDetail(
-                                        name: 'Hambuger',
-                                        image: image,
-                                      )),
-                            );
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image(
-                              image: NetworkImage(image),
-                              width: 150,
-                              height: 150,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              Text(
-                                'Hamburger',
-                                style: GoogleFonts.lato(
-                                    fontSize: 25,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.white),
-                              ),
-                              Text(
-                                '10 mins',
-                                style: GoogleFonts.lato(
-                                    fontSize: 20,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colors.white),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      _decreaseCounter();
-                                    },
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.greenAccent,
-                                      ),
-                                      child: Text(
-                                        '-',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 30,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text(
-                                    '$counter',
-                                    style: GoogleFonts.bebasNeue(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      _increaseCounter();
-                                    },
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.greenAccent,
-                                      ),
-                                      child: Text(
-                                        '+',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 30,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ]),
+              ),
+            );
+          },
         ),
-      )),
+        //   ),
+        // ),
+      ),
       floatingActionButton: FloatingActionButton.large(
         child: Badge(
           badgeContent: Text(
@@ -328,3 +186,237 @@ class _menuFoodState extends State<menuFood> {
     );
   }
 }
+
+// SafeArea(
+//           child: SingleChildScrollView(
+//         child: Center(
+//           child: Column(children: [
+//             SizedBox(
+//               height: 20,
+//             ),
+
+//             //no amount
+//             Row(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: [
+//                 Container(
+//                   decoration: BoxDecoration(
+//                     borderRadius: BorderRadius.circular(12),
+//                     color: Colors.greenAccent,
+//                   ),
+//                   child: Padding(
+//                     padding: const EdgeInsets.all(5.0),
+//                     child: Row(
+//                       children: [
+//                         InkWell(
+//                           onTap: () {
+//                             Navigator.push(
+//                               context,
+//                               MaterialPageRoute(
+//                                   builder: (context) => menuFoodDetail(
+//                                         name: 'Hambuger',
+//                                         image: image,
+//                                       )),
+//                             );
+//                           },
+//                           child: ClipRRect(
+//                             borderRadius: BorderRadius.circular(12),
+//                             child: Image(
+//                               image: NetworkImage(image),
+//                               width: 150,
+//                               height: 150,
+//                               fit: BoxFit.fill,
+//                             ),
+//                           ),
+//                         ),
+//                         SizedBox(
+//                           width: 20,
+//                         ),
+//                         Padding(
+//                           padding: const EdgeInsets.all(8.0),
+//                           child: Column(
+//                             children: [
+//                               Text(
+//                                 'Hamburger',
+//                                 style: GoogleFonts.lato(
+//                                     fontSize: 25,
+//                                     fontStyle: FontStyle.italic,
+//                                     color: Colors.white),
+//                               ),
+//                               Text(
+//                                 '10 mins',
+//                                 style: GoogleFonts.lato(
+//                                     fontSize: 20,
+//                                     fontStyle: FontStyle.italic,
+//                                     color: Colors.white),
+//                               ),
+//                               SizedBox(
+//                                 height: 20,
+//                               ),
+//                               InkWell(
+//                                 onTap: () {
+//                                   Navigator.push(
+//                                     context,
+//                                     MaterialPageRoute(
+//                                         builder: (context) => menuCart()),
+//                                   );
+//                                 },
+//                                 child: Container(
+//                                   alignment: Alignment.center,
+//                                   height: 40,
+//                                   width: 80,
+//                                   decoration: BoxDecoration(
+//                                       color: Colors.white,
+//                                       borderRadius: BorderRadius.circular(12)),
+//                                   child: Text(
+//                                     'CHOOSE',
+//                                     style: TextStyle(
+//                                       color: Colors.greenAccent,
+//                                       fontWeight: FontWeight.bold,
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                         )
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//             SizedBox(
+//               height: 10,
+//             ),
+            
+//             //AMOUNT
+//             // Row(
+//             //   mainAxisAlignment: MainAxisAlignment.center,
+//             //   children: [
+//             //     Container(
+//             //       decoration: BoxDecoration(
+//             //         borderRadius: BorderRadius.circular(12),
+//             //         color: Colors.greenAccent,
+//             //       ),
+//             //       child: Padding(
+//             //         padding: const EdgeInsets.all(5.0),
+//             //         child: Row(
+//             //           children: [
+//             //             InkWell(
+//             //               onTap: () {
+//             //                 Navigator.push(
+//             //                   context,
+//             //                   MaterialPageRoute(
+//             //                       builder: (context) => menuFoodDetail(
+//             //                             name: 'Hambuger',
+//             //                             image: image,
+//             //                           )),
+//             //                 );
+//             //               },
+//             //               child: ClipRRect(
+//             //                 borderRadius: BorderRadius.circular(12),
+//             //                 child: Image(
+//             //                   image: NetworkImage(image),
+//             //                   width: 150,
+//             //                   height: 150,
+//             //                   fit: BoxFit.fill,
+//             //                 ),
+//             //               ),
+//             //             ),
+//             //             SizedBox(
+//             //               width: 20,
+//             //             ),
+//             //             Padding(
+//             //               padding: const EdgeInsets.all(8.0),
+//             //               child: Column(
+//             //                 children: [
+//             //                   Text(
+//             //                     'Hamburger',
+//             //                     style: GoogleFonts.lato(
+//             //                         fontSize: 25,
+//             //                         fontStyle: FontStyle.italic,
+//             //                         color: Colors.white),
+//             //                   ),
+//             //                   Text(
+//             //                     '10 mins',
+//             //                     style: GoogleFonts.lato(
+//             //                         fontSize: 20,
+//             //                         fontStyle: FontStyle.italic,
+//             //                         color: Colors.white),
+//             //                   ),
+//             //                   SizedBox(
+//             //                     height: 20,
+//             //                   ),
+//             //                   Row(
+//             //                     mainAxisAlignment:
+//             //                         MainAxisAlignment.spaceBetween,
+//             //                     children: [
+//             //                       InkWell(
+//             //                         onTap: () {
+//             //                           _decreaseCounter();
+//             //                         },
+//             //                         child: Container(
+//             //                           alignment: Alignment.center,
+//             //                           decoration: BoxDecoration(
+//             //                             shape: BoxShape.circle,
+//             //                             color: Colors.greenAccent,
+//             //                           ),
+//             //                           child: Text(
+//             //                             '-',
+//             //                             style: TextStyle(
+//             //                               color: Colors.white,
+//             //                               fontWeight: FontWeight.bold,
+//             //                               fontSize: 30,
+//             //                             ),
+//             //                           ),
+//             //                         ),
+//             //                       ),
+//             //                       SizedBox(
+//             //                         width: 20,
+//             //                       ),
+//             //                       Text(
+//             //                         '$counter',
+//             //                         style: GoogleFonts.bebasNeue(
+//             //                           color: Colors.white,
+//             //                           fontWeight: FontWeight.normal,
+//             //                           fontSize: 20,
+//             //                         ),
+//             //                       ),
+//             //                       SizedBox(
+//             //                         width: 20,
+//             //                       ),
+//             //                       InkWell(
+//             //                         onTap: () {
+//             //                           _increaseCounter();
+//             //                         },
+//             //                         child: Container(
+//             //                           alignment: Alignment.center,
+//             //                           decoration: BoxDecoration(
+//             //                             shape: BoxShape.circle,
+//             //                             color: Colors.greenAccent,
+//             //                           ),
+//             //                           child: Text(
+//             //                             '+',
+//             //                             style: TextStyle(
+//             //                               color: Colors.white,
+//             //                               fontWeight: FontWeight.bold,
+//             //                               fontSize: 30,
+//             //                             ),
+//             //                           ),
+//             //                         ),
+//             //                       ),
+//             //                     ],
+//             //                   ),
+//             //                 ],
+//             //               ),
+//             //             )
+//             //           ],
+//             //         ),
+//             //       ),
+//             //     ),
+//             //   ],
+//             // ),
+//           ]),
+//         ),
+//       )),

@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, camel_case_types
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:oms_mobile/Table%20reservation/table_picker.dart';
 
 class tableReservation extends StatefulWidget {
@@ -11,6 +12,14 @@ class tableReservation extends StatefulWidget {
 }
 
 class _tableReservationState extends State<tableReservation> {
+  final numberController = TextEditingController();
+
+  @override
+  void dispose() {
+    numberController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,6 +47,11 @@ class _tableReservationState extends State<tableReservation> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
+                      controller: numberController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Input number of guest',
@@ -64,7 +78,11 @@ class _tableReservationState extends State<tableReservation> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => tablePicker()),
+                      MaterialPageRoute(
+                          builder: (context) => tablePicker(
+                                numberOfPeople:
+                                    int.parse(numberController.text),
+                              )),
                     );
                   },
                   child: Text(

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:oms_mobile/Table%20reservation/table_reservation.dart';
 import 'package:oms_mobile/test.dart';
 import '../Home/home_screen.dart';
 
@@ -136,7 +137,8 @@ class _loginScreenState extends State<loginScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Test()),
+                          MaterialPageRoute(
+                              builder: (context) => tableReservation()),
                         );
                       },
                       child: Text(
