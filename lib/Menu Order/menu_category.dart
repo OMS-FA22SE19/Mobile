@@ -1,12 +1,16 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, camel_case_types
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_cart.dart';
 import 'package:oms_mobile/Menu%20Order/menu_food.dart';
 import 'package:oms_mobile/Menu%20Order/menu_status.dart';
 import 'package:badges/badges.dart';
+import 'package:oms_mobile/Models/course_type.dart';
+import 'package:oms_mobile/Models/food_type.dart';
+import 'package:oms_mobile/services/remote_service.dart';
 
 class menuCategory extends StatefulWidget {
   const menuCategory({super.key});
@@ -16,6 +20,26 @@ class menuCategory extends StatefulWidget {
 }
 
 class _menuCategoryState extends State<menuCategory> {
+  List<courseType>? courses;
+  List<foodType>? foodTypes;
+  var isLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    courses = await RemoteService().getCourseTypes();
+    foodTypes = await RemoteService().getFoodTypes();
+    if (courses != null) {
+      setState(() {
+        isLoaded = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -60,203 +84,157 @@ class _menuCategoryState extends State<menuCategory> {
               indicatorSize: TabBarIndicatorSize.label,
               tabs: [
                 Tab(
-                  text: "Course Type",
-                  icon: Icon(Icons.restaurant_menu_rounded),
+                  text: "Courses",
+                  icon: Icon(Icons.ramen_dining_rounded),
                 ),
-                Tab(text: "Food Type", icon: Icon(Icons.lunch_dining_rounded)),
+                Tab(text: "Foods", icon: Icon(Icons.brunch_dining_rounded)),
               ],
             ),
           ),
           backgroundColor: Colors.grey[200],
           body: TabBarView(
             children: [
-              ///
-              ////
-              ////
-              ///
-              //Course
-
-              SingleChildScrollView(
-                child: Center(
-                  child: Column(children: [
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => menuFood()),
-                            );
-                          },
-                          child: Container(
-                            height: 180,
-                            width: 180,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.greenAccent,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Column(children: [
-                                Icon(
-                                  Icons.fastfood_outlined,
-                                  size: 120,
-                                  color: Colors.white,
-                                ),
-                                Text(
-                                  'Main Course',
-                                  style: GoogleFonts.cabin(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                )
-                              ]),
-                            ),
+              Visibility(
+                visible: isLoaded,
+                // child: Center(
+                //   child: Container(
+                //     width: 300,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: courses?.length,
+                  padding: EdgeInsets.all(10),
+                  // scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => menuFood(
+                                    id: courses![index].id,
+                                  )),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Container(
+                          height: 120,
+                          width: 300,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.redAccent,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Icon(
+                                    Icons.fastfood_outlined,
+                                    size: 80,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      courses![index].name,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.cabin(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                ]),
                           ),
                         ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => menuFood()),
-                            );
-                          },
-                          child: Container(
-                            height: 180,
-                            width: 180,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.greenAccent,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Column(children: [
-                                Icon(
-                                  Icons.fastfood_outlined,
-                                  size: 120,
-                                  color: Colors.white,
-                                ),
-                                Text(
-                                  'Appetizer',
-                                  style: GoogleFonts.cabin(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                )
-                              ]),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ]),
+                      ),
+                    );
+                  },
                 ),
+                //   ),
+                // ),
               ),
 
-              //
-              //
-              //
-              //
-              //FOod
-              SingleChildScrollView(
-                child: Center(
-                  child: Column(children: [
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => menuFood()),
-                            );
-                          },
-                          child: Container(
-                            height: 180,
-                            width: 180,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.greenAccent,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Column(children: [
-                                Icon(
-                                  Icons.fastfood_outlined,
-                                  size: 120,
-                                  color: Colors.white,
-                                ),
-                                Text(
-                                  'Dairy',
-                                  style: GoogleFonts.cabin(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                )
-                              ]),
-                            ),
+              //tab2
+              Visibility(
+                visible: isLoaded,
+                // child: Center(
+                //   child: Container(
+                //     width: 300,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: foodTypes?.length,
+                  padding: EdgeInsets.all(10),
+                  // scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => menuFood(
+                                    id: foodTypes![index].id,
+                                  )),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Container(
+                          height: 120,
+                          width: 300,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.redAccent,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Icon(
+                                    Icons.fastfood_outlined,
+                                    size: 80,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      foodTypes![index].name,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.cabin(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                ]),
                           ),
                         ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => menuFood()),
-                            );
-                          },
-                          child: Container(
-                            height: 180,
-                            width: 180,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.greenAccent,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Column(children: [
-                                Icon(
-                                  Icons.fastfood_outlined,
-                                  size: 120,
-                                  color: Colors.white,
-                                ),
-                                Text(
-                                  'Vegan',
-                                  style: GoogleFonts.cabin(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
-                                )
-                              ]),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ]),
+                      ),
+                    );
+                  },
                 ),
+                //   ),
+                // ),
               ),
             ],
           ),

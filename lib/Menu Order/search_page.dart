@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:oms_mobile/Menu%20Order/menu_food.dart';
 
@@ -18,7 +20,7 @@ class _searchPageState extends State<searchPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => menuFood()),
+                  MaterialPageRoute(builder: (context) => menuFood(id: 1)),
                 );
               },
               icon: Icon(

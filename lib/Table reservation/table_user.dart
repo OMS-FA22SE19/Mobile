@@ -4,11 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Table%20reservation/table_information.dart';
 
-class tableUser extends StatelessWidget {
-  final String date;
-  final String time;
-  const tableUser({super.key, required this.date, required this.time});
+class tableUser extends StatefulWidget {
+  final DateTime date;
+  final TimeOfDay time;
+  final int tableTypeId;
+  final int numberOfSeats;
+  const tableUser(
+      {super.key,
+      required this.date,
+      required this.time,
+      required this.tableTypeId,
+      required this.numberOfSeats});
 
+  @override
+  State<tableUser> createState() => _tableUserState();
+}
+
+class _tableUserState extends State<tableUser> {
   @override
   Widget build(BuildContext context) {
     final nameController1 = TextEditingController();
@@ -181,8 +193,10 @@ class tableUser extends StatelessWidget {
                           builder: (context) => tableInformation(
                                 name: nameController1.text,
                                 phone: phoneController1.text,
-                                date: date,
-                                time: time,
+                                date: widget.date,
+                                time: widget.time,
+                                tableTypeId: widget.tableTypeId,
+                                numberOfSeats: widget.numberOfSeats,
                               )),
                     );
                   },

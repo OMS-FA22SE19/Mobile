@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
 import 'package:oms_mobile/Menu%20Order/menu_food_detaiil.dart';
+import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/User%20History/history_page.dart';
+import 'package:oms_mobile/services/remote_service.dart';
 
 import '../Table reservation/table_reservation.dart';
 
@@ -16,6 +18,25 @@ class homeScreen extends StatefulWidget {
 }
 
 class _homeScreenState extends State<homeScreen> {
+  List<reservation>? reservations;
+  bool isLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    //fetch data from API
+    getData();
+  }
+
+  getData() async {
+    reservations = await RemoteService().getReservations();
+    if (reservations != null) {
+      setState(() {
+        isLoaded = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -177,14 +198,15 @@ class _homeScreenState extends State<homeScreen> {
               //
               //
               //TAB 1
-              SingleChildScrollView(
-                  child: Column(
-                children: [
-                  SizedBox(height: 10),
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
+              Visibility(
+                  visible: isLoaded,
+                  child: ListView.builder(
+                    itemCount: reservations?.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 5),
+                        child: Container(
                           height: 180,
                           width: MediaQuery.of(context).size.width - 20,
                           decoration: BoxDecoration(
@@ -215,7 +237,10 @@ class _homeScreenState extends State<homeScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'DATE:    22/22/2222',
+                                        'DATE: ' +
+                                            reservations![index]
+                                                .startTime
+                                                .substring(0, 10),
                                         maxLines: 2,
                                         style: GoogleFonts.cabin(
                                             fontSize: 17, color: Colors.white),
@@ -224,7 +249,10 @@ class _homeScreenState extends State<homeScreen> {
                                         width: 30,
                                       ),
                                       Text(
-                                        'TIME:    22:22',
+                                        'TIME: ' +
+                                            reservations![index]
+                                                .startTime
+                                                .substring(11, 16),
                                         maxLines: 2,
                                         style: GoogleFonts.cabin(
                                             fontSize: 17, color: Colors.white),
@@ -235,7 +263,10 @@ class _homeScreenState extends State<homeScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'SEATS:    4 Peoples',
+                                        'TABLEID: ' +
+                                            reservations![index]
+                                                .tableId
+                                                .toString(),
                                         maxLines: 2,
                                         style: GoogleFonts.cabin(
                                             fontSize: 17, color: Colors.white),
@@ -244,7 +275,7 @@ class _homeScreenState extends State<homeScreen> {
                                         width: 30,
                                       ),
                                       Text(
-                                        'TYPE:    Outdoor',
+                                        'TYPE:    No',
                                         maxLines: 2,
                                         style: GoogleFonts.cabin(
                                             fontSize: 17, color: Colors.white),
@@ -254,14 +285,10 @@ class _homeScreenState extends State<homeScreen> {
                                 ]),
                           ),
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              )),
+                      );
+                    },
+                  )),
+
               //
               //
               //

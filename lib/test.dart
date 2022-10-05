@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:oms_mobile/Models/food_category.dart';
-import 'package:oms_mobile/main.dart';
+import 'package:oms_mobile/Models/course_type.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
 class Test extends StatefulWidget {
@@ -13,7 +10,7 @@ class Test extends StatefulWidget {
 }
 
 class _TestState extends State<Test> {
-  List<Datum>? categories;
+  List<courseType>? categories;
   var isLoaded = false;
 
   @override
@@ -24,7 +21,7 @@ class _TestState extends State<Test> {
   }
 
   getData() async {
-    await ARemoteService().getCategories();
+    categories = await RemoteService().getCourseTypes();
     if (categories != null) {
       setState(() {
         isLoaded = true;
@@ -42,18 +39,22 @@ class _TestState extends State<Test> {
       ),
       body: Visibility(
         visible: isLoaded,
-        child: ListView.builder(
-          itemCount: categories?.length,
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                Container(
-                  color: Colors.amber,
-                  child: Text(categories![index].toString()),
-                ),
-              ],
-            );
-          },
+        child: Row(
+          children: [
+            ListView.builder(
+              itemCount: categories?.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    Container(
+                      color: Colors.amber,
+                      child: Text(categories![index].name),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
         ),
         replacement: const Center(
           child: CircularProgressIndicator(),
