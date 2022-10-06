@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, camel_case_types
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_cart.dart';
@@ -65,19 +64,19 @@ class _menuCategoryState extends State<menuCategory> {
                   size: 30,
                 )),
             automaticallyImplyLeading: false,
-            actions: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => menuStatus()),
-                    );
-                  },
-                  icon: Icon(
-                    Icons.timer_rounded,
-                    size: 30,
-                  )),
-            ],
+            // actions: [
+            //   IconButton(
+            //       onPressed: () {
+            //         Navigator.push(
+            //           context,
+            //           MaterialPageRoute(builder: (context) => menuStatus()),
+            //         );
+            //       },
+            //       icon: Icon(
+            //         Icons.timer_rounded,
+            //         size: 30,
+            //       )),
+            // ],
             bottom: const TabBar(
               indicatorColor: Colors.green,
               indicatorWeight: 2.5,
@@ -94,6 +93,7 @@ class _menuCategoryState extends State<menuCategory> {
           backgroundColor: Colors.grey[200],
           body: TabBarView(
             children: [
+              //TAB 1: COURSE TYPE
               Visibility(
                 visible: isLoaded,
                 // child: Center(
@@ -111,7 +111,7 @@ class _menuCategoryState extends State<menuCategory> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => menuFood(
-                                    id: courses![index].id,
+                                    categoryId: courses![index].id,
                                   )),
                         );
                       },
@@ -165,7 +165,7 @@ class _menuCategoryState extends State<menuCategory> {
                 // ),
               ),
 
-              //tab2
+              //TAB 2: FOOD TYPE
               Visibility(
                 visible: isLoaded,
                 // child: Center(
@@ -183,7 +183,7 @@ class _menuCategoryState extends State<menuCategory> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => menuFood(
-                                    id: foodTypes![index].id,
+                                    categoryId: foodTypes![index].id,
                                   )),
                         );
                       },
@@ -238,30 +238,30 @@ class _menuCategoryState extends State<menuCategory> {
               ),
             ],
           ),
-          floatingActionButton: FloatingActionButton.large(
-            child: Badge(
-              badgeContent: Text(
-                '3',
-                style: GoogleFonts.cabin(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-              badgeColor: Colors.teal,
-              child: Icon(
-                size: 70,
-                Icons.shopping_bag_rounded,
-                color: Colors.white,
-              ),
-            ),
-            backgroundColor: Colors.greenAccent,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => menuCart()),
-              );
-            },
-          ),
+          // floatingActionButton: FloatingActionButton.large(
+          //   child: Badge(
+          //     badgeContent: Text(
+          //       '3',
+          //       style: GoogleFonts.cabin(
+          //           fontSize: 20,
+          //           fontWeight: FontWeight.bold,
+          //           color: Colors.white),
+          //     ),
+          //     badgeColor: Colors.teal,
+          //     child: Icon(
+          //       size: 70,
+          //       Icons.shopping_bag_rounded,
+          //       color: Colors.white,
+          //     ),
+          //   ),
+          //   backgroundColor: Colors.greenAccent,
+          //   onPressed: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => menuCart()),
+          //     );
+          //   },
+          // ),
         ),
       ),
     );

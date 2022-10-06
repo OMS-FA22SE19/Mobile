@@ -1,14 +1,14 @@
 // ignore_for_file: camel_case_types
 
-class responseData3 {
-  responseData3({
+class responseData8 {
+  responseData8({
     required this.data,
     required this.succeeded,
     required this.statusCode,
     required this.message,
   });
 
-  List<food> data;
+  List<menu> data;
   bool succeeded;
   String statusCode;
   dynamic message;
@@ -19,8 +19,8 @@ class responseData3 {
   //       message: json["message"],
   //     );
 
-  factory responseData3.fromJson(Map<String, dynamic> json) => responseData3(
-        data: List<food>.from(json["data"].map((x) => food.fromJson(x))),
+  factory responseData8.fromJson(Map<String, dynamic> json) => responseData8(
+        data: List<menu>.from(json["data"].map((x) => menu.fromJson(x))),
         succeeded: json["succeeded"],
         statusCode: json["statusCode"],
         message: json["message"],
@@ -34,49 +34,29 @@ class responseData3 {
       };
 }
 
-class food {
-  food({
-    required this.id,
-    required this.name,
-    required this.available,
-    required this.description,
-    required this.ingredient,
-    required this.pictureUrl,
-    required this.isDeleted,
-    required this.price,
-    required this.quantity,
-  });
+class menu {
+  menu(
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.isHidden});
 
-  int quantity;
   int id;
   String name;
   String description;
-  String ingredient;
-  bool isDeleted;
-  bool available;
-  String pictureUrl;
-  int price;
+  bool isHidden;
 
-  factory food.fromJson(Map<String, dynamic> json) => food(
-        quantity: 0,
+  factory menu.fromJson(Map<String, dynamic> json) => menu(
         id: json["id"],
         name: json["name"],
-        available: json["available"],
         description: json["description"],
-        ingredient: json["ingredient"],
-        isDeleted: json["isDeleted"],
-        pictureUrl: json["pictureUrl"],
-        price: json["price"],
+        isHidden: json["isHidden"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
-        "available": available,
         "description": description,
-        "ingredient": ingredient,
-        "pictureUrl": pictureUrl,
-        "isDeleted": isDeleted,
-        "price": price,
+        "isHidden": isHidden,
       };
 }
