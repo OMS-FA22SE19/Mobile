@@ -5,6 +5,9 @@ import 'package:oms_mobile/Models/available_date.dart';
 import 'package:oms_mobile/Models/course_type.dart';
 import 'package:oms_mobile/Models/food.dart';
 import 'package:oms_mobile/Models/food_type.dart';
+import 'package:oms_mobile/Models/menu.dart';
+import 'package:oms_mobile/Models/order.dart';
+import 'package:oms_mobile/Models/orderDetail.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Models/table.dart';
 import 'package:oms_mobile/main.dart';
@@ -67,18 +70,147 @@ class RemoteService {
     return foodTypes;
   }
 
-  Future<List<food>?> getFoods() async {
+  Future<List<food>?> getFoods(int menuId, int categoryId) async {
     final Dio dio = Dio();
-    // var client = http.Client();
-
-    // var uri = Uri.parse('https://10.0.2.2:7246/api/v1/Types');
-
     HttpOverrides.global = MyHttpOverrides();
-    Response response =
-        await dio.get('https://10.0.2.2:7246/api/v1/Foods'); //header, author
-    var result = responseData3.fromJson(response.data);
-    List<food> foods = result.data;
-    return foods;
+    try {
+      final response = await dio.get(
+          'https://10.0.2.2:7246/api/v1/Menus/$menuId/Food?typeId=$categoryId'); //header, author
+      var result = responseData3.fromJson(response.data);
+      List<food> foods = result.data;
+
+      return foods;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  Future<order>? getOrders(String? orderId) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio
+          .get('https://10.0.2.2:7246/api/Orders/$orderId'); //header, author
+      var result = responseData9.fromJson(response.data);
+      order gotOrder = result.data;
+
+      return gotOrder;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return order(
+            id: "0",
+            userId: "0",
+            date: "0",
+            // fullName: "0",
+            phoneNumber: "0",
+            prePaid: 0,
+            status: "0",
+            total: 0);
+      } else {
+        return order(
+            id: "0",
+            userId: "0",
+            date: "0",
+            // fullName: "0",
+            phoneNumber: "0",
+            prePaid: 0,
+            status: "0",
+            total: 0);
+      }
+    }
+  }
+
+  Future<List<orderDetail>?> getOrdersDetails(String? orderId) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio.get(
+          'https://10.0.2.2:7246/api/OrderDetails?SearchValue=$orderId'); //header, author
+      var result = responseData10.fromJson(response.data);
+      List<orderDetail> foods = result.data;
+
+      return foods;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  Future<order>? createOrder(int tableId, List<food>? foods) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    Map<String, int> map1 = {for (var e in foods!) e.id.toString(): e.quantity};
+    var formData = PostFood(tableId: tableId, orderDetails: map1).toJson();
+    try {
+      final response =
+          await dio.post('https://10.0.2.2:7246/api/Orders', data: formData);
+      var result = responseData9.fromJson(response.data);
+      order orders = result.data;
+      return orders;
+      //header, author
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return order(
+            id: "0",
+            userId: "0",
+            date: "0",
+            // fullName: "0",
+            phoneNumber: "0",
+            prePaid: 0,
+            status: "0",
+            total: 0);
+      } else {
+        return order(
+            id: "0",
+            userId: "0",
+            date: "0",
+            // fullName: "0",
+            phoneNumber: "0",
+            prePaid: 0,
+            status: "0",
+            total: 0);
+      }
+    }
+  }
+
+  void confirmOrder(String id) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio.post(
+          'https://10.0.2.2:7246/api/Orders/$id/Confirm'); //header, author
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  Future<List<menu>?> getMenuAvailable() async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response =
+          await dio.get('https://10.0.2.2:7246/api/v1/Menus'); //header, author
+      var result = responseData8.fromJson(response.data);
+      List<menu> menus = result.data;
+      return menus;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      } else {
+        return null;
+      }
+    }
   }
 
   Future<List<table>?> getTablesAvailable(int numberOfPeople) async {
@@ -157,4 +289,26 @@ class RemoteService {
       }
     }
   }
+}
+
+class PostFood {
+  PostFood({
+    required this.tableId,
+    required this.orderDetails,
+  });
+
+  int tableId;
+  Map<String, int> orderDetails;
+
+  factory PostFood.fromJson(Map<String, dynamic> json) => PostFood(
+        tableId: json["tableId"],
+        orderDetails: Map.from(json["orderDetails"])
+            .map((k, v) => MapEntry<String, int>(k, v)),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "tableId": tableId,
+        "orderDetails": Map.from(orderDetails)
+            .map((k, v) => MapEntry<String, dynamic>(k, v)),
+      };
 }

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:oms_mobile/Menu%20Order/menu_food.dart';
 
 class searchPage extends StatefulWidget {
-  const searchPage({super.key});
+  final int menuId;
+  final int categoryId;
+  const searchPage({super.key, required this.menuId, required this.categoryId});
 
   @override
   State<searchPage> createState() => _searchPageState();
@@ -20,7 +22,10 @@ class _searchPageState extends State<searchPage> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => menuFood(id: 1)),
+                  MaterialPageRoute(
+                      builder: (context) => menuFood(
+                            categoryId: widget.categoryId,
+                          )),
                 );
               },
               icon: Icon(

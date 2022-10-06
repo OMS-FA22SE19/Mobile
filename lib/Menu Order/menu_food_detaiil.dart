@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_cart.dart';
 
 class menuFoodDetail extends StatelessWidget {
@@ -142,7 +143,9 @@ class menuFoodDetail extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => menuCart()),
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  homeScreen()), //truyen ve menufood ? khong nen cho ra cart?
                         );
                       },
                       child: Container(
