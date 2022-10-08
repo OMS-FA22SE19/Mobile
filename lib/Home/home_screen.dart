@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
-import 'package:oms_mobile/Menu%20Order/menu_food_detaiil.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/User%20History/history_page.dart';
 import 'package:oms_mobile/services/remote_service.dart';
@@ -304,12 +303,7 @@ class _homeScreenState extends State<homeScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => menuFoodDetail(
-                                  name: "asc",
-                                  image:
-                                      "https://img.freepik.com/premium-photo/big-hamburger-with-double-beef-french-fries_252907-8.jpg?w=2000",
-                                )),
+                        MaterialPageRoute(builder: (context) => homeScreen()),
                       );
                     },
                     child: Container(

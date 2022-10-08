@@ -1,5 +1,4 @@
 // ignore_for_file: camel_case_types, prefer_const_constructors
-import 'package:time_picker_widget/time_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
@@ -28,8 +27,8 @@ class _datePickerState extends State<datePicker> {
   DateTime today = DateTime.now();
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay(hour: 0, minute: 0);
-  TimeOfDay _openTime = TimeOfDay(hour: 9, minute: 0);
-  TimeOfDay _closeTime = TimeOfDay(hour: 22, minute: 0);
+  final TimeOfDay _openTime = TimeOfDay(hour: 9, minute: 0);
+  final TimeOfDay _closeTime = TimeOfDay(hour: 22, minute: 0);
 
   @override
   TimeOfDayFormat timeOfDayFormat({bool alwaysUse24HourFormat = false}) {
@@ -56,17 +55,17 @@ class _datePickerState extends State<datePicker> {
     }
   }
 
-  void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) async {
-    setState(() {
-      selectedDate = args.value.toString();
-    });
-  }
+  // void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) async {
+  //   setState(() {
+  //     selectedDate = args.value.toString();
+  //   });
+  // }
 
-  void _onTimeSelectionChanged(String text) {
-    setState(() {
-      selectedTime = text;
-    });
-  }
+  // void _onTimeSelectionChanged(String text) {
+  //   setState(() {
+  //     selectedTime = text;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

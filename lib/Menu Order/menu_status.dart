@@ -232,30 +232,6 @@ class _menuStatusState extends State<menuStatus> {
     }
   }
 
-  // screenStatus() {
-  //   if (flag) {
-  //     return
-  //   } else {
-  //     return Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       crossAxisAlignment: CrossAxisAlignment.center,
-  //       children: [
-  //         Center(
-  //           child: Text(
-  //             "Your order has already finish. Choose your next action to proceed",
-  //             maxLines: 2,
-  //             overflow: TextOverflow.ellipsis,
-  //             style: GoogleFonts.cabin(
-  //                 fontSize: 22,
-  //                 fontWeight: FontWeight.bold,
-  //                 color: Colors.black),
-  //           ),
-  //         ),
-  //       ],
-  //     );
-  //   }
-  // }
-
   statusBar(String status) {
     if (status.contains("Cancelled")) {
       return InkWell(

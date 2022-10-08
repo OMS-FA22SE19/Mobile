@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_cart.dart';
+import 'package:oms_mobile/Menu%20Order/menu_food_detaiil.dart';
 import 'package:oms_mobile/Menu%20Order/search_page.dart';
 import 'package:oms_mobile/Models/food.dart';
 import 'package:oms_mobile/Models/menu.dart';
 import 'package:oms_mobile/services/remote_service.dart';
+import 'package:intl/intl.dart' as intl;
 
 class menuFood extends StatefulWidget {
   const menuFood({super.key, required this.categoryId});
@@ -33,6 +35,12 @@ class _menuFoodState extends State<menuFood> {
   void initState() {
     super.initState();
     getData();
+  }
+
+  String changeFormat(int number) {
+    String formated =
+        intl.NumberFormat.decimalPattern().format(number).toString();
+    return formated;
   }
 
   getData() async {
@@ -106,8 +114,10 @@ class _menuFoodState extends State<menuFood> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => menuFood(
-                            categoryId: 1,
+                      builder: (context) => menuFoodDetail(
+                            categoryId: widget.categoryId.toString(),
+                            foodId: foods![index].id.toString(),
+                            price: foods![index].price,
                           )),
                 );
               },
@@ -153,7 +163,7 @@ class _menuFoodState extends State<menuFood> {
                                   height: 2,
                                 ),
                                 Text(
-                                  'Price: ' + foods![index].price.toString(),
+                                  'Price: ' + changeFormat(foods![index].price),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.cabin(
@@ -205,7 +215,7 @@ class _menuFoodState extends State<menuFood> {
       floatingActionButton: FloatingActionButton.large(
         child: Badge(
           badgeContent: Text(
-            '$counter',
+            foods?.length.toString() ?? " ",
             style: GoogleFonts.cabin(
                 fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
           ),
@@ -222,6 +232,7 @@ class _menuFoodState extends State<menuFood> {
             context,
             MaterialPageRoute(
                 builder: (context) => menuCart(
+                      categoryId: widget.categoryId,
                       foods: foods,
                     )),
           );
