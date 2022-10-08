@@ -1,5 +1,3 @@
-// ignore_for_file: camel_case_types
-
 class responseData9 {
   responseData9({
     required this.data,
@@ -86,5 +84,130 @@ class order {
         "status": status,
         "prePaid": prePaid,
         "total": total,
+      };
+}
+
+class responseData15 {
+  responseData15({
+    required this.data,
+    required this.succeeded,
+    required this.statusCode,
+    required this.message,
+  });
+
+  Orders data;
+  bool succeeded;
+  String statusCode;
+  dynamic message;
+
+  factory responseData15.fromJson(Map<String, dynamic> json) => responseData15(
+        data: Orders.fromJson(json["data"]),
+        succeeded: json["succeeded"],
+        statusCode: json["statusCode"],
+        message: json["message"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "data": data,
+        "succeeded": succeeded,
+        "statusCode": statusCode,
+        "message": message,
+      };
+}
+
+class Orders {
+  Orders({
+    required this.id,
+    required this.userId,
+    // required this.fullName,
+    required this.phoneNumber,
+    required this.date,
+    required this.status,
+    required this.prePaid,
+    required this.total,
+    required this.orderDetails,
+  });
+
+  String id;
+  String userId;
+  // dynamic fullName;
+  String phoneNumber;
+  String date;
+  String status;
+  int prePaid;
+  int total;
+  List<OrderDetail> orderDetails;
+
+  factory Orders.fromJson(Map<String, dynamic> json) => Orders(
+        id: json["id"],
+        userId: json["userId"],
+        // fullName: json["fullName"],
+        phoneNumber: json["phoneNumber"],
+        date: json["date"],
+        status: json["status"],
+        prePaid: json["prePaid"],
+        total: json["total"],
+        orderDetails: List<OrderDetail>.from(
+            json["orderDetails"].map((x) => OrderDetail.fromJson(x))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "userId": userId,
+        // "fullName": fullName,
+        "phoneNumber": phoneNumber,
+        "date": date,
+        "status": status,
+        "prePaid": prePaid,
+        "total": total,
+        "orderDetails": List<dynamic>.from(orderDetails.map((x) => x.toJson())),
+      };
+}
+
+class OrderDetail {
+  OrderDetail({
+    required this.orderId,
+    required this.userId,
+    required this.date,
+    required this.foodId,
+    required this.foodName,
+    required this.status,
+    required this.price,
+    required this.quantity,
+    required this.amount,
+  });
+
+  String orderId;
+  String userId;
+  String date;
+  int foodId;
+  String foodName;
+  String status;
+  int price;
+  int quantity;
+  int amount;
+
+  factory OrderDetail.fromJson(Map<String, dynamic> json) => OrderDetail(
+        orderId: json["orderId"],
+        userId: json["userId"],
+        date: json["date"],
+        foodId: json["foodId"],
+        foodName: json["foodName"],
+        status: json["status"],
+        price: json["price"],
+        quantity: json["quantity"],
+        amount: json["amount"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "orderId": orderId,
+        "userId": userId,
+        "date": date,
+        "foodId": foodId,
+        "foodName": foodName,
+        "status": status,
+        "price": price,
+        "quantity": quantity,
+        "amount": amount,
       };
 }

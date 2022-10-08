@@ -89,7 +89,89 @@ class RemoteService {
     }
   }
 
-  Future<order>? getOrders(String? orderId) async {
+  Future<foodWithoutPrice>? getFood(String? foodId) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio
+          .get('https://10.0.2.2:7246/api/v1/Foods/$foodId'); //header, author
+      var result = responseData12.fromJson(response.data);
+      foodWithoutPrice gotFood = result.data;
+      return gotFood;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return foodWithoutPrice(
+            id: 1,
+            name: "0",
+            available: false,
+            description: "0",
+            ingredient: "0",
+            pictureUrl: "0",
+            isDeleted: false,
+            quantity: 1);
+      } else {
+        return foodWithoutPrice(
+            id: 1,
+            name: "0",
+            available: false,
+            description: "0",
+            ingredient: "0",
+            pictureUrl: "0",
+            isDeleted: false,
+            quantity: 1);
+      }
+    }
+  }
+
+  Future<Orders> getOrders(String? orderId) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+
+    OrderDetail abc = OrderDetail(
+        date: "a",
+        foodId: 1,
+        foodName: "a",
+        orderId: "a",
+        price: 1,
+        status: "a",
+        amount: 1,
+        quantity: 1,
+        userId: "a");
+    List<OrderDetail> newList = [abc];
+    newList.add(abc);
+
+    try {
+      final response = await dio
+          .get('https://10.0.2.2:7246/api/Orders/$orderId'); //header, author
+      var result = responseData15.fromJson(response.data);
+      Orders gotOrder = result.data;
+      return gotOrder;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return Orders(
+            id: "0",
+            userId: "0",
+            phoneNumber: "0",
+            date: "0",
+            status: "0",
+            prePaid: 1,
+            total: 1,
+            orderDetails: newList);
+      } else {
+        return Orders(
+            id: "0",
+            userId: "0",
+            phoneNumber: "0",
+            date: "0",
+            status: "0",
+            prePaid: 1,
+            total: 1,
+            orderDetails: newList);
+      }
+    }
+  }
+
+  Future<order>? getOrder(String? orderId) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {

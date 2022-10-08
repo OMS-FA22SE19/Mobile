@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
@@ -30,7 +32,7 @@ class _orderConfirmState extends State<orderConfirm> {
                 MaterialPageRoute(builder: (context) => homeScreen()),
               );
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.home_rounded,
               size: 30,
             )),
@@ -85,7 +87,7 @@ class _orderConfirmState extends State<orderConfirm> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => orderMethod(
-                              orderid: widget.orderId,
+                              orderId: widget.orderId,
                               method: "Cash",
                             )),
                   );
@@ -131,7 +133,7 @@ class _orderConfirmState extends State<orderConfirm> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => orderMethod(
-                              orderid: widget.orderId,
+                              orderId: widget.orderId,
                               method: "Online Method",
                             )),
                   );
