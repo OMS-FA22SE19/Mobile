@@ -1,18 +1,21 @@
-// ignore_for_file: camel_case_types, prefer_const_constructors
+// ignore_for_file: camel_case_types, prefer_const_constructors, no_leading_underscores_for_local_identifiers
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Models/available_date.dart';
+import 'package:oms_mobile/Table%20reservation/table_information.dart';
 import 'package:oms_mobile/Table%20reservation/table_picker.dart';
-import 'package:oms_mobile/Table%20reservation/table_user.dart';
 import 'package:oms_mobile/services/remote_service.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class datePicker extends StatefulWidget {
   final int tableTypeId;
   final int numberOfSeats;
+  final int numberOfPeople;
   const datePicker(
-      {super.key, required this.numberOfSeats, required this.tableTypeId});
+      {super.key,
+      required this.numberOfSeats,
+      required this.tableTypeId,
+      required this.numberOfPeople});
 
   @override
   State<datePicker> createState() => _datePickerState();
@@ -26,16 +29,27 @@ class _datePickerState extends State<datePicker> {
   String selectedTime = "";
   DateTime today = DateTime.now();
   DateTime _selectedDate = DateTime.now();
-  TimeOfDay _selectedTime = TimeOfDay(hour: 0, minute: 0);
-  final TimeOfDay _openTime = TimeOfDay(hour: 9, minute: 0);
+  TimeOfDay _selectedTime = TimeOfDay(hour: 11, minute: 0);
+  final TimeOfDay _openTime = TimeOfDay(hour: 11, minute: 0);
   final TimeOfDay _closeTime = TimeOfDay(hour: 22, minute: 0);
-
-  @override
+  bool ocupiedFlag = false;
+  bool invalidFlag = false;
+  double chooseTime = 0;
+  double openTime = 0;
+  double closeTime = 0;
+  String errorText = "";
+// @override
+// String formatTimeOfDay(
+// TimeOfDay timeOfDay,
+// {bool alwaysUse24HourFormat = false}
+// )
   TimeOfDayFormat timeOfDayFormat({bool alwaysUse24HourFormat = false}) {
     return alwaysUse24HourFormat
         ? TimeOfDayFormat.HH_colon_mm
         : TimeOfDayFormat.h_colon_mm_space_a;
   }
+
+  double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
 
   @override
   void initState() {
@@ -55,25 +69,13 @@ class _datePickerState extends State<datePicker> {
     }
   }
 
-  // void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) async {
-  //   setState(() {
-  //     selectedDate = args.value.toString();
-  //   });
-  // }
-
-  // void _onTimeSelectionChanged(String text) {
-  //   setState(() {
-  //     selectedTime = text;
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
-        title: Text('Menu',
+        title: Text('Reservation',
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
@@ -114,39 +116,16 @@ class _datePickerState extends State<datePicker> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Container(
-                //   color: Colors.grey,
-                //   child: SfDateRangePicker(
-                //     onSelectionChanged: _onSelectionChanged,
-                //     view: DateRangePickerView.month,
-                //     selectionMode: DateRangePickerSelectionMode.single,
-                //     enablePastDates: false,
-                //     selectionColor: Colors.greenAccent,
-                //     todayHighlightColor: Colors.greenAccent,
-                //     // showActionButtons: true,
-                //     monthViewSettings:
-                //         DateRangePickerMonthViewSettings(firstDayOfWeek: 1),
-                //   ),
-                // ),
-                // Container(
-                //   height: 200,
-                //   child: CupertinoDatePicker(
-                //     mode: CupertinoDatePickerMode.date,
-                //     initialDateTime: DateTime(1969, 1, 1),
-                //     onDateTimeChanged: (DateTime newDateTime) {
-                //       // Do something
-                //     },
-                //   ),
-                // ),
                 SizedBox(
                   height: 10,
                 ),
                 Text(
                   'Current Choosed Date: ' +
                       '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
-                  style: GoogleFonts.bebasNeue(
+                  style: GoogleFonts.cabin(
                     color: Colors.black,
-                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                   ),
                 ),
                 SizedBox(
@@ -157,7 +136,7 @@ class _datePickerState extends State<datePicker> {
                   children: [
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.greenAccent,
+                        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
                       ),
                       onPressed: () async {
                         DateTime? newDate = await showDatePicker(
@@ -175,27 +154,15 @@ class _datePickerState extends State<datePicker> {
                       },
                       child: Text(
                         'Open calendar',
-                        style: GoogleFonts.bebasNeue(
+                        style: GoogleFonts.cabin(
+                          fontWeight: FontWeight.bold,
                           color: Colors.black,
-                          fontSize: 25,
+                          fontSize: 20,
                         ),
                       ),
                     ),
                     SizedBox(
                       width: 10,
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.greenAccent,
-                      ),
-                      onPressed: () async {},
-                      child: Text(
-                        'Confirm',
-                        style: GoogleFonts.bebasNeue(
-                          color: Colors.black,
-                          fontSize: 25,
-                        ),
-                      ),
                     ),
                   ],
                 ),
@@ -204,9 +171,10 @@ class _datePickerState extends State<datePicker> {
                 ),
                 Text(
                   'Occupied Time: ',
-                  style: GoogleFonts.bebasNeue(
+                  style: GoogleFonts.cabin(
+                    fontWeight: FontWeight.bold,
                     color: Colors.black,
-                    fontSize: 25,
+                    fontSize: 20,
                   ),
                 ),
                 SizedBox(
@@ -245,10 +213,24 @@ class _datePickerState extends State<datePicker> {
                   height: 20,
                 ),
                 Text(
-                  'Current Choosed Time: ${_selectedTime.hour}:${_selectedTime.minute}',
-                  style: GoogleFonts.bebasNeue(
+                  'Business Hour: ${_openTime.format(context)} - ${_closeTime.format(context)}',
+                  // 'Current Choosed Time: ${_selectedTime.hour}:${_selectedTime.minute}',
+                  style: GoogleFonts.cabin(
+                    fontWeight: FontWeight.bold,
                     color: Colors.black,
-                    fontSize: 25,
+                    fontSize: 20,
+                  ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  'Current Choosed Time: ${_selectedTime.format(context)}',
+                  // 'Current Choosed Time: ${_selectedTime.hour}:${_selectedTime.minute}',
+                  style: GoogleFonts.cabin(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 20,
                   ),
                 ),
                 SizedBox(
@@ -256,17 +238,22 @@ class _datePickerState extends State<datePicker> {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.greenAccent,
+                    backgroundColor: Color.fromRGBO(232, 192, 125, 100),
                   ),
                   onPressed: () async {
                     TimeOfDay? newTime = await showTimePicker(
                       context: context,
-                      initialTime: TimeOfDay(hour: 00, minute: 00),
+                      initialTime: TimeOfDay(hour: 11, minute: 00),
                     );
                     //CANCEL
                     if (newTime == null) return;
                     //OK
                     setState(() {
+                      chooseTime = toDouble(newTime);
+                      openTime = toDouble(_openTime);
+                      closeTime = toDouble(_closeTime);
+                      ocupiedFlag = false;
+                      invalidFlag = false;
                       dates?.forEach((element) {
                         TimeOfDay _start = TimeOfDay(
                             hour: int.parse(element.startTime
@@ -285,74 +272,64 @@ class _datePickerState extends State<datePicker> {
 
                         if (_selectedTime.hour >= _start.hour &&
                             _selectedTime.hour <= _end.hour) {
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text(
-                                  'Invalid Time',
-                                  style: GoogleFonts.lato(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                content: Text(
-                                  'The time you choose is already occupied, Please choose again!',
-                                  style: GoogleFonts.lato(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, 'Cancel'),
-                                    child: const Text('I understand'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        } else if (_selectedTime.hour < _openTime.hour ||
-                            _selectedTime.hour > _closeTime.hour) {
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text(
-                                  'Invalid Time',
-                                  style: GoogleFonts.lato(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                content: Text(
-                                  'The time you choose is not in bussiness hour, Please choose again!',
-                                  style: GoogleFonts.lato(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, 'Cancel'),
-                                    child: const Text('I understand'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        } else {}
+                          ocupiedFlag = true;
+                          errorText =
+                              "The time you choose is already occupied, Please choose again!";
+                        }
                       });
-                      _selectedTime = newTime;
+
+                      if (chooseTime < openTime || chooseTime >= closeTime) {
+                        invalidFlag = true;
+                        if (chooseTime == closeTime) {
+                          errorText =
+                              "Our restaurant close at 10:00PM. Please choose again!";
+                        } else {
+                          errorText =
+                              "Our bussiness hour is from 11:00AM - 10:00PM. Please choose again!";
+                        }
+                      }
+
+                      if (ocupiedFlag || invalidFlag) {
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                'Invalid Time',
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              content: Text(
+                                errorText,
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, 'Cancel'),
+                                  child: const Text('I understand'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        return;
+                      } else {
+                        _selectedTime = newTime;
+                      }
                     });
                   },
                   child: Text(
                     'Open Time Picker',
-                    style: GoogleFonts.bebasNeue(
+                    style: GoogleFonts.cabin(
+                      fontWeight: FontWeight.bold,
                       color: Colors.black,
-                      fontSize: 25,
+                      fontSize: 20,
                     ),
                   ),
                 ),
@@ -363,29 +340,37 @@ class _datePickerState extends State<datePicker> {
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.greenAccent,
+                      backgroundColor: Color.fromRGBO(232, 192, 125, 100),
                       minimumSize: Size(double.infinity, 35),
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(15)),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => tableUser(
-                                  date: _selectedDate,
-                                  time: _selectedTime,
-                                  tableTypeId: widget.tableTypeId,
-                                  numberOfSeats: widget.numberOfSeats,
-                                )),
-                      );
-                    },
+                    onPressed: invalidFlag || ocupiedFlag
+                        ? null
+                        : () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => tableInformation(
+                                        numberOfPeople: widget.numberOfPeople,
+                                        name: "Default User",
+                                        phone: "0941767748",
+                                        date: _selectedDate,
+                                        time: _selectedTime,
+                                        tableTypeId: widget.tableTypeId,
+                                        numberOfSeats: widget.numberOfSeats,
+                                      )),
+                            );
+                          },
                     child: Text(
                       'Confirm'.toUpperCase(),
-                      style: GoogleFonts.bebasNeue(
-                          color: Colors.white, fontSize: 24),
+                      style: GoogleFonts.cabin(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 20,
+                      ),
                     ),
                   ),
                 ),

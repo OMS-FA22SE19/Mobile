@@ -9,9 +9,16 @@ import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
 class menuCart extends StatefulWidget {
+  final int tableId;
   final int categoryId;
   final List<food>? foods;
-  const menuCart({super.key, required this.foods, required this.categoryId});
+  final isCourse;
+  const menuCart(
+      {super.key,
+      required this.foods,
+      required this.categoryId,
+      this.isCourse,
+      required this.tableId});
 
   @override
   State<menuCart> createState() => _menuCartState();
@@ -54,7 +61,7 @@ class _menuCartState extends State<menuCart> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
         title: Text('Cart',
             style: GoogleFonts.bebasNeue(
@@ -66,6 +73,8 @@ class _menuCartState extends State<menuCart> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => menuFood(
+                          tableId: widget.tableId,
+                          isCourse: widget.isCourse,
                           categoryId: widget.categoryId,
                         )),
               );
@@ -115,125 +124,199 @@ class _menuCartState extends State<menuCart> {
             if (widget.foods![index].quantity != 0) {
               return Padding(
                 padding: const EdgeInsets.all(5.0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width - 10,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.greenAccent,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
+                child: Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width - 10,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color.fromRGBO(232, 192, 125, 100),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Column(
+                              Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          widget.foods![index].name,
+                                          style: GoogleFonts.cabin(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black),
+                                        ),
+                                        Text(
+                                          'Price: ' +
+                                              changeFormat(
+                                                  widget.foods![index].price),
+                                          style: GoogleFonts.roboto(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Center(
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      widget.foods![index].name,
-                                      style: GoogleFonts.cabin(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          widget.foods![index].quantity =
+                                              widget.foods![index].quantity - 1;
+                                          if (widget.foods![index].quantity <
+                                              0) {
+                                            widget.foods![index].quantity = 0;
+                                          }
+                                        });
+                                        total = 0;
+                                        totalMoney();
+                                      },
+                                      child: Container(
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Color.fromRGBO(
+                                                232, 192, 125, 100),
+                                          ),
+                                          child: Icon(
+                                            Icons.remove_circle_outline_rounded,
+                                            color: Colors.black,
+                                            size: 30,
+                                          )),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
                                     ),
                                     Text(
-                                      'Price: ' +
-                                          changeFormat(
-                                              widget.foods![index].price),
-                                      style: GoogleFonts.roboto(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.black),
+                                      widget.foods![index].quantity.toString(),
+                                      style: GoogleFonts.bebasNeue(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 30,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          widget.foods![index].quantity =
+                                              widget.foods![index].quantity + 1;
+                                          if (widget.foods![index].quantity >
+                                              10)
+                                            widget.foods![index].quantity = 10;
+                                        });
+                                        total = 0;
+                                        totalMoney();
+                                      },
+                                      child: Container(
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Color.fromRGBO(
+                                                232, 192, 125, 100),
+                                          ),
+                                          child: Icon(
+                                            Icons.add_circle_outline_rounded,
+                                            color: Colors.black,
+                                            size: 30,
+                                          )
+
+                                          // Text(
+                                          //   '+',
+                                          //   style: TextStyle(
+                                          //     color: Colors.white,
+                                          //     fontWeight: FontWeight.bold,
+                                          //     fontSize: 30,
+                                          //   ),
+                                          // ),
+                                          ),
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    InkWell(
+                                      onTap: () {
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                'Remove',
+                                                style: GoogleFonts.lato(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              content: Text(
+                                                "Are you really want to remove this item?",
+                                                style: GoogleFonts.lato(
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          context, 'Cancel'),
+                                                  child: const Text('No'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      widget.foods![index]
+                                                          .quantity = 0;
+                                                    });
+                                                    Navigator.pop(
+                                                        context, 'Cancel');
+                                                  },
+                                                  child: const Text('Yes'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                        total = 0;
+                                        totalMoney();
+                                      },
+                                      child: Container(
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Color.fromRGBO(
+                                                232, 192, 125, 100),
+                                          ),
+                                          child: Icon(
+                                            Icons.highlight_remove_rounded,
+                                            color: Colors.red,
+                                            size: 20,
+                                          )),
                                     ),
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                          Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      widget.foods![index].quantity =
-                                          widget.foods![index].quantity - 1;
-                                      if (widget.foods![index].quantity < 0)
-                                        widget.foods![index].quantity = 0;
-                                    });
-                                    total = 0;
-                                    totalMoney();
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.greenAccent,
-                                    ),
-                                    child: Text(
-                                      '-',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 40,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                Text(
-                                  widget.foods![index].quantity.toString(),
-                                  style: GoogleFonts.bebasNeue(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 25,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      widget.foods![index].quantity =
-                                          widget.foods![index].quantity + 1;
-                                      if (widget.foods![index].quantity > 10)
-                                        widget.foods![index].quantity = 10;
-                                    });
-                                    total = 0;
-                                    totalMoney();
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.greenAccent,
-                                    ),
-                                    child: Text(
-                                      '+',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 30,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ]),
-                  ),
+                            ]),
+                      ),
+                    ),
+                  ],
                 ),
               );
             } else {
@@ -281,19 +364,21 @@ class _menuCartState extends State<menuCart> {
                   ),
                   InkWell(
                     onTap: () async {
-                      newOrder =
-                          await RemoteService().createOrder(1, widget.foods);
+                      newOrder = await RemoteService()
+                          .createOrder(widget.tableId, widget.foods);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => menuStatus(
+                                  tableId: widget.tableId,
+                                  isCourse: widget.isCourse,
                                   orderId: newOrder?.id,
                                 )),
                       );
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                          color: Colors.greenAccent,
+                          color: Color.fromRGBO(232, 192, 125, 100),
                           borderRadius: BorderRadius.circular(15)),
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),

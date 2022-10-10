@@ -4,9 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:oms_mobile/Menu%20Order/menu_food.dart';
 
 class searchPage extends StatefulWidget {
+  final int tableId;
   final int menuId;
   final int categoryId;
-  const searchPage({super.key, required this.menuId, required this.categoryId});
+  final bool isCourse;
+  const searchPage(
+      {super.key,
+      required this.menuId,
+      required this.categoryId,
+      required this.isCourse,
+      required this.tableId});
 
   @override
   State<searchPage> createState() => _searchPageState();
@@ -24,6 +31,8 @@ class _searchPageState extends State<searchPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => menuFood(
+                            tableId: widget.tableId,
+                            isCourse: widget.isCourse,
                             categoryId: widget.categoryId,
                           )),
                 );

@@ -179,7 +179,7 @@ class _tableUserState extends State<tableUser> {
                 padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.greenAccent,
+                    backgroundColor: Color.fromRGBO(232, 192, 125, 100),
                     minimumSize: Size(double.infinity, 35),
                     padding: EdgeInsets.symmetric(horizontal: 16),
                     shape: const RoundedRectangleBorder(
@@ -191,6 +191,7 @@ class _tableUserState extends State<tableUser> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => tableInformation(
+                                numberOfPeople: 4,
                                 name: nameController1.text,
                                 phone: phoneController1.text,
                                 date: widget.date,
@@ -387,7 +388,7 @@ class _tableUserState extends State<tableUser> {
 //                 padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
 //                 child: ElevatedButton(
 //                   style: ElevatedButton.styleFrom(
-//                     backgroundColor: Colors.greenAccent,
+//                     backgroundColor: Color.fromRGBO(232, 192, 125, 100),
 //                     minimumSize: Size(double.infinity, 35),
 //                     padding: EdgeInsets.symmetric(horizontal: 16),
 //                     shape: const RoundedRectangleBorder(

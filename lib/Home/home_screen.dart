@@ -17,7 +17,7 @@ class homeScreen extends StatefulWidget {
 }
 
 class _homeScreenState extends State<homeScreen> {
-  List<reservation>? reservations;
+  List<Reservation>? reservations;
   bool isLoaded = false;
 
   @override
@@ -48,7 +48,7 @@ class _homeScreenState extends State<homeScreen> {
               children: [
                 DrawerHeader(
                   decoration: BoxDecoration(
-                    color: Colors.greenAccent,
+                    color: Color.fromRGBO(232, 192, 125, 100),
                   ),
                   child: Column(
                     children: [
@@ -58,7 +58,7 @@ class _homeScreenState extends State<homeScreen> {
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: GoogleFonts.lato(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -90,7 +90,7 @@ class _homeScreenState extends State<homeScreen> {
                               overflow: TextOverflow.ellipsis,
                               maxLines: 2,
                               style: GoogleFonts.lato(
-                                color: Colors.white,
+                                color: Colors.black,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -132,7 +132,10 @@ class _homeScreenState extends State<homeScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => menuCategory()),
+                      MaterialPageRoute(
+                          builder: (context) => menuCategory(
+                                tableId: 0,
+                              )),
                     );
                   },
                 ),
@@ -157,7 +160,7 @@ class _homeScreenState extends State<homeScreen> {
             ),
           ),
           appBar: AppBar(
-            backgroundColor: Colors.greenAccent,
+            backgroundColor: Color.fromRGBO(232, 192, 125, 100),
             centerTitle: true,
             title: Text('Menu',
                 style: GoogleFonts.bebasNeue(
@@ -177,7 +180,7 @@ class _homeScreenState extends State<homeScreen> {
                   )),
             ],
             bottom: const TabBar(
-              indicatorColor: Colors.green,
+              indicatorColor: Color.fromRGBO(232, 192, 125, 100),
               indicatorWeight: 2.5,
               indicatorSize: TabBarIndicatorSize.label,
               tabs: [
@@ -205,83 +208,126 @@ class _homeScreenState extends State<homeScreen> {
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 10, horizontal: 5),
-                        child: Container(
-                          height: 180,
-                          width: MediaQuery.of(context).size.width - 20,
-                          decoration: BoxDecoration(
-                            color: Colors.greenAccent,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.table_restaurant_rounded,
-                                    size: 80,
-                                    color: Colors.white,
-                                  ),
-                                  Text(
-                                    'YOUR RESERVATION',
-                                    maxLines: 2,
-                                    style: GoogleFonts.cabin(
-                                        fontSize: 20, color: Colors.white),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'DATE: ' +
-                                            reservations![index]
-                                                .startTime
-                                                .substring(0, 10),
-                                        maxLines: 2,
-                                        style: GoogleFonts.cabin(
-                                            fontSize: 17, color: Colors.white),
-                                      ),
-                                      SizedBox(
-                                        width: 30,
-                                      ),
-                                      Text(
-                                        'TIME: ' +
-                                            reservations![index]
-                                                .startTime
-                                                .substring(11, 16),
-                                        maxLines: 2,
-                                        style: GoogleFonts.cabin(
-                                            fontSize: 17, color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'TABLEID: ' +
-                                            reservations![index]
-                                                .tableId
-                                                .toString(),
-                                        maxLines: 2,
-                                        style: GoogleFonts.cabin(
-                                            fontSize: 17, color: Colors.white),
-                                      ),
-                                      SizedBox(
-                                        width: 30,
-                                      ),
-                                      Text(
-                                        'TYPE:    No',
-                                        maxLines: 2,
-                                        style: GoogleFonts.cabin(
-                                            fontSize: 17, color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                ]),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => menuCategory(
+                                      tableId: reservations![index].tableId)),
+                            );
+                          },
+                          child: Container(
+                            height: 200,
+                            width: MediaQuery.of(context).size.width - 20,
+                            decoration: BoxDecoration(
+                              color: Color.fromRGBO(232, 192, 125, 100),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.table_restaurant_rounded,
+                                      size: 80,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      'YOUR RESERVATION',
+                                      maxLines: 2,
+                                      style: GoogleFonts.cabin(
+                                          fontSize: 20, color: Colors.white),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Text(
+                                              'DATE: ' +
+                                                  reservations![index]
+                                                      .startTime
+                                                      .toString()
+                                                      .substring(0, 10),
+                                              maxLines: 2,
+                                              style: GoogleFonts.cabin(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                            SizedBox(
+                                              width: 30,
+                                            ),
+                                            Text(
+                                              'START TIME: ' +
+                                                  reservations![index]
+                                                      .startTime
+                                                      .toString()
+                                                      .substring(11, 16),
+                                              maxLines: 2,
+                                              style: GoogleFonts.cabin(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          ],
+                                        ),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              'TABLEID: ' +
+                                                  reservations![index]
+                                                      .tableId
+                                                      .toString(),
+                                              maxLines: 2,
+                                              style: GoogleFonts.cabin(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                            SizedBox(
+                                              width: 30,
+                                            ),
+                                            Text(
+                                              'TYPE: ' +
+                                                  reservations![index]
+                                                      .table
+                                                      .tableType
+                                                      .name,
+                                              maxLines: 2,
+                                              style: GoogleFonts.cabin(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      'NUMBER OF SEATS: ' +
+                                          reservations![index]
+                                              .table
+                                              .numOfSeats
+                                              .toString(),
+                                      maxLines: 2,
+                                      style: GoogleFonts.cabin(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17,
+                                          color: Colors.white),
+                                    ),
+                                  ]),
+                            ),
                           ),
                         ),
                       );
@@ -311,7 +357,7 @@ class _homeScreenState extends State<homeScreen> {
                       width: 250,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Colors.greenAccent,
+                        color: Color.fromRGBO(232, 192, 125, 100),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),

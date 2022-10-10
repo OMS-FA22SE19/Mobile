@@ -36,13 +36,15 @@ class responseData2 {
 }
 
 class foodType {
-  foodType({required this.id, required this.name});
+  foodType({required this.id, required this.name, required this.isDeleted});
 
   int id;
   String name;
+  bool isDeleted;
 
-  factory foodType.fromJson(Map<String, dynamic> json) =>
-      foodType(id: json["id"], name: json["name"]);
+  factory foodType.fromJson(Map<String, dynamic> json) => foodType(
+      id: json["id"], name: json["name"], isDeleted: json["isDeleted"]);
 
-  Map<String, dynamic> toJson() => {"id": id, "name": name};
+  Map<String, dynamic> toJson() =>
+      {"id": id, "name": name, "isDeleted": isDeleted};
 }
