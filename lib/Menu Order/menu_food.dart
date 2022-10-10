@@ -3,8 +3,8 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_cart.dart';
+import 'package:oms_mobile/Menu%20Order/menu_category.dart';
 import 'package:oms_mobile/Menu%20Order/menu_food_detaiil.dart';
 import 'package:oms_mobile/Menu%20Order/search_page.dart';
 import 'package:oms_mobile/Models/food.dart';
@@ -13,9 +13,14 @@ import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
 
 class menuFood extends StatefulWidget {
-  const menuFood({super.key, required this.categoryId});
-
+  const menuFood(
+      {super.key,
+      required this.categoryId,
+      required this.isCourse,
+      required this.tableId});
+  final int tableId;
   final int categoryId;
+  final bool isCourse;
 
   @override
   State<menuFood> createState() => _menuFoodState();
@@ -23,9 +28,6 @@ class menuFood extends StatefulWidget {
 
 class _menuFoodState extends State<menuFood> {
   int counter = 0;
-  final String image =
-      'https://media.istockphoto.com/photos/cheeseburger-isolated-on-white-picture-id1157515115?k=20&m=1157515115&s=612x612&w=0&h=1-tuF1ovimw3DuivpApekSjJXN5-vc97-qBY5EBOUts=';
-
   List<menu>? menus;
   List<food>? foods;
   int menuId = 0;
@@ -49,7 +51,8 @@ class _menuFoodState extends State<menuFood> {
       if (menu.isHidden == false) menuId = menu.id;
     });
 
-    foods = await RemoteService().getFoods(menuId, widget.categoryId);
+    foods = await RemoteService()
+        .getFoods(menuId, widget.categoryId, widget.isCourse);
     if (foods != null) {
       setState(() {
         isLoaded = true;
@@ -61,7 +64,7 @@ class _menuFoodState extends State<menuFood> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
         title: Text('Menu',
             style: GoogleFonts.bebasNeue(
@@ -71,11 +74,14 @@ class _menuFoodState extends State<menuFood> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => homeScreen()),
+                MaterialPageRoute(
+                    builder: (context) => menuCategory(
+                          tableId: widget.tableId,
+                        )),
               );
             },
             icon: Icon(
-              Icons.home_rounded,
+              Icons.arrow_back_ios_new_rounded,
               size: 30,
             )),
         automaticallyImplyLeading: false,
@@ -86,6 +92,8 @@ class _menuFoodState extends State<menuFood> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => searchPage(
+                            tableId: widget.tableId,
+                            isCourse: widget.isCourse,
                             categoryId: widget.categoryId,
                             menuId: menuId,
                           )),
@@ -115,6 +123,8 @@ class _menuFoodState extends State<menuFood> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => menuFoodDetail(
+                            tableId: widget.tableId,
+                            isCourse: widget.isCourse,
                             categoryId: widget.categoryId.toString(),
                             foodId: foods![index].id.toString(),
                             price: foods![index].price,
@@ -128,7 +138,7 @@ class _menuFoodState extends State<menuFood> {
                   width: 300,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.redAccent,
+                    color: Color.fromRGBO(232, 192, 125, 100),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -219,19 +229,21 @@ class _menuFoodState extends State<menuFood> {
             style: GoogleFonts.cabin(
                 fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
           ),
-          badgeColor: Colors.teal,
+          badgeColor: Colors.brown,
           child: Icon(
             size: 70,
             Icons.shopping_bag_rounded,
             color: Colors.white,
           ),
         ),
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => menuCart(
+                      tableId: widget.tableId,
+                      isCourse: widget.isCourse,
                       categoryId: widget.categoryId,
                       foods: foods,
                     )),

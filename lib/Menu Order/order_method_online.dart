@@ -5,26 +5,26 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
 import 'package:oms_mobile/Models/order.dart';
+import 'package:oms_mobile/Models/payment_url.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:oms_mobile/test.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class orderMethod extends StatefulWidget {
+class orderMethodOnline extends StatefulWidget {
   final String? orderId;
   final String method;
   final int tableId;
-
-  const orderMethod(
-      {super.key,
-      required this.orderId,
-      required this.method,
-      required this.tableId});
+  const orderMethodOnline(
+      {super.key, this.orderId, required this.method, required this.tableId});
 
   @override
-  State<orderMethod> createState() => _orderMethodState();
+  State<orderMethodOnline> createState() => _orderMethodOnlineState();
 }
 
-class _orderMethodState extends State<orderMethod> {
+class _orderMethodOnlineState extends State<orderMethodOnline> {
   Orders? currentOrder;
+  paymentURL? payment;
   List<OrderDetail>? details;
   var isLoaded = false;
 
@@ -42,6 +42,8 @@ class _orderMethodState extends State<orderMethod> {
 
   getData() async {
     currentOrder = await RemoteService().getOrders(widget.orderId);
+    payment = await RemoteService()
+        .getPaymentURL(widget.orderId, currentOrder?.total);
     details = currentOrder?.orderDetails;
     if (currentOrder != null) {
       setState(() {
@@ -241,11 +243,16 @@ class _orderMethodState extends State<orderMethod> {
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => homeScreen()),
-                          );
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //       builder: (context) => Test(
+                          //             orderId: widget.orderId,
+                          //             total: currentOrder?.total,
+                          //           )),
+                          // );
+                          launchUrl(Uri.parse(payment?.url ?? ""),
+                              mode: LaunchMode.externalNonBrowserApplication);
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -254,7 +261,7 @@ class _orderMethodState extends State<orderMethod> {
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Text(
-                              'CONFIRM',
+                              'Pay',
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.cabin(
                                 fontSize: 20,

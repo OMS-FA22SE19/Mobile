@@ -10,8 +10,14 @@ import 'package:oms_mobile/Models/orderDetail.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
 class menuStatus extends StatefulWidget {
+  final int tableId;
   final String? orderId;
-  const menuStatus({super.key, required this.orderId});
+  final bool isCourse;
+  const menuStatus(
+      {super.key,
+      required this.orderId,
+      required this.isCourse,
+      required this.tableId});
 
   @override
   State<menuStatus> createState() => _menuStatusState();
@@ -53,7 +59,7 @@ class _menuStatusState extends State<menuStatus> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.greenAccent,
+          backgroundColor: Color.fromRGBO(232, 192, 125, 100),
           centerTitle: true,
           title: Text("Order",
               style: GoogleFonts.bebasNeue(
@@ -76,7 +82,9 @@ class _menuStatusState extends State<menuStatus> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => menuCategory()),
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            menuCategory(tableId: widget.tableId)),
                   );
                 },
                 icon: Icon(
@@ -92,9 +100,9 @@ class _menuStatusState extends State<menuStatus> {
           //   child: Container(
           //     width: 300,
           child: ListView.builder(
-            shrinkWrap: true,
+            // shrinkWrap: true,
             itemCount: orderDetails?.length,
-            padding: EdgeInsets.all(10),
+            // padding: EdgeInsets.all(10),
             // scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               return InkWell(
@@ -103,6 +111,8 @@ class _menuStatusState extends State<menuStatus> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => menuFood(
+                              tableId: widget.tableId,
+                              isCourse: widget.isCourse,
                               categoryId: 1,
                             )),
                   );
@@ -195,7 +205,7 @@ class _menuStatusState extends State<menuStatus> {
   conditionalFloatingActionButton(String? id) {
     if (flag) {
       return FloatingActionButton.extended(
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         label: Text(
           "Reload",
           style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
@@ -213,7 +223,7 @@ class _menuStatusState extends State<menuStatus> {
       );
     } else {
       return FloatingActionButton.extended(
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         label: Text(
           "Confirm",
           style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
@@ -225,7 +235,11 @@ class _menuStatusState extends State<menuStatus> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => orderConfirm(orderId: id)),
+            MaterialPageRoute(
+                builder: (context) => orderConfirm(
+                      orderId: id,
+                      tableId: widget.tableId,
+                    )),
           );
         },
       );

@@ -1,18 +1,15 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, camel_case_types
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
-import 'package:oms_mobile/Menu%20Order/menu_cart.dart';
 import 'package:oms_mobile/Menu%20Order/menu_food.dart';
-import 'package:oms_mobile/Menu%20Order/menu_status.dart';
-import 'package:badges/badges.dart';
 import 'package:oms_mobile/Models/course_type.dart';
 import 'package:oms_mobile/Models/food_type.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
 class menuCategory extends StatefulWidget {
-  const menuCategory({super.key});
+  final int tableId;
+  const menuCategory({super.key, required this.tableId});
 
   @override
   State<menuCategory> createState() => _menuCategoryState();
@@ -46,7 +43,7 @@ class _menuCategoryState extends State<menuCategory> {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.greenAccent,
+            backgroundColor: Color.fromRGBO(232, 192, 125, 100),
             centerTitle: true,
             title: Text('Menu',
                 style: GoogleFonts.bebasNeue(
@@ -78,7 +75,7 @@ class _menuCategoryState extends State<menuCategory> {
             //       )),
             // ],
             bottom: const TabBar(
-              indicatorColor: Colors.green,
+              indicatorColor: Colors.brown,
               indicatorWeight: 2.5,
               indicatorSize: TabBarIndicatorSize.label,
               tabs: [
@@ -111,6 +108,8 @@ class _menuCategoryState extends State<menuCategory> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => menuFood(
+                                    tableId: widget.tableId,
+                                    isCourse: true,
                                     categoryId: courses![index].id,
                                   )),
                         );
@@ -122,7 +121,7 @@ class _menuCategoryState extends State<menuCategory> {
                           width: 300,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Colors.redAccent,
+                            color: Color.fromRGBO(232, 192, 125, 100),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
@@ -183,6 +182,8 @@ class _menuCategoryState extends State<menuCategory> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => menuFood(
+                                    tableId: widget.tableId,
+                                    isCourse: false,
                                     categoryId: foodTypes![index].id,
                                   )),
                         );
@@ -194,7 +195,7 @@ class _menuCategoryState extends State<menuCategory> {
                           width: 300,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Colors.redAccent,
+                            color: Color.fromRGBO(232, 192, 125, 100),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
@@ -254,7 +255,7 @@ class _menuCategoryState extends State<menuCategory> {
           //       color: Colors.white,
           //     ),
           //   ),
-          //   backgroundColor: Colors.greenAccent,
+          //   backgroundColor: Color.fromRGBO(232, 192, 125, 100),
           //   onPressed: () {
           //     Navigator.push(
           //       context,

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
+import 'package:oms_mobile/Menu%20Order/menu_food.dart';
 import 'package:oms_mobile/Models/food.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
@@ -11,11 +12,15 @@ class menuFoodDetail extends StatefulWidget {
   final int price;
   final String foodId;
   final String categoryId;
+  final bool isCourse;
+  final int tableId;
   const menuFoodDetail(
       {super.key,
       required this.price,
       required this.foodId,
-      required this.categoryId});
+      required this.categoryId,
+      required this.isCourse,
+      required this.tableId});
 
   @override
   State<menuFoodDetail> createState() => _menuFoodDetailState();
@@ -62,7 +67,12 @@ class _menuFoodDetailState extends State<menuFoodDetail> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => homeScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => menuFood(
+                            tableId: widget.tableId,
+                            categoryId: int.parse(widget.categoryId),
+                            isCourse: widget.isCourse,
+                          )),
                 );
               },
               icon: Icon(
@@ -107,7 +117,7 @@ class _menuFoodDetailState extends State<menuFoodDetail> {
                   padding: const EdgeInsets.fromLTRB(0, 250, 0, 0),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    // height: MediaQuery.of(context).size.height,
+                    height: MediaQuery.of(context).size.height,
                     decoration: BoxDecoration(
                       color: Color.fromRGBO(159, 192, 136, 20),
                       borderRadius: BorderRadius.only(

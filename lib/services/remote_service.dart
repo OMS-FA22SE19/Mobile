@@ -8,6 +8,7 @@ import 'package:oms_mobile/Models/food_type.dart';
 import 'package:oms_mobile/Models/menu.dart';
 import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/Models/orderDetail.dart';
+import 'package:oms_mobile/Models/payment_url.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Models/table.dart';
 import 'package:oms_mobile/main.dart';
@@ -56,6 +57,42 @@ class RemoteService {
     return courseTypes;
   }
 
+  // Future<List<courseType>?> getCourseTypes() async {
+  //   final Dio dio = Dio();
+  //   HttpOverrides.global = MyHttpOverrides();
+  //   try {
+  //     Response response = await dio
+  //         .get('https://10.0.2.2:7246//api/v1/CourseTypes'); //header, author
+  //     var result = responseData.fromJson(response.data);
+  //     List<courseType> courses = result.data;
+  //     return courses;
+  //   } on DioError catch (e) {
+  //     if (e.response?.statusCode == 404) {
+  //       return null;
+  //     } else {
+  //       return null;
+  //     }
+  //   }
+  // }
+
+  // Future<List<foodType>?> getFoodTypes() async {
+  //   final Dio dio = Dio();
+  //   HttpOverrides.global = MyHttpOverrides();
+  //   try {
+  //     Response response =
+  //         await dio.get('https://10.0.2.2:7246/api/v1/Types'); //header, author
+  //     var result = responseData2.fromJson(response.data);
+  //     List<foodType> types = result.data;
+  //     return types;
+  //   } on DioError catch (e) {
+  //     if (e.response?.statusCode == 404) {
+  //       return null;
+  //     } else {
+  //       return null;
+  //     }
+  //   }
+  // }
+
   Future<List<foodType>?> getFoodTypes() async {
     final Dio dio = Dio();
     // var client = http.Client();
@@ -70,12 +107,20 @@ class RemoteService {
     return foodTypes;
   }
 
-  Future<List<food>?> getFoods(int menuId, int categoryId) async {
+  Future<List<food>?> getFoods(
+      int menuId, int categoryId, bool isCourse) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response = await dio.get(
-          'https://10.0.2.2:7246/api/v1/Menus/$menuId/Food?typeId=$categoryId'); //header, author
+      final response;
+      if (isCourse) {
+        response = await dio.get(
+            'https://10.0.2.2:7246/api/v1/Menus/$menuId/Food?courseTypeId=$categoryId');
+      } else {
+        response = await dio.get(
+            'https://10.0.2.2:7246/api/v1/Menus/$menuId/Food?typeId=$categoryId');
+      }
+      //header, author
       var result = responseData3.fromJson(response.data);
       List<food> foods = result.data;
 
@@ -214,7 +259,6 @@ class RemoteService {
           'https://10.0.2.2:7246/api/OrderDetails?SearchValue=$orderId'); //header, author
       var result = responseData10.fromJson(response.data);
       List<orderDetail> foods = result.data;
-
       return foods;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
@@ -332,14 +376,14 @@ class RemoteService {
     }
   }
 
-  Future<List<reservation>?> getReservations() async {
+  Future<List<Reservation>?> getReservations() async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio
           .get('https://10.0.2.2:7246/api/v1/Reservations'); //header, author
       var result = responseData7.fromJson(response.data);
-      List<reservation> reservationList = result.data;
+      List<Reservation> reservationList = result.data;
       return reservationList;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
@@ -368,6 +412,24 @@ class RemoteService {
         return null;
       } else {
         return null;
+      }
+    }
+  }
+
+  Future<paymentURL>? getPaymentURL(String? orderId, int? total) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio.get(
+          'https://10.0.2.2:7246/api/v1/VNPay/GetUrl?ammount=$total&orderId=$orderId'); //header, author
+      var result = responseData20.fromJson(response.data);
+      paymentURL returnURL = result.data;
+      return returnURL;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return paymentURL(url: "NULL URL");
+      } else {
+        return paymentURL(url: "NULL URL");
       }
     }
   }

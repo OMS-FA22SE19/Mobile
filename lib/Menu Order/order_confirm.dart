@@ -5,10 +5,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
 import 'package:oms_mobile/Menu%20Order/order_method.dart';
+import 'package:oms_mobile/Menu%20Order/order_method_online.dart';
 
 class orderConfirm extends StatefulWidget {
+  final int tableId;
   final String? orderId;
-  const orderConfirm({super.key, required this.orderId});
+  const orderConfirm({super.key, required this.orderId, required this.tableId});
 
   @override
   State<orderConfirm> createState() => _orderConfirmState();
@@ -19,7 +21,7 @@ class _orderConfirmState extends State<orderConfirm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
         title: Text("Order",
             style: GoogleFonts.bebasNeue(
@@ -42,7 +44,10 @@ class _orderConfirmState extends State<orderConfirm> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => menuCategory()),
+                  MaterialPageRoute(
+                      builder: (context) => menuCategory(
+                            tableId: widget.tableId,
+                          )),
                 );
               },
               icon: Icon(
@@ -87,6 +92,7 @@ class _orderConfirmState extends State<orderConfirm> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => orderMethod(
+                              tableId: widget.tableId,
                               orderId: widget.orderId,
                               method: "Cash",
                             )),
@@ -132,7 +138,8 @@ class _orderConfirmState extends State<orderConfirm> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => orderMethod(
+                        builder: (context) => orderMethodOnline(
+                              tableId: widget.tableId,
                               orderId: widget.orderId,
                               method: "Online Method",
                             )),

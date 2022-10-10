@@ -43,7 +43,7 @@ class _tablePickerState extends State<tablePicker> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.greenAccent,
+          backgroundColor: Color.fromRGBO(232, 192, 125, 100),
           centerTitle: true,
           title: Text('Reservation',
               style: GoogleFonts.bebasNeue(
@@ -93,6 +93,7 @@ class _tablePickerState extends State<tablePicker> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => datePicker(
+                            numberOfPeople: widget.numberOfPeople,
                             numberOfSeats: tables![index].numOfSeats,
                             tableTypeId: tables![index].tableTypeId,
                           )),
@@ -105,7 +106,7 @@ class _tablePickerState extends State<tablePicker> {
                   width: 300,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.redAccent,
+                    color: Color.fromRGBO(232, 192, 125, 50),
                   ),
                   child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
