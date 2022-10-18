@@ -11,11 +11,13 @@ class datePicker extends StatefulWidget {
   final int tableTypeId;
   final int numberOfSeats;
   final int numberOfPeople;
+  final int amount;
   const datePicker(
       {super.key,
       required this.numberOfSeats,
       required this.tableTypeId,
-      required this.numberOfPeople});
+      required this.numberOfPeople,
+      required this.amount});
 
   @override
   State<datePicker> createState() => _datePickerState();
@@ -60,7 +62,7 @@ class _datePickerState extends State<datePicker> {
 
   getData(String date) async {
     dates = await RemoteService().getTimeAvailable(
-        widget.numberOfSeats, widget.tableTypeId, date.substring(0, 10));
+        widget.numberOfSeats, widget.tableTypeId, date.substring(0, 10), 10);
     if (dates != null) {
       setState(() {
         isLoaded = true;
@@ -354,11 +356,13 @@ class _datePickerState extends State<datePicker> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => tableInformation(
+                                        amount: widget.amount,
                                         numberOfPeople: widget.numberOfPeople,
                                         name: "Default User",
                                         phone: "0941767748",
                                         date: _selectedDate,
-                                        time: _selectedTime,
+                                        startTime: _selectedTime,
+                                        endTime: _selectedTime,
                                         tableTypeId: widget.tableTypeId,
                                         numberOfSeats: widget.numberOfSeats,
                                       )),

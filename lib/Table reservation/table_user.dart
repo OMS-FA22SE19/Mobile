@@ -6,15 +6,25 @@ import 'package:oms_mobile/Table%20reservation/table_information.dart';
 
 class tableUser extends StatefulWidget {
   final DateTime date;
-  final TimeOfDay time;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
   final int tableTypeId;
   final int numberOfSeats;
+  final int numberOfPeople;
+  final String name;
+  final String phone;
+  final int amount;
   const tableUser(
       {super.key,
       required this.date,
-      required this.time,
+      required this.startTime,
       required this.tableTypeId,
-      required this.numberOfSeats});
+      required this.numberOfSeats,
+      required this.numberOfPeople,
+      required this.name,
+      required this.phone,
+      required this.amount,
+      required this.endTime});
 
   @override
   State<tableUser> createState() => _tableUserState();
@@ -114,64 +124,6 @@ class _tableUserState extends State<tableUser> {
               SizedBox(
                 height: 20,
               ),
-              Text(
-                "Reservation for",
-                style:
-                    GoogleFonts.lato(fontSize: 15, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.white),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      autofocus: true,
-                      decoration: InputDecoration(
-                        icon: Icon(
-                          Icons.person,
-                          size: 20,
-                        ),
-                        border: InputBorder.none,
-                        hintText: 'Input your name',
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.white),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        icon: Icon(
-                          Icons.phone_rounded,
-                          size: 20,
-                        ),
-                        border: InputBorder.none,
-                        hintText: 'Input your phone number',
-                      ),
-                    ),
-                  ),
-                ),
-              ),
               SizedBox(
                 height: 20,
               ),
@@ -191,11 +143,13 @@ class _tableUserState extends State<tableUser> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => tableInformation(
-                                numberOfPeople: 4,
+                                amount: widget.amount,
+                                numberOfPeople: widget.numberOfPeople,
                                 name: nameController1.text,
                                 phone: phoneController1.text,
                                 date: widget.date,
-                                time: widget.time,
+                                startTime: widget.startTime,
+                                endTime: widget.endTime,
                                 tableTypeId: widget.tableTypeId,
                                 numberOfSeats: widget.numberOfSeats,
                               )),

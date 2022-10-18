@@ -179,9 +179,14 @@ class _menuCartState extends State<menuCart> {
                                         setState(() {
                                           widget.foods![index].quantity =
                                               widget.foods![index].quantity - 1;
-                                          if (widget.foods![index].quantity <
+                                          if (widget.foods![index].quantity <=
                                               0) {
                                             widget.foods![index].quantity = 0;
+                                            widget.foods?.forEach((element) {
+                                              if (element.quantity != 0) {
+                                                isLoaded = true;
+                                              }
+                                            });
                                           }
                                         });
                                         total = 0;
@@ -220,8 +225,9 @@ class _menuCartState extends State<menuCart> {
                                           widget.foods![index].quantity =
                                               widget.foods![index].quantity + 1;
                                           if (widget.foods![index].quantity >
-                                              10)
+                                              10) {
                                             widget.foods![index].quantity = 10;
+                                          }
                                         });
                                         total = 0;
                                         totalMoney();
@@ -284,7 +290,16 @@ class _menuCartState extends State<menuCart> {
                                                     setState(() {
                                                       widget.foods![index]
                                                           .quantity = 0;
+                                                      widget.foods
+                                                          ?.forEach((element) {
+                                                        if (element.quantity !=
+                                                            0) {
+                                                          isLoaded = true;
+                                                        }
+                                                      });
                                                     });
+                                                    total = 0;
+                                                    totalMoney();
                                                     Navigator.pop(
                                                         context, 'Cancel');
                                                   },
@@ -362,35 +377,35 @@ class _menuCartState extends State<menuCart> {
                       ],
                     ),
                   ),
-                  InkWell(
-                    onTap: () async {
-                      newOrder = await RemoteService()
-                          .createOrder(widget.tableId, widget.foods);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => menuStatus(
-                                  tableId: widget.tableId,
-                                  isCourse: widget.isCourse,
-                                  orderId: newOrder?.id,
-                                )),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Color.fromRGBO(232, 192, 125, 100),
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                          'CONFIRM',
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.cabin(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[700],
-                          ),
-                        ),
+                  ElevatedButton(
+                    onPressed: isLoaded
+                        ? () async {
+                            newOrder = await RemoteService()
+                                .createOrder(widget.tableId, widget.foods);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => menuStatus(
+                                        tableId: widget.tableId,
+                                        isCourse: widget.isCourse,
+                                        orderId: newOrder?.id,
+                                      )),
+                            );
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                    ),
+                    child: Text(
+                      'CONFIRM',
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.cabin(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700],
                       ),
                     ),
                   )

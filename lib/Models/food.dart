@@ -112,6 +112,8 @@ class food {
         "isDeleted": isDeleted,
         "price": price,
       };
+
+  getById(int id) {}
 }
 
 class foodWithoutPrice {

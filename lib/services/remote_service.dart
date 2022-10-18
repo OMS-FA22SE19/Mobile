@@ -306,12 +306,28 @@ class RemoteService {
     }
   }
 
-  void confirmOrder(String id) async {
+  // void confirmOrder(String id) async {
+  //   final Dio dio = Dio();
+  //   HttpOverrides.global = MyHttpOverrides();
+  //   try {
+  //     final response = await dio.post(
+  //         'https://10.0.2.2:7246/api/Orders/$id/Confirm'); //header, author
+  //   } on DioError catch (e) {
+  //     if (e.response?.statusCode == 404) {
+  //       return null;
+  //     } else {
+  //       return null;
+  //     }
+  //   }
+  // }
+
+  void foodCancelled(String id) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response = await dio.post(
-          'https://10.0.2.2:7246/api/Orders/$id/Confirm'); //header, author
+      final response = await dio.put(
+          'https://10.0.2.2:7246/api/OrderDetails/id?id=$id',
+          data: {"id": id, "status": "Cancelled"}); //header, author
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         return null;
@@ -339,14 +355,14 @@ class RemoteService {
     }
   }
 
-  Future<List<table>?> getTablesAvailable(int numberOfPeople) async {
+  Future<List<tableAvailable>?> getTablesAvailable(int numberOfPeople) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.get(
-          'https://10.0.2.2:7246/api/v1/Tables/people/$numberOfPeople'); //header, author
-      var result = responseData5.fromJson(response.data);
-      List<table> tables = result.data;
+          'https://10.0.2.2:7246/api/v1/Tables/People/$numberOfPeople'); //header, author
+      var result = responseData25.fromJson(response.data);
+      List<tableAvailable> tables = result.data;
       return tables;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
@@ -358,12 +374,12 @@ class RemoteService {
   }
 
   Future<List<availableDate>?> getTimeAvailable(
-      int numberOfSeats, int tableTypeId, String date) async {
+      int numberOfSeats, int tableTypeId, String date, int quantity) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.get(
-          'https://10.0.2.2:7246/api/v1/Reservations/BusyDate?date=$date&NumOfSeats=$numberOfSeats&TableTypeId=$tableTypeId'); //header, author
+          'https://10.0.2.2:7246/api/v1/Reservations/BusyDate?date=$date&NumOfSeats=$numberOfSeats&TableTypeId=$tableTypeId&Quantity=$quantity'); //header, author
       var result = responseData6.fromJson(response.data);
       List<availableDate> dateList = result.data;
       return dateList;
@@ -394,8 +410,101 @@ class RemoteService {
     }
   }
 
-  void createReservations(String start, String end, int numberOfSeats,
-      int tableTypeId, bool isPriorFoodOrder) async {
+  Future<List<ReservationNoTable>?> getReservationsBeforeCheckin() async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio
+          .get('https://10.0.2.2:7246/api/v1/Reservations'); //header, author
+      var result = responseReservation.fromJson(response.data);
+      List<ReservationNoTable> reservationList = result.data;
+      return reservationList;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  Future<ReservationNoTable>? getReservationBeforeCheckin(int id) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio.get(
+          'https://10.0.2.2:7246/api/v1/Reservations/$id'); //header, author
+      var result = responseOneReservation.fromJson(response.data);
+      ReservationNoTable reservationList = result.data;
+      return reservationList;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return ReservationNoTable(
+            id: 0,
+            userId: "",
+            numOfPeople: 0,
+            numOfSeats: 0,
+            quantity: 0,
+            tableType: "",
+            tableTypeId: 0,
+            startTime: DateTime.now(),
+            endTime: DateTime.now(),
+            status: "",
+            isPriorFoodOrder: false,
+            user: User(
+                id: "",
+                userName: "",
+                fullName: "",
+                phoneNumber: "",
+                isDeleted: true));
+      } else {
+        return ReservationNoTable(
+            id: 0,
+            userId: "",
+            numOfPeople: 0,
+            numOfSeats: 0,
+            quantity: 0,
+            tableType: "",
+            tableTypeId: 0,
+            startTime: DateTime.now(),
+            endTime: DateTime.now(),
+            status: "",
+            isPriorFoodOrder: false,
+            user: User(
+                id: "",
+                userName: "",
+                fullName: "",
+                phoneNumber: "",
+                isDeleted: true));
+      }
+    }
+  }
+
+  void cancelReservation(int? id) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio.delete(
+          'https://10.0.2.2:7246/api/v1/Reservations/$id'); //header, author
+      // var result = responseData20.fromJson(response.data);
+      // paymentURL returnURL = result.data;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return;
+      } else {
+        return;
+      }
+    }
+  }
+
+  void createReservations(
+      String start,
+      String end,
+      int numberOfSeats,
+      int numberOfPeople,
+      int tableTypeId,
+      bool isPriorFoodOrder,
+      int quantity) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
@@ -403,8 +512,10 @@ class RemoteService {
           await dio.post('https://10.0.2.2:7246/api/v1/Reservations', data: {
         "startTime": start,
         "endTime": end,
+        "numberOfPeople": numberOfPeople,
         "numOfSeats": numberOfSeats,
         "tableTypeId": tableTypeId,
+        "quantity": quantity,
         "isPriorFoodOrder": false
       }); //header, author
     } on DioError catch (e) {

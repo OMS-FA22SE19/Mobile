@@ -11,18 +11,22 @@ class tableInformation extends StatefulWidget {
   final String name;
   final String phone;
   final DateTime date;
-  final TimeOfDay time;
+  final TimeOfDay startTime;
+  final TimeOfDay endTime;
   final int tableTypeId;
   final int numberOfSeats;
+  final int amount;
   const tableInformation(
       {super.key,
       required this.name,
       required this.phone,
       required this.date,
-      required this.time,
+      required this.startTime,
+      required this.endTime,
       required this.tableTypeId,
       required this.numberOfSeats,
-      required this.numberOfPeople});
+      required this.numberOfPeople,
+      required this.amount});
 
   @override
   State<tableInformation> createState() => _tableInformationState();
@@ -34,10 +38,10 @@ class _tableInformationState extends State<tableInformation> {
     super.initState();
   }
 
-  postData(String start, String end, int numberOfSeats, int tableTypeId,
-      bool isPriorFoodOrder) async {
-    RemoteService().createReservations(
-        start, end, numberOfSeats, tableTypeId, isPriorFoodOrder);
+  postData(String start, String end, int numberOfSeats, int numberOfPeople,
+      int tableTypeId, bool isPriorFoodOrder, int quantity) async {
+    RemoteService().createReservations(start, end, numberOfSeats,
+        numberOfPeople, tableTypeId, isPriorFoodOrder, quantity);
   }
 
   @override
@@ -56,6 +60,7 @@ class _tableInformationState extends State<tableInformation> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => datePicker(
+                          amount: widget.amount,
                           numberOfPeople: widget.numberOfPeople,
                           numberOfSeats: widget.numberOfSeats,
                           tableTypeId: widget.tableTypeId,
@@ -207,7 +212,7 @@ class _tableInformationState extends State<tableInformation> {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '${widget.time.format(context)}',
+                          '${widget.startTime.format(context)}',
                           textAlign: TextAlign.right,
                           style: GoogleFonts.roboto(
                               fontSize: 20,
@@ -223,14 +228,71 @@ class _tableInformationState extends State<tableInformation> {
                           ),
                         ),
                         Text(
-                          'Duration: ',
+                          'End time: ',
                           style: GoogleFonts.roboto(
                               fontSize: 20,
                               color: Colors.white,
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '1 Hour',
+                          '${widget.endTime.format(context)}',
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.roboto(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ]),
+                      TableRow(children: [
+                        TableCell(
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'User: ',
+                          style: GoogleFonts.roboto(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'User Default',
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.roboto(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        TableCell(
+                          child: Icon(
+                            Icons.phone,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          'Phone: ',
+                          style: GoogleFonts.roboto(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          '0941767748',
                           textAlign: TextAlign.right,
                           style: GoogleFonts.roboto(
                               fontSize: 20,
@@ -256,13 +318,11 @@ class _tableInformationState extends State<tableInformation> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => homeScreen()),
-                      );
                       setState(() {
                         String startMinute;
-                        String startHour = "0";
+                        String startHour;
+                        String endMinute;
+                        String endHour;
 
                         String startDay;
                         String startMonth;
@@ -279,16 +339,28 @@ class _tableInformationState extends State<tableInformation> {
                           startMonth = '0${widget.date.month}';
                         }
 
-                        if (widget.time.minute.toString().length == 2) {
-                          startMinute = '${widget.time.minute}';
+                        if (widget.startTime.minute.toString().length == 2) {
+                          startMinute = '${widget.startTime.minute}';
                         } else {
-                          startMinute = '0${widget.time.minute}';
+                          startMinute = '0${widget.startTime.minute}';
                         }
 
-                        if (widget.time.hour.toString().length == 2) {
-                          startHour = '${widget.time.hour}';
+                        if (widget.startTime.hour.toString().length == 2) {
+                          startHour = '${widget.startTime.hour}';
                         } else {
-                          startHour = '0${widget.time.hour}';
+                          startHour = '0${widget.startTime.hour}';
+                        }
+
+                        if (widget.endTime.minute.toString().length == 2) {
+                          endMinute = '${widget.endTime.minute}';
+                        } else {
+                          endMinute = '0${widget.endTime.minute}';
+                        }
+
+                        if (widget.endTime.hour.toString().length == 2) {
+                          endHour = '${widget.endTime.hour}';
+                        } else {
+                          endHour = '0${widget.endTime.hour}';
                         }
 
                         // if (widget.time.minute.toString().length == 2) {
@@ -299,7 +371,7 @@ class _tableInformationState extends State<tableInformation> {
                         //       '${widget.date.year}-${widget.date.month}-${widget.date.day}T${widget.time.hour}:0${widget.time.minute}:00.000Z';
                         // }
 
-                        String endHour = (int.parse(startHour) + 1).toString();
+                        // String endHour = (int.parse(startHour) + 1).toString();
                         String start =
                             '${widget.date.year}-$startMonth-$startDay' +
                                 'T' +
@@ -307,10 +379,24 @@ class _tableInformationState extends State<tableInformation> {
                         String end =
                             '${widget.date.year}-$startMonth-$startDay' +
                                 'T' +
-                                '$endHour:$startMinute:00.000Z';
+                                '$endHour:$endMinute:00.000Z';
 
-                        postData(start, end, widget.numberOfSeats,
-                            widget.tableTypeId, false);
+                        // postData(start, end, widget.numberOfSeats,
+                        //     widget.tableTypeId, false);
+
+                        postData(
+                            start,
+                            end,
+                            widget.numberOfSeats,
+                            widget.numberOfPeople,
+                            widget.tableTypeId,
+                            false,
+                            widget.amount);
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => homeScreen()),
+                        );
                       });
                     },
                     child: Text(

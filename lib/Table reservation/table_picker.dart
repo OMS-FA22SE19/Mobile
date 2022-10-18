@@ -18,7 +18,7 @@ class tablePicker extends StatefulWidget {
 }
 
 class _tablePickerState extends State<tablePicker> {
-  List<table>? tables;
+  List<tableAvailable>? tables;
   bool isLoaded = false;
   bool flag = false;
 
@@ -93,6 +93,7 @@ class _tablePickerState extends State<tablePicker> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => datePicker(
+                            amount: 1,
                             numberOfPeople: widget.numberOfPeople,
                             numberOfSeats: tables![index].numOfSeats,
                             tableTypeId: tables![index].tableTypeId,
@@ -144,8 +145,7 @@ class _tablePickerState extends State<tablePicker> {
                                     fontSize: 18, color: Colors.white),
                               ),
                               Text(
-                                "Table available: " +
-                                    tables![index].total.toString(),
+                                "Amount: " + tables![index].quantity.toString(),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.cabin(
