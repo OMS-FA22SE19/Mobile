@@ -1,10 +1,13 @@
-// ignore_for_file: prefer_const_constructors, camel_case_types
+// ignore_for_file: prefer_const_constructors, camel_case_types, no_leading_underscores_for_local_identifiers
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
-import 'package:oms_mobile/Table%20reservation/table_picker.dart';
+import 'package:oms_mobile/Models/available_date.dart';
+import 'package:oms_mobile/Models/table.dart';
+import 'package:oms_mobile/Table%20reservation/table_user.dart';
+import 'package:oms_mobile/services/remote_service.dart';
 
 class tableReservation extends StatefulWidget {
   const tableReservation({super.key});
@@ -15,13 +18,75 @@ class tableReservation extends StatefulWidget {
 
 class _tableReservationState extends State<tableReservation> {
   final inputController = TextEditingController();
-  bool flag = false;
+  List<tableAvailable>? tables;
+  List<availableDate>? dates;
+  bool flag = true;
+  bool flagText = false;
+  bool hiddenFlag = true;
+  bool isLoaded = false;
+  bool isLoadedTime = false;
+  int numberOfPeople = 0;
+  int numberOfSeats = 0;
+  int amount = 0;
+  int tableTypeId = 0;
+  int quantity = 0;
+  Color onSelected = Color.fromRGBO(232, 192, 125, 50);
+
+  String selectedDate = "";
+  String selectedTime = "";
+  DateTime today = DateTime.now();
+  DateTime _selectedDate = DateTime.now();
+  TimeOfDay _selectedStartTime = TimeOfDay(hour: 11, minute: 0);
+  TimeOfDay _selectedEndTime = TimeOfDay(hour: 12, minute: 0);
+  final TimeOfDay _openTime = TimeOfDay(hour: 11, minute: 0);
+  final TimeOfDay _closeTime = TimeOfDay(hour: 22, minute: 0);
+  bool ocupiedFlag = false;
+  bool invalidFlag = false;
+  double chooseTime = 0;
+  double openTime = 0;
+  double closeTime = 0;
+  String errorText = "";
 
   @override
   void dispose() {
     inputController.dispose();
     super.dispose();
   }
+
+  @override
+  void initState() {
+    super.initState();
+    //fetch data from API
+    // getData(numberOfPeople);
+  }
+
+  getData(int people) async {
+    tables = await RemoteService().getTablesAvailable(people);
+    int? check = tables?.length;
+    bool? checkb = tables?.isEmpty;
+    if (tables != null) {
+      setState(() {
+        isLoaded = true;
+      });
+    }
+    if (check == 0) {
+      setState(() {
+        isLoaded = false;
+      });
+    }
+  }
+
+  getTimeAvailable(String date) async {
+    dates = await RemoteService().getTimeAvailable(
+        numberOfSeats, tableTypeId, date.substring(0, 10), quantity);
+    if (dates != null) {
+      setState(() {
+        isLoadedTime = true;
+      });
+    }
+  }
+
+  double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
 
   @override
   Widget build(BuildContext context) {
@@ -54,100 +119,704 @@ class _tableReservationState extends State<tableReservation> {
                 );
               },
               icon: Icon(
-                Icons.home_rounded,
+                Icons.info_outline_rounded,
                 size: 30,
               )),
         ],
       ),
       backgroundColor: Colors.grey[200],
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-              child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: Icon(
-                  Icons.restaurant_menu_rounded,
-                  size: 100,
+      body: ListView(
+        children: [
+          // SizedBox(
+          //   height: 20,
+          // ),
+          // Container(
+          //   decoration: BoxDecoration(
+          //     color: Color.fromRGBO(232, 192, 125, 100),
+          //     borderRadius: BorderRadius.circular(10),
+          //   ),
+          //   child: Padding(
+          //     padding: const EdgeInsets.all(10),
+          //     child: Column(
+          //       children: [
+          //         Text(
+          //           'WE\'RE OPEN!',
+          //           textAlign: TextAlign.center,
+          //           style: GoogleFonts.cabin(
+          //             fontWeight: FontWeight.bold,
+          //             color: Colors.black,
+          //             fontSize: 20,
+          //           ),
+          //         ),
+          //         Text(
+          //           'Business Hour: ${_openTime.format(context)} - ${_closeTime.format(context)}',
+          //           textAlign: TextAlign.center,
+          //           style: GoogleFonts.cabin(
+          //             fontWeight: FontWeight.bold,
+          //             color: Colors.black,
+          //             fontSize: 20,
+          //           ),
+          //         ),
+          //         Text(
+          //           'Business Day: from Mon to Sun',
+          //           textAlign: TextAlign.center,
+          //           style: GoogleFonts.cabin(
+          //             fontWeight: FontWeight.bold,
+          //             color: Colors.black,
+          //             fontSize: 20,
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            'Guest Amount: ',
+            style: GoogleFonts.cabin(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  onChanged: (value) {
+                    if (inputController.text.isEmpty) {
+                      setState(() {
+                        flagText = true;
+                        flag = true;
+                      });
+                    } else {
+                      setState(() {
+                        flagText = false;
+                        flag = false;
+                      });
+                    }
+                  },
+                  controller: inputController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  autofocus: false,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Input number of guest',
+                    // labelText: 'Input number of guest',
+                    errorText: flagText ? 'Please input a number!' : null,
+                  ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: inputController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Input number of guest',
-                        // labelText: 'Input number of guest',
-                        errorText: flag ? 'Please input a number!' : null,
+            ),
+          ),
+          Text(
+            'Selected Date: ' +
+                '${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+            style: GoogleFonts.cabin(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 100),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+              ),
+              onPressed: () async {
+                DateTime? newDate = await showDatePicker(
+                    context: context,
+                    initialDate: today,
+                    firstDate: today,
+                    lastDate: today.add(Duration(days: 30)));
+                //CANCEL
+                if (newDate == null) return;
+                //OK
+                setState(() {
+                  _selectedDate = newDate;
+                });
+                getTimeAvailable(_selectedDate.toString());
+              },
+              child: Text(
+                'Open calendar',
+                style: GoogleFonts.cabin(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                minimumSize: Size(double.infinity, 35),
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+              ),
+              onPressed: flag
+                  ? null
+                  : () {
+                      setState(() {
+                        hiddenFlag = true;
+                        numberOfPeople = int.parse(inputController.text);
+                      });
+                      getData(numberOfPeople);
+                    },
+              child: Text(
+                'Continue'.toUpperCase(),
+                style: GoogleFonts.cabin(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Visibility(
+            visible: isLoaded,
+            // ignore: sort_child_properties_last
+            child: Container(
+              height: 180,
+              child: ListView.builder(
+                itemCount: tables?.length,
+                physics: BouncingScrollPhysics(),
+                // shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    // focusColor: Colors.yellow,
+                    highlightColor: Colors.red,
+                    canRequestFocus: true,
+                    onTap: () {
+                      setState(() {
+                        numberOfSeats = tables![index].numOfSeats;
+                        quantity = tables![index].quantity;
+                        tableTypeId = tables![index].tableTypeId;
+                        hiddenFlag = false;
+                      });
+                      getTimeAvailable(_selectedDate.toString());
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 10),
+                      child: Container(
+                        height: 120,
+                        width: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Color.fromRGBO(232, 192, 125, 50),
+                        ),
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Icon(
+                                Icons.table_bar_rounded,
+                                size: 80,
+                                color: Colors.white,
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Flexible(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      tables![index].tableTypeName,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.cabin(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                    Text(
+                                      "Number of seats: " +
+                                          tables![index].numOfSeats.toString(),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.cabin(
+                                          fontSize: 18, color: Colors.white),
+                                    ),
+                                    Text(
+                                      "Amount: " +
+                                          tables![index].quantity.toString(),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.cabin(
+                                          fontSize: 18, color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                            ]),
                       ),
                     ),
+                  );
+                },
+              ),
+            ),
+            replacement: Center(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                child: Container(
+                  height: 170,
+                  width: MediaQuery.of(context).size.width - 10,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Color.fromRGBO(232, 192, 125, 50),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    'None table available!',
+                    style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
-              SizedBox(
-                height: 30,
+            ),
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          ConditionalWidget(hiddenFlag),
+        ],
+      ),
+    );
+  }
+
+  ConditionalWidget(bool check) {
+    if (check) {
+      return Container();
+    } else {
+      return Column(
+        children: [
+          Text(
+            'Occupied Time: ',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.cabin(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              fontSize: 20,
+            ),
+          ),
+          SizedBox(
+            height: 100,
+            child: Visibility(
+              visible: isLoadedTime,
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.horizontal,
+                itemCount: dates?.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: InkWell(
+                      onTap: () {},
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: 170,
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Text(
+                          dates![index].startTime.substring(11, 16) +
+                              '  -  ' +
+                              dates![index].endTime.substring(11, 16),
+                          style: GoogleFonts.lato(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              replacement: const Center(
+                child: Text(
+                  "Your tables doesn't occupied by any other reservation",
+                  style: TextStyle(fontSize: 15),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    'Selection Start Time:',
+                    style: GoogleFonts.cabin(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    '${_selectedStartTime.format(context)}',
+                    style: GoogleFonts.cabin(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
               Padding(
-                //Table reservation
-                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                padding: EdgeInsets.symmetric(horizontal: 10),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color.fromRGBO(232, 192, 125, 100),
-                    minimumSize: Size(double.infinity, 35),
-                    padding: EdgeInsets.symmetric(horizontal: 16),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
+                    TimeOfDay? newTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay(hour: 11, minute: 00),
+                    );
+                    //CANCEL
+                    if (newTime == null) return;
+                    //OK
                     setState(() {
-                      if (inputController.value.text.isEmpty) {
-                        flag = true;
+                      chooseTime = toDouble(newTime);
+                      openTime = toDouble(_openTime);
+                      closeTime = toDouble(_closeTime);
+                      ocupiedFlag = false;
+                      invalidFlag = false;
+                      dates?.forEach((element) {
+                        TimeOfDay _start = TimeOfDay(
+                            hour: int.parse(element.startTime
+                                .substring(11, 16)
+                                .split(":")[0]),
+                            minute: int.parse(element.startTime
+                                .substring(11, 16)
+                                .split(":")[1]));
+                        TimeOfDay _end = TimeOfDay(
+                            hour: int.parse(element.endTime
+                                .substring(11, 16)
+                                .split(":")[0]),
+                            minute: int.parse(element.endTime
+                                .substring(11, 16)
+                                .split(":")[1]));
+
+                        double _ocupiedStart = toDouble(_start);
+                        double _ocupiedEnd = toDouble(_end);
+
+                        if (chooseTime >= _ocupiedStart &&
+                            chooseTime <= _ocupiedEnd) {
+                          ocupiedFlag = true;
+                          errorText =
+                              "The time you choose is already occupied, Please choose again!";
+                        }
+                      });
+
+                      if (chooseTime < openTime || chooseTime >= closeTime) {
+                        invalidFlag = true;
+                        if (chooseTime == closeTime) {
+                          errorText =
+                              "Our restaurant close at 10:00PM. Please choose again!";
+                        } else {
+                          errorText =
+                              "Our bussiness hour is from 11:00AM - 10:00PM. Please choose again!";
+                        }
+                      }
+                      // else {
+                      //   if (chooseTime > toDouble(_selectedEndTime)) {
+                      //     invalidFlag = true;
+                      //     errorText = "A. Please choose again!";
+                      //   }
+                      // }
+
+                      if (ocupiedFlag || invalidFlag) {
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                'Invalid Time',
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              content: Text(
+                                errorText,
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, 'Cancel'),
+                                  child: const Text('I understand'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        return;
                       } else {
-                        flag = false;
+                        _selectedStartTime = newTime;
                       }
                     });
-                    if (flag != true) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => tablePicker(
-                                  numberOfPeople:
-                                      int.parse(inputController.text),
-                                )),
-                      );
-                    }
                   },
                   child: Text(
-                    'Confirm'.toUpperCase(),
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold),
+                    'Time Picker',
+                    style: GoogleFonts.cabin(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
                   ),
                 ),
               ),
-              SizedBox(
-                height: 20,
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    'Selection End Time:',
+                    style: GoogleFonts.cabin(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    '${_selectedEndTime.format(context)}',
+                    style: GoogleFonts.cabin(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                    ),
+                  ),
+                  onPressed: () async {
+                    TimeOfDay? newTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay(hour: 11, minute: 00),
+                    );
+                    //CANCEL
+                    if (newTime == null) return;
+                    //OK
+                    setState(() {
+                      chooseTime = toDouble(newTime);
+                      openTime = toDouble(_openTime);
+                      closeTime = toDouble(_closeTime);
+                      ocupiedFlag = false;
+                      invalidFlag = false;
+                      dates?.forEach((element) {
+                        TimeOfDay _start = TimeOfDay(
+                            hour: int.parse(element.startTime
+                                .substring(11, 16)
+                                .split(":")[0]),
+                            minute: int.parse(element.startTime
+                                .substring(11, 16)
+                                .split(":")[1]));
+                        TimeOfDay _end = TimeOfDay(
+                            hour: int.parse(element.endTime
+                                .substring(11, 16)
+                                .split(":")[0]),
+                            minute: int.parse(element.endTime
+                                .substring(11, 16)
+                                .split(":")[1]));
+
+                        double _ocupiedStart = toDouble(_start);
+                        double _ocupiedEnd = toDouble(_end);
+
+                        if (chooseTime >= _ocupiedStart &&
+                            chooseTime <= _ocupiedEnd) {
+                          ocupiedFlag = true;
+                          errorText =
+                              "The time you choose is already occupied, Please choose again!";
+                        }
+                      });
+
+                      if (chooseTime <= openTime || chooseTime >= closeTime) {
+                        invalidFlag = true;
+                        if (chooseTime == openTime) {
+                          errorText =
+                              "Our restaurant open at 11:00AM. Please choose again!";
+                        } else {
+                          errorText =
+                              "Our bussiness hour is from 11:00AM - 10:00PM. Please choose again!";
+                        }
+                      } else {
+                        if (chooseTime >= toDouble(_selectedStartTime) &&
+                            chooseTime < toDouble(_selectedStartTime) + 0.5) {
+                          invalidFlag = true;
+                          errorText =
+                              "Reservation duration must be at least 30 minutes. Please choose again!";
+                        } else if (chooseTime >
+                            toDouble(_selectedStartTime) + 3) {
+                          invalidFlag = true;
+                          errorText =
+                              "Reservation duration must not longer than 3 hours. Please choose again!";
+                        } else if (chooseTime < toDouble(_selectedStartTime)) {
+                          invalidFlag = true;
+                          errorText =
+                              "End time must not smaller than Start time. Please choose again!";
+                        }
+                      }
+
+                      if (ocupiedFlag || invalidFlag) {
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                'Invalid Time',
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              content: Text(
+                                errorText,
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, 'Cancel'),
+                                  child: const Text('I understand'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        return;
+                      } else {
+                        _selectedEndTime = newTime;
+                      }
+                    });
+                  },
+                  child: Text(
+                    'Time Picker',
+                    style: GoogleFonts.cabin(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
               ),
             ],
-          )),
-        ),
-      ),
-    );
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                minimumSize: Size(double.infinity, 35),
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+              ),
+              onPressed: invalidFlag || ocupiedFlag
+                  ? null
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => tableUser(
+                                  amount: quantity,
+                                  numberOfPeople: numberOfPeople,
+                                  name: "Default User",
+                                  phone: "0941767748",
+                                  date: _selectedDate,
+                                  startTime: _selectedStartTime,
+                                  endTime: _selectedEndTime,
+                                  tableTypeId: tableTypeId,
+                                  numberOfSeats: numberOfSeats * quantity,
+                                )),
+                      );
+                    },
+              child: Text(
+                'Finish'.toUpperCase(),
+                style: GoogleFonts.cabin(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
   }
 }

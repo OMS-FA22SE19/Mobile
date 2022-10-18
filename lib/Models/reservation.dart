@@ -88,7 +88,7 @@ class Reservation {
     required this.endTime,
     required this.status,
     required this.isPriorFoodOrder,
-    required this.table,
+    required this.reservationTables,
     required this.user,
   });
 
@@ -99,7 +99,7 @@ class Reservation {
   DateTime endTime;
   String status;
   bool isPriorFoodOrder;
-  Table table;
+  reservationTable reservationTables;
   User user;
 
   factory Reservation.fromJson(Map<String, dynamic> json) => Reservation(
@@ -110,7 +110,7 @@ class Reservation {
         endTime: DateTime.parse(json["endTime"]),
         status: json["status"],
         isPriorFoodOrder: json["isPriorFoodOrder"],
-        table: Table.fromJson(json["table"]),
+        reservationTables: reservationTable.fromJson(json["reservationTables"]),
         user: User.fromJson(json["user"]),
       );
 
@@ -122,13 +122,13 @@ class Reservation {
         "endTime": endTime.toIso8601String(),
         "status": status,
         "isPriorFoodOrder": isPriorFoodOrder,
-        "table": table.toJson(),
+        "table": reservationTables.toJson(),
         "user": user.toJson(),
       };
 }
 
-class Table {
-  Table({
+class reservationTable {
+  reservationTable({
     required this.id,
     required this.numOfSeats,
     required this.status,
@@ -140,7 +140,8 @@ class Table {
   String status;
   TableType tableType;
 
-  factory Table.fromJson(Map<String, dynamic> json) => Table(
+  factory reservationTable.fromJson(Map<String, dynamic> json) =>
+      reservationTable(
         id: json["id"],
         numOfSeats: json["numOfSeats"],
         status: json["status"],
@@ -208,5 +209,130 @@ class User {
         "fullName": fullName,
         "phoneNumber": phoneNumber,
         "isDeleted": isDeleted,
+      };
+}
+
+class ReservationNoTable {
+  ReservationNoTable({
+    required this.id,
+    required this.userId,
+    required this.numOfPeople,
+    required this.tableTypeId,
+    required this.tableType,
+    required this.numOfSeats,
+    required this.quantity,
+    required this.startTime,
+    required this.endTime,
+    required this.status,
+    required this.isPriorFoodOrder,
+    required this.user,
+  });
+
+  int id;
+  String userId;
+  int numOfPeople;
+  int tableTypeId;
+  String tableType;
+  int numOfSeats;
+  int quantity;
+  DateTime startTime;
+  DateTime endTime;
+  String status;
+  bool isPriorFoodOrder;
+  User user;
+
+  factory ReservationNoTable.fromJson(Map<String, dynamic> json) =>
+      ReservationNoTable(
+          id: json["id"],
+          userId: json["userId"],
+          numOfPeople: json["numOfPeople"],
+          tableTypeId: json["tableTypeId"],
+          tableType: json["tableType"],
+          numOfSeats: json["numOfSeats"],
+          quantity: json["quantity"],
+          startTime: DateTime.parse(json["startTime"]),
+          endTime: DateTime.parse(json["endTime"]),
+          status: json["status"],
+          isPriorFoodOrder: json["isPriorFoodOrder"],
+          user: User.fromJson(json["user"]));
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "userId": userId,
+        "numOfPeople": numOfPeople,
+        "tableTypeId": tableTypeId,
+        "tableType": tableType,
+        "numOfSeats": numOfSeats,
+        "quantity": quantity,
+        "startTime": startTime.toIso8601String(),
+        "endTime": endTime.toIso8601String(),
+        "status": status,
+        "isPriorFoodOrder": isPriorFoodOrder,
+        "user": user.toJson(),
+      };
+}
+
+class responseReservation {
+  responseReservation({
+    required this.data,
+    required this.succeeded,
+    required this.statusCode,
+    required this.message,
+  });
+
+  List<ReservationNoTable> data;
+  bool succeeded;
+  String statusCode;
+  dynamic message;
+  // factory ApiResponseA.fromJson(Map<String, dynamic> json) => ApiResponseA(
+  //       data: json["data"],
+  //       succeeded: json["succeeded"],
+  //       statusCode: json["statusCode"],
+  //       message: json["message"],
+  //     );
+
+  factory responseReservation.fromJson(Map<String, dynamic> json) =>
+      responseReservation(
+        data: List<ReservationNoTable>.from(
+            json["data"].map((x) => ReservationNoTable.fromJson(x))),
+        succeeded: json["succeeded"],
+        statusCode: json["statusCode"],
+        message: json["message"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "data": data,
+        "succeeded": succeeded,
+        "statusCode": statusCode,
+        "message": message,
+      };
+}
+
+class responseOneReservation {
+  responseOneReservation({
+    required this.data,
+    required this.succeeded,
+    required this.statusCode,
+    required this.message,
+  });
+
+  ReservationNoTable data;
+  bool succeeded;
+  String statusCode;
+  dynamic message;
+
+  factory responseOneReservation.fromJson(Map<String, dynamic> json) =>
+      responseOneReservation(
+        data: ReservationNoTable.fromJson(json["data"]),
+        succeeded: json["succeeded"],
+        statusCode: json["statusCode"],
+        message: json["message"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "data": data,
+        "succeeded": succeeded,
+        "statusCode": statusCode,
+        "message": message,
       };
 }

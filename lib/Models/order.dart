@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
 class responseData9 {
   responseData9({
     required this.data,

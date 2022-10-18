@@ -1,5 +1,4 @@
 // ignore_for_file: camel_case_types, prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
@@ -8,6 +7,7 @@ import 'package:oms_mobile/Menu%20Order/menu_food.dart';
 import 'package:oms_mobile/Menu%20Order/order_confirm.dart';
 import 'package:oms_mobile/Models/orderDetail.dart';
 import 'package:oms_mobile/services/remote_service.dart';
+import 'package:intl/intl.dart' as intl;
 
 class menuStatus extends StatefulWidget {
   final int tableId;
@@ -27,6 +27,7 @@ class _menuStatusState extends State<menuStatus> {
   List<orderDetail>? orderDetails;
   var isLoaded = false;
   var flag = true;
+  var isCancel = false;
 
   @override
   void initState() {
@@ -41,6 +42,13 @@ class _menuStatusState extends State<menuStatus> {
           element.status.contains("Received")) {
         flag = true;
       } else {
+        if (element.status.contains("Processing") ||
+            element.status.contains("Cancelled") ||
+            element.status.contains("Served")) {
+          isCancel = false;
+        } else {
+          isCancel = true;
+        }
         flag = false;
       }
     });
@@ -53,6 +61,12 @@ class _menuStatusState extends State<menuStatus> {
         isLoaded = true;
       });
     }
+  }
+
+  String changeFormat(int number) {
+    String formated =
+        intl.NumberFormat.decimalPattern().format(number).toString();
+    return formated;
   }
 
   @override
@@ -165,7 +179,8 @@ class _menuStatusState extends State<menuStatus> {
                                   ),
                                   Text(
                                     'Price: ' +
-                                        orderDetails![index].price.toString(),
+                                        changeFormat(
+                                            orderDetails![index].price),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.cabin(
@@ -181,7 +196,13 @@ class _menuStatusState extends State<menuStatus> {
                                   SizedBox(
                                     height: 15,
                                   ),
-                                  statusBar(orderDetails![index].status)
+                                  Row(
+                                    children: [
+                                      statusBar(orderDetails![index].status),
+                                      cancelFood(orderDetails![index].status,
+                                          orderDetails![index].id),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -249,12 +270,7 @@ class _menuStatusState extends State<menuStatus> {
   statusBar(String status) {
     if (status.contains("Cancelled")) {
       return InkWell(
-        onTap: () {
-          // setState(() {
-          //   foods![index].quantity =
-          //       foods![index].quantity + 1;
-          // });
-        },
+        onTap: () {},
         child: Container(
           alignment: Alignment.center,
           height: 40,
@@ -270,12 +286,7 @@ class _menuStatusState extends State<menuStatus> {
       );
     } else if (status.contains("Received")) {
       return InkWell(
-        onTap: () {
-          // setState(() {
-          //   foods![index].quantity =
-          //       foods![index].quantity + 1;
-          // });
-        },
+        onTap: () {},
         child: Container(
           alignment: Alignment.center,
           height: 40,
@@ -323,6 +334,26 @@ class _menuStatusState extends State<menuStatus> {
           ),
         ),
       );
+    }
+  }
+
+  cancelFood(String status, int id) {
+    if (status.contains("Received")) {
+      return InkWell(
+        onTap: () {
+          setState(() {
+            RemoteService().foodCancelled(id.toString());
+            checkStatusOrder();
+            getData();
+          });
+        },
+        child: Icon(
+          Icons.highlight_remove_rounded,
+          color: Colors.red,
+        ),
+      );
+    } else {
+      return Icon(Icons.highlight_alt_rounded);
     }
   }
 }

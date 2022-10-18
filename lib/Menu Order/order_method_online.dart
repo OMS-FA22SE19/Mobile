@@ -3,12 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
-import 'package:oms_mobile/Menu%20Order/menu_category.dart';
 import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/Models/payment_url.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:oms_mobile/test.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class orderMethodOnline extends StatefulWidget {
@@ -75,19 +73,19 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
             )),
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          menuCategory(tableId: widget.tableId)),
-                );
-              },
-              icon: const Icon(
-                Icons.menu_book_rounded,
-                size: 30,
-              )),
+          // IconButton(
+          //     onPressed: () {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute(
+          //             builder: (context) =>
+          //                 menuCategory(tableId: widget.tableId)),
+          //       );
+          //     },
+          //     icon: const Icon(
+          //       Icons.menu_book_rounded,
+          //       size: 30,
+          //     )),
         ],
       ),
       backgroundColor: Colors.grey[200],
@@ -251,8 +249,11 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                           //             total: currentOrder?.total,
                           //           )),
                           // );
-                          launchUrl(Uri.parse(payment?.url ?? ""),
-                              mode: LaunchMode.externalNonBrowserApplication);
+                          launchUrl(
+                            Uri.parse(payment?.url ?? ""),
+                            mode: LaunchMode.externalApplication,
+                          );
+                          closeInAppWebView();
                         },
                         child: Container(
                           decoration: BoxDecoration(
