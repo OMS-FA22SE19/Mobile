@@ -1,8 +1,8 @@
 // ignore_for_file: camel_case_types
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
+import 'package:oms_mobile/Menu%20Order/order_success.dart';
 import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/Models/payment_url.dart';
 import 'package:oms_mobile/services/remote_service.dart';
@@ -21,10 +21,13 @@ class orderMethodOnline extends StatefulWidget {
 }
 
 class _orderMethodOnlineState extends State<orderMethodOnline> {
-  Orders? currentOrder;
+  Order? currentOrder;
   paymentURL? payment;
   List<OrderDetail>? details;
   var isLoaded = false;
+  bool flag = false;
+  int count = 0;
+  int total = 0;
 
   @override
   void initState() {
@@ -40,14 +43,20 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
 
   getData() async {
     currentOrder = await RemoteService().getOrders(widget.orderId);
-    payment = await RemoteService()
-        .getPaymentURL(widget.orderId, currentOrder?.total);
+    getURL();
+    flag = currentOrder?.status.contains("Paid") ?? false;
     details = currentOrder?.orderDetails;
     if (currentOrder != null) {
       setState(() {
         isLoaded = true;
+        total = (currentOrder?.total ?? 0) + (currentOrder?.prePaid ?? 0);
       });
     }
+  }
+
+  getURL() async {
+    payment = await RemoteService()
+        .getPaymentURL(widget.orderId, currentOrder?.total);
   }
 
   @override
@@ -73,19 +82,14 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
             )),
         automaticallyImplyLeading: false,
         actions: [
-          // IconButton(
-          //     onPressed: () {
-          //       Navigator.push(
-          //         context,
-          //         MaterialPageRoute(
-          //             builder: (context) =>
-          //                 menuCategory(tableId: widget.tableId)),
-          //       );
-          //     },
-          //     icon: const Icon(
-          //       Icons.menu_book_rounded,
-          //       size: 30,
-          //     )),
+          IconButton(
+              onPressed: () {
+                getData();
+              },
+              icon: const Icon(
+                Icons.refresh_rounded,
+                size: 30,
+              )),
         ],
       ),
       backgroundColor: Colors.grey[200],
@@ -212,48 +216,97 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                   ),
                 ),
                 Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Total: ',
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cabin(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
+                        padding: const EdgeInsets.all(2),
+                        child: Table(
+                          defaultVerticalAlignment:
+                              TableCellVerticalAlignment.middle,
+                          columnWidths: const <int, TableColumnWidth>{
+                            0: FixedColumnWidth(100),
+                            1: FixedColumnWidth(150),
+                          },
+                          children: <TableRow>[
+                            TableRow(children: [
+                              Text(
+                                'Total bill: ',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cabin(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
                               ),
-                            ),
-                            Text(
-                              changeFormat(currentOrder?.total ?? 0),
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cabin(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
+                              Text(
+                                '${changeFormat(total)}đ',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cabin(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
                               ),
-                            ),
+                            ]),
+                            TableRow(children: [
+                              Text(
+                                'Deposit: ',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cabin(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              Text(
+                                '- ${changeFormat(currentOrder?.prePaid ?? 0)}đ',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cabin(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ]),
+                            TableRow(children: [
+                              Text(
+                                'Total pay: ',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cabin(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              Text(
+                                '${changeFormat(currentOrder?.total ?? 0)}đ',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cabin(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ]),
                           ],
                         ),
                       ),
                       InkWell(
                         onTap: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //       builder: (context) => Test(
-                          //             orderId: widget.orderId,
-                          //             total: currentOrder?.total,
-                          //           )),
-                          // );
-                          launchUrl(
-                            Uri.parse(payment?.url ?? ""),
-                            mode: LaunchMode.externalApplication,
-                          );
-                          closeInAppWebView();
+                          if (flag == true) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => orderSuccess(
+                                        orderId: widget.orderId ?? "",
+                                      )),
+                            );
+                          } else {
+                            launchUrl(
+                              Uri.parse(payment?.url ?? ""),
+                              mode: LaunchMode.externalApplication,
+                            );
+                          }
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -261,15 +314,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                               borderRadius: BorderRadius.circular(15)),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Text(
-                              'Pay',
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cabin(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
-                              ),
-                            ),
+                            child: conditionalButton(),
                           ),
                         ),
                       ),
@@ -281,5 +326,29 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
         color: Colors.white,
       ),
     );
+  }
+
+  conditionalButton() {
+    if (flag) {
+      return Text(
+        'Continue',
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.cabin(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey[700],
+        ),
+      );
+    } else {
+      return Text(
+        'Pay',
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.cabin(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey[700],
+        ),
+      );
+    }
   }
 }

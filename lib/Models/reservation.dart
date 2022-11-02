@@ -1,150 +1,228 @@
-// ignore_for_file: camel_case_types
+// // ignore_for_file: camel_case_types
 
-class responseData7 {
-  responseData7({
-    required this.data,
-    required this.succeeded,
-    required this.statusCode,
-    required this.message,
-  });
+// class responseData7 {
+//   responseData7({
+//     required this.data,
+//     required this.succeeded,
+//     required this.statusCode,
+//     required this.message,
+//   });
 
-  List<Reservation> data;
-  bool succeeded;
-  String statusCode;
-  dynamic message;
-  // factory ApiResponseA.fromJson(Map<String, dynamic> json) => ApiResponseA(
-  //       data: json["data"],
-  //       succeeded: json["succeeded"],
-  //       statusCode: json["statusCode"],
-  //       message: json["message"],
-  //     );
+//   List<Reservation> data;
+//   bool succeeded;
+//   String statusCode;
+//   dynamic message;
+//   // factory ApiResponseA.fromJson(Map<String, dynamic> json) => ApiResponseA(
+//   //       data: json["data"],
+//   //       succeeded: json["succeeded"],
+//   //       statusCode: json["statusCode"],
+//   //       message: json["message"],
+//   //     );
 
-  factory responseData7.fromJson(Map<String, dynamic> json) => responseData7(
-        data: List<Reservation>.from(
-            json["data"].map((x) => Reservation.fromJson(x))),
-        succeeded: json["succeeded"],
-        statusCode: json["statusCode"],
-        message: json["message"],
-      );
+//   factory responseData7.fromJson(Map<String, dynamic> json) => responseData7(
+//         data: List<Reservation>.from(
+//             json["data"].map((x) => Reservation.fromJson(x))),
+//         succeeded: json["succeeded"],
+//         statusCode: json["statusCode"],
+//         message: json["message"],
+//       );
 
-  Map<String, dynamic> toJson() => {
-        "data": data,
-        "succeeded": succeeded,
-        "statusCode": statusCode,
-        "message": message,
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         "data": data,
+//         "succeeded": succeeded,
+//         "statusCode": statusCode,
+//         "message": message,
+//       };
+// }
 
-// class reservation {
-//   reservation({
+// // class reservation {
+// //   reservation({
+// //     required this.startTime,
+// //     required this.endTime,
+// //     required this.id,
+// //     required this.tableId,
+// //     required this.userId,
+// //     required this.status,
+// //     // required this.table,
+// //     // required this.user
+// //   });
+
+// //   int id;
+// //   String userId;
+// //   int tableId;
+// //   String startTime;
+// //   String endTime;
+// //   String status;
+// //   // String table;
+// //   // String user;
+
+// //   factory reservation.fromJson(Map<String, dynamic> json) => reservation(
+// //         id: json["id"],
+// //         userId: json["userId"],
+// //         tableId: json["tableId"],
+// //         startTime: json["startTime"],
+// //         endTime: json["endTime"],
+// //         status: json["status"],
+// //         // table: json["table"],
+// //         // user: json["user"],
+// //       );
+
+// //   Map<String, dynamic> toJson() => {
+// //         "id": id,
+// //         "userId": userId,
+// //         "tableId": tableId,
+// //         "startTime": startTime,
+// //         "endTime": endTime,
+// //         "status": status,
+// //         // "table": table,
+// //         // "user": user,
+// //       };
+// // }
+
+// class Reservation {
+//   Reservation({
+//     required this.id,
+//     required this.userId,
+//     required this.tableId,
 //     required this.startTime,
 //     required this.endTime,
-//     required this.id,
-//     required this.tableId,
-//     required this.userId,
 //     required this.status,
-//     // required this.table,
-//     // required this.user
+//     required this.isPriorFoodOrder,
+//     required this.reservationTables,
+//     required this.user,
 //   });
 
 //   int id;
 //   String userId;
 //   int tableId;
-//   String startTime;
-//   String endTime;
+//   DateTime startTime;
+//   DateTime endTime;
 //   String status;
-//   // String table;
-//   // String user;
+//   bool isPriorFoodOrder;
+//   reservationTable reservationTables;
+//   User user;
 
-//   factory reservation.fromJson(Map<String, dynamic> json) => reservation(
+//   factory Reservation.fromJson(Map<String, dynamic> json) => Reservation(
 //         id: json["id"],
 //         userId: json["userId"],
 //         tableId: json["tableId"],
-//         startTime: json["startTime"],
-//         endTime: json["endTime"],
+//         startTime: DateTime.parse(json["startTime"]),
+//         endTime: DateTime.parse(json["endTime"]),
 //         status: json["status"],
-//         // table: json["table"],
-//         // user: json["user"],
+//         isPriorFoodOrder: json["isPriorFoodOrder"],
+//         reservationTables: reservationTable.fromJson(json["reservationTables"]),
+//         user: User.fromJson(json["user"]),
 //       );
 
 //   Map<String, dynamic> toJson() => {
 //         "id": id,
 //         "userId": userId,
 //         "tableId": tableId,
-//         "startTime": startTime,
-//         "endTime": endTime,
+//         "startTime": startTime.toIso8601String(),
+//         "endTime": endTime.toIso8601String(),
 //         "status": status,
-//         // "table": table,
-//         // "user": user,
+//         "isPriorFoodOrder": isPriorFoodOrder,
+//         "table": reservationTables.toJson(),
+//         "user": user.toJson(),
 //       };
 // }
 
-class Reservation {
-  Reservation({
-    required this.id,
-    required this.userId,
+// class reservationTable {
+//   reservationTable({
+//     required this.id,
+//     required this.numOfSeats,
+//     required this.status,
+//     required this.tableType,
+//   });
+
+//   int id;
+//   int numOfSeats;
+//   String status;
+//   TableType tableType;
+
+//   factory reservationTable.fromJson(Map<String, dynamic> json) =>
+//       reservationTable(
+//         id: json["id"],
+//         numOfSeats: json["numOfSeats"],
+//         status: json["status"],
+//         tableType: TableType.fromJson(json["tableType"]),
+//       );
+
+//   Map<String, dynamic> toJson() => {
+//         "id": id,
+//         "numOfSeats": numOfSeats,
+//         "status": status,
+//         "tableType": tableType.toJson(),
+//       };
+// }
+
+// class TableType {
+//   TableType({
+//     required this.id,
+//     required this.name,
+//     required this.chargePerSeat,
+//   });
+
+//   int id;
+//   String name;
+//   int chargePerSeat;
+
+//   factory TableType.fromJson(Map<String, dynamic> json) => TableType(
+//         id: json["id"],
+//         name: json["name"],
+//         chargePerSeat: json["chargePerSeat"],
+//       );
+
+//   Map<String, dynamic> toJson() => {
+//         "id": id,
+//         "name": name,
+//         "chargePerSeat": chargePerSeat,
+//       };
+// }
+
+// ignore_for_file: camel_case_types
+
+class ReservationTable {
+  ReservationTable({
     required this.tableId,
-    required this.startTime,
-    required this.endTime,
-    required this.status,
-    required this.isPriorFoodOrder,
-    required this.reservationTables,
-    required this.user,
+    required this.table,
   });
 
-  int id;
-  String userId;
   int tableId;
-  DateTime startTime;
-  DateTime endTime;
-  String status;
-  bool isPriorFoodOrder;
-  reservationTable reservationTables;
-  User user;
+  TableModel table;
 
-  factory Reservation.fromJson(Map<String, dynamic> json) => Reservation(
-        id: json["id"],
-        userId: json["userId"],
+  factory ReservationTable.fromJson(Map<String, dynamic> json) =>
+      ReservationTable(
         tableId: json["tableId"],
-        startTime: DateTime.parse(json["startTime"]),
-        endTime: DateTime.parse(json["endTime"]),
-        status: json["status"],
-        isPriorFoodOrder: json["isPriorFoodOrder"],
-        reservationTables: reservationTable.fromJson(json["reservationTables"]),
-        user: User.fromJson(json["user"]),
+        table: TableModel.fromJson(json["table"]),
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "userId": userId,
         "tableId": tableId,
-        "startTime": startTime.toIso8601String(),
-        "endTime": endTime.toIso8601String(),
-        "status": status,
-        "isPriorFoodOrder": isPriorFoodOrder,
-        "table": reservationTables.toJson(),
-        "user": user.toJson(),
+        "table": table.toJson(),
       };
 }
 
-class reservationTable {
-  reservationTable({
+class TableModel {
+  TableModel({
     required this.id,
     required this.numOfSeats,
     required this.status,
+    required this.isDeleted,
     required this.tableType,
   });
 
   int id;
   int numOfSeats;
   String status;
+  bool isDeleted;
   TableType tableType;
 
-  factory reservationTable.fromJson(Map<String, dynamic> json) =>
-      reservationTable(
+  factory TableModel.fromJson(Map<String, dynamic> json) => TableModel(
         id: json["id"],
         numOfSeats: json["numOfSeats"],
         status: json["status"],
+        isDeleted: json["isDeleted"],
         tableType: TableType.fromJson(json["tableType"]),
       );
 
@@ -152,6 +230,7 @@ class reservationTable {
         "id": id,
         "numOfSeats": numOfSeats,
         "status": status,
+        "isDeleted": isDeleted,
         "tableType": tableType.toJson(),
       };
 }
@@ -161,22 +240,30 @@ class TableType {
     required this.id,
     required this.name,
     required this.chargePerSeat,
+    required this.canBeCombined,
+    required this.isDeleted,
   });
 
   int id;
   String name;
   int chargePerSeat;
+  bool canBeCombined;
+  bool isDeleted;
 
   factory TableType.fromJson(Map<String, dynamic> json) => TableType(
         id: json["id"],
         name: json["name"],
         chargePerSeat: json["chargePerSeat"],
+        canBeCombined: json["canBeCombined"],
+        isDeleted: json["isDeleted"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
         "chargePerSeat": chargePerSeat,
+        "canBeCombined": canBeCombined,
+        "isDeleted": isDeleted,
       };
 }
 
@@ -226,6 +313,7 @@ class ReservationNoTable {
     required this.status,
     required this.isPriorFoodOrder,
     required this.user,
+    this.reservationTables = const [],
   });
 
   int id;
@@ -240,21 +328,25 @@ class ReservationNoTable {
   String status;
   bool isPriorFoodOrder;
   User user;
+  List<ReservationTable> reservationTables;
 
   factory ReservationNoTable.fromJson(Map<String, dynamic> json) =>
       ReservationNoTable(
-          id: json["id"],
-          userId: json["userId"],
-          numOfPeople: json["numOfPeople"],
-          tableTypeId: json["tableTypeId"],
-          tableType: json["tableType"],
-          numOfSeats: json["numOfSeats"],
-          quantity: json["quantity"],
-          startTime: DateTime.parse(json["startTime"]),
-          endTime: DateTime.parse(json["endTime"]),
-          status: json["status"],
-          isPriorFoodOrder: json["isPriorFoodOrder"],
-          user: User.fromJson(json["user"]));
+        id: json["id"],
+        userId: json["userId"],
+        numOfPeople: json["numOfPeople"],
+        tableTypeId: json["tableTypeId"],
+        tableType: json["tableType"],
+        numOfSeats: json["numOfSeats"],
+        quantity: json["quantity"],
+        startTime: DateTime.parse(json["startTime"]),
+        endTime: DateTime.parse(json["endTime"]),
+        status: json["status"],
+        isPriorFoodOrder: json["isPriorFoodOrder"],
+        user: User.fromJson(json["user"]),
+        reservationTables: List<ReservationTable>.from(
+            json["reservationTables"].map((x) => ReservationTable.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -269,6 +361,8 @@ class ReservationNoTable {
         "status": status,
         "isPriorFoodOrder": isPriorFoodOrder,
         "user": user.toJson(),
+        "reservationTables":
+            List<dynamic>.from(reservationTables.map((x) => x.toJson())),
       };
 }
 

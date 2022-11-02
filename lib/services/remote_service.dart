@@ -168,85 +168,75 @@ class RemoteService {
     }
   }
 
-  Future<Orders> getOrders(String? orderId) async {
+  Future<Order> getOrders(String? orderId) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
-
-    OrderDetail abc = OrderDetail(
-        date: "a",
-        foodId: 1,
-        foodName: "a",
-        orderId: "a",
-        price: 1,
-        status: "a",
-        amount: 1,
-        quantity: 1,
-        userId: "a");
-    List<OrderDetail> newList = [abc];
-    newList.add(abc);
-
     try {
       final response = await dio
-          .get('https://10.0.2.2:7246/api/Orders/$orderId'); //header, author
+          .get('https://10.0.2.2:7246/api/v1/Orders/$orderId'); //header, author
       var result = responseData15.fromJson(response.data);
-      Orders gotOrder = result.data;
+      Order gotOrder = result.data;
       return gotOrder;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
-        return Orders(
+        return Order(
             id: "0",
             userId: "0",
             phoneNumber: "0",
+            fullName: "",
             date: "0",
             status: "0",
             prePaid: 1,
             total: 1,
-            orderDetails: newList);
+            orderDetails: []);
       } else {
-        return Orders(
+        return Order(
             id: "0",
             userId: "0",
             phoneNumber: "0",
+            fullName: "",
             date: "0",
             status: "0",
             prePaid: 1,
             total: 1,
-            orderDetails: newList);
+            orderDetails: []);
       }
     }
   }
 
-  Future<order>? getOrder(String? orderId) async {
+  Future<Order>? getOrder(String? orderId) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio
-          .get('https://10.0.2.2:7246/api/Orders/$orderId'); //header, author
-      var result = responseData9.fromJson(response.data);
-      order gotOrder = result.data;
+          .get('https://10.0.2.2:7246/api/v1/Orders/$orderId'); //header, author
+      var result = responseData15.fromJson(response.data);
+      Order gotOrder = result.data;
 
       return gotOrder;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
-        return order(
+        return Order(
             id: "0",
             userId: "0",
             date: "0",
-            // fullName: "0",
+            fullName: "0",
             phoneNumber: "0",
             prePaid: 0,
             status: "0",
-            total: 0);
+            total: 0,
+            orderDetails: []);
       } else {
-        return order(
+        return Order(
             id: "0",
             userId: "0",
             date: "0",
-            // fullName: "0",
+            fullName: "0",
             phoneNumber: "0",
             prePaid: 0,
             status: "0",
-            total: 0);
+            total: 0,
+            orderDetails: []);
       }
     }
   }
@@ -256,7 +246,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.get(
-          'https://10.0.2.2:7246/api/OrderDetails?SearchValue=$orderId'); //header, author
+          'https://10.0.2.2:7246/api/v1/OrderDetails?SearchValue=$orderId'); //header, author
       var result = responseData10.fromJson(response.data);
       List<orderDetail> foods = result.data;
       return foods;
@@ -269,43 +259,90 @@ class RemoteService {
     }
   }
 
-  Future<order>? createOrder(int tableId, List<food>? foods) async {
+  Future<Order>? createOrder(int reservationId, List<food>? foods) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
-    Map<String, int> map1 = {for (var e in foods!) e.id.toString(): e.quantity};
-    var formData = PostFood(tableId: tableId, orderDetails: map1).toJson();
+    Map<String, Detail> map1 = {
+      for (var e in foods!)
+        e.id.toString(): Detail(quantity: e.quantity, note: e.note)
+    };
+    var formData =
+        PostFood(reservationId: reservationId, orderDetails: map1).toJson();
     try {
       final response =
-          await dio.post('https://10.0.2.2:7246/api/Orders', data: formData);
-      var result = responseData9.fromJson(response.data);
-      order orders = result.data;
+          await dio.post('https://10.0.2.2:7246/api/v1/Orders', data: formData);
+      var result = responseData15.fromJson(response.data);
+      Order orders = result.data;
       return orders;
       //header, author
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
-        return order(
-            id: "0",
+        return Order(
+            id: "create Order 1",
             userId: "0",
             date: "0",
-            // fullName: "0",
+            fullName: "0",
             phoneNumber: "0",
             prePaid: 0,
             status: "0",
-            total: 0);
+            total: 0,
+            orderDetails: []);
       } else {
-        return order(
-            id: "0",
+        return Order(
+            id: "create Order 2",
             userId: "0",
             date: "0",
-            // fullName: "0",
+            fullName: "0",
             phoneNumber: "0",
             prePaid: 0,
             status: "0",
-            total: 0);
+            total: 0,
+            orderDetails: []);
       }
     }
   }
 
+  Future<Order>? putOrder(String orderId, List<food>? foods) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    Map<String, Detail> map1 = {
+      for (var e in foods!)
+        e.id.toString(): Detail(quantity: e.quantity, note: e.note)
+    };
+    var formData = PutFood(orderId: orderId, orderDetails: map1).toJson();
+    try {
+      final response = await dio
+          .put('https://10.0.2.2:7246/api/v1/Orders/AddDishes', data: formData);
+      var result = responseData15.fromJson(response.data);
+      Order orders = result.data;
+      return orders;
+      //header, author
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return Order(
+            id: "Put order",
+            userId: "0",
+            date: "0",
+            fullName: "0",
+            phoneNumber: "0",
+            prePaid: 0,
+            status: "0",
+            total: 0,
+            orderDetails: []);
+      } else {
+        return Order(
+            id: "Put order",
+            userId: "0",
+            date: "0",
+            fullName: "0",
+            phoneNumber: "0",
+            prePaid: 0,
+            status: "0",
+            total: 0,
+            orderDetails: []);
+      }
+    }
+  }
   // void confirmOrder(String id) async {
   //   final Dio dio = Dio();
   //   HttpOverrides.global = MyHttpOverrides();
@@ -326,7 +363,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.put(
-          'https://10.0.2.2:7246/api/OrderDetails/id?id=$id',
+          'https://10.0.2.2:7246/api/v1/OrderDetails/$id',
           data: {"id": id, "status": "Cancelled"}); //header, author
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
@@ -392,14 +429,32 @@ class RemoteService {
     }
   }
 
-  Future<List<Reservation>?> getReservations() async {
+  Future<List<Order>?> getOrdersHistory() async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response =
+          await dio.get('https://10.0.2.2:7246/api/v1/Orders'); //header, author
+      var result = ResponseOrder.fromJson(response.data);
+      List<Order> orderList = result.data;
+      return orderList;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  Future<List<ReservationNoTable>?> getReservationsHistory() async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio
           .get('https://10.0.2.2:7246/api/v1/Reservations'); //header, author
-      var result = responseData7.fromJson(response.data);
-      List<Reservation> reservationList = result.data;
+      var result = responseReservation.fromJson(response.data);
+      List<ReservationNoTable> reservationList = result.data;
       return reservationList;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
@@ -410,15 +465,17 @@ class RemoteService {
     }
   }
 
-  Future<List<ReservationNoTable>?> getReservationsBeforeCheckin() async {
+  Future<List<ReservationNoTable>?> getReservationsBeforeCheckin(
+      String status) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response = await dio
-          .get('https://10.0.2.2:7246/api/v1/Reservations'); //header, author
+      final response = await dio.get(
+          'https://10.0.2.2:7246/api/v1/Reservations?Status=$status'); //header, author
       var result = responseReservation.fromJson(response.data);
       List<ReservationNoTable> reservationList = result.data;
-      return reservationList;
+      var finalList = reservationList;
+      return finalList;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         return null;
@@ -440,42 +497,46 @@ class RemoteService {
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         return ReservationNoTable(
-            id: 0,
-            userId: "",
-            numOfPeople: 0,
-            numOfSeats: 0,
-            quantity: 0,
-            tableType: "",
-            tableTypeId: 0,
-            startTime: DateTime.now(),
-            endTime: DateTime.now(),
-            status: "",
-            isPriorFoodOrder: false,
-            user: User(
-                id: "",
-                userName: "",
-                fullName: "",
-                phoneNumber: "",
-                isDeleted: true));
+          id: 0,
+          userId: "",
+          numOfPeople: 0,
+          numOfSeats: 0,
+          quantity: 0,
+          tableType: "",
+          tableTypeId: 0,
+          startTime: DateTime.now(),
+          endTime: DateTime.now(),
+          status: "",
+          isPriorFoodOrder: false,
+          user: User(
+              id: "",
+              userName: "",
+              fullName: "",
+              phoneNumber: "",
+              isDeleted: true),
+          reservationTables: [],
+        );
       } else {
         return ReservationNoTable(
-            id: 0,
-            userId: "",
-            numOfPeople: 0,
-            numOfSeats: 0,
-            quantity: 0,
-            tableType: "",
-            tableTypeId: 0,
-            startTime: DateTime.now(),
-            endTime: DateTime.now(),
-            status: "",
-            isPriorFoodOrder: false,
-            user: User(
-                id: "",
-                userName: "",
-                fullName: "",
-                phoneNumber: "",
-                isDeleted: true));
+          id: 0,
+          userId: "",
+          numOfPeople: 0,
+          numOfSeats: 0,
+          quantity: 0,
+          tableType: "",
+          tableTypeId: 0,
+          startTime: DateTime.now(),
+          endTime: DateTime.now(),
+          status: "",
+          isPriorFoodOrder: false,
+          user: User(
+              id: "",
+              userName: "",
+              fullName: "",
+              phoneNumber: "",
+              isDeleted: true),
+          reservationTables: [],
+        );
       }
     }
   }
@@ -488,6 +549,22 @@ class RemoteService {
           'https://10.0.2.2:7246/api/v1/Reservations/$id'); //header, author
       // var result = responseData20.fromJson(response.data);
       // paymentURL returnURL = result.data;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return;
+      } else {
+        return;
+      }
+    }
+  }
+
+  void checkinReservation() async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio.post(
+          'https://10.0.2.2:7246/api/v1/Reservations/Checkin',
+          data: {}); //header, author
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         return;
@@ -512,7 +589,7 @@ class RemoteService {
           await dio.post('https://10.0.2.2:7246/api/v1/Reservations', data: {
         "startTime": start,
         "endTime": end,
-        "numberOfPeople": numberOfPeople,
+        "numOfPeople": numberOfPeople,
         "numOfSeats": numberOfSeats,
         "tableTypeId": tableTypeId,
         "quantity": quantity,
@@ -531,8 +608,31 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response = await dio.get(
-          'https://10.0.2.2:7246/api/v1/VNPay/GetUrl?ammount=$total&orderId=$orderId'); //header, author
+      final response = await dio.post(
+          'https://10.0.2.2:7246/api/v1/VNPay/Order',
+          data: {"Amount": total, "OrderId": orderId}); //header, author
+      var result = responseData20.fromJson(response.data);
+      paymentURL returnURL = result.data;
+      return returnURL;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return paymentURL(url: "NULL URL");
+      } else {
+        return paymentURL(url: "NULL URL");
+      }
+    }
+  }
+
+  Future<paymentURL>? getPaymentURLReservation(
+      int? reservationId, int? total) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio
+          .post('https://10.0.2.2:7246/api/v1/VNPay/Reservation', data: {
+        "Amount": total,
+        "reservationId": reservationId
+      }); //header, author
       var result = responseData20.fromJson(response.data);
       paymentURL returnURL = result.data;
       return returnURL;
@@ -548,22 +648,64 @@ class RemoteService {
 
 class PostFood {
   PostFood({
-    required this.tableId,
+    required this.reservationId,
     required this.orderDetails,
   });
 
-  int tableId;
-  Map<String, int> orderDetails;
+  int reservationId;
+  Map<String, Detail> orderDetails;
 
   factory PostFood.fromJson(Map<String, dynamic> json) => PostFood(
-        tableId: json["tableId"],
+        reservationId: json["reservationId"],
         orderDetails: Map.from(json["orderDetails"])
-            .map((k, v) => MapEntry<String, int>(k, v)),
+            .map((k, v) => MapEntry<String, Detail>(k, Detail.fromJson(v))),
       );
 
   Map<String, dynamic> toJson() => {
-        "tableId": tableId,
+        "reservationId": reservationId,
         "orderDetails": Map.from(orderDetails)
             .map((k, v) => MapEntry<String, dynamic>(k, v)),
+      };
+}
+
+class PutFood {
+  PutFood({
+    required this.orderId,
+    required this.orderDetails,
+  });
+
+  String orderId;
+  Map<String, Detail> orderDetails;
+
+  factory PutFood.fromJson(Map<String, dynamic> json) => PutFood(
+        orderId: json["orderId"],
+        orderDetails: Map.from(json["orderDetails"])
+            .map((k, v) => MapEntry<String, Detail>(k, Detail.fromJson(v))),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "orderId": orderId,
+        "orderDetails": Map.from(orderDetails)
+            .map((k, v) => MapEntry<String, dynamic>(k, v)),
+      };
+}
+
+class Detail {
+  Detail({
+    required this.quantity,
+    required this.note,
+  });
+
+  int quantity;
+  String note;
+
+  factory Detail.fromJson(Map<String, dynamic> json) => Detail(
+        quantity: json["quantity"],
+        note: json["note"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "quantity": quantity,
+        "note": note,
       };
 }

@@ -46,6 +46,7 @@ class _tableReservationState extends State<tableReservation> {
   double openTime = 0;
   double closeTime = 0;
   String errorText = "";
+  int settingHour = 3;
 
   @override
   void dispose() {
@@ -113,9 +114,47 @@ class _tableReservationState extends State<tableReservation> {
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => homeScreen()),
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      alignment: Alignment.center,
+                      icon: Icon(Icons.info_outline_rounded),
+                      title: Text(
+                        'Remind',
+                        style: GoogleFonts.lato(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      content: Container(
+                        height: 50,
+                        child: Column(
+                          children: [
+                            Text(
+                              "Business Hours:",
+                              style: GoogleFonts.lato(
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              "11:00 AM - 10:00 PM",
+                              style: GoogleFonts.lato(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'Cancel'),
+                          child: const Text('I understand'),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
               icon: Icon(
@@ -439,10 +478,31 @@ class _tableReservationState extends State<tableReservation> {
               fontSize: 20,
             ),
           ),
-          SizedBox(
+          Container(
             height: 100,
             child: Visibility(
               visible: isLoadedTime,
+              replacement: Center(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: Container(
+                    height: 170,
+                    width: MediaQuery.of(context).size.width - 10,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color.fromRGBO(232, 192, 125, 50),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'None table available!',
+                      style:
+                          GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
               child: ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
@@ -472,13 +532,6 @@ class _tableReservationState extends State<tableReservation> {
                   );
                 },
               ),
-              replacement: const Center(
-                child: Text(
-                  "Your tables doesn't occupied by any other reservation",
-                  style: TextStyle(fontSize: 15),
-                  textAlign: TextAlign.center,
-                ),
-              ),
             ),
           ),
           SizedBox(
@@ -499,7 +552,7 @@ class _tableReservationState extends State<tableReservation> {
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                    '${_selectedStartTime.format(context)}',
+                    _selectedStartTime.format(context),
                     style: GoogleFonts.cabin(
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -552,7 +605,7 @@ class _tableReservationState extends State<tableReservation> {
                         double _ocupiedEnd = toDouble(_end);
 
                         if (chooseTime >= _ocupiedStart &&
-                            chooseTime <= _ocupiedEnd) {
+                            chooseTime < _ocupiedEnd) {
                           ocupiedFlag = true;
                           errorText =
                               "The time you choose is already occupied, Please choose again!";
@@ -641,7 +694,7 @@ class _tableReservationState extends State<tableReservation> {
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                    '${_selectedEndTime.format(context)}',
+                    _selectedEndTime.format(context),
                     style: GoogleFonts.cabin(
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -701,7 +754,7 @@ class _tableReservationState extends State<tableReservation> {
                         }
                       });
 
-                      if (chooseTime <= openTime || chooseTime >= closeTime) {
+                      if (chooseTime <= openTime || chooseTime > closeTime) {
                         invalidFlag = true;
                         if (chooseTime == openTime) {
                           errorText =
@@ -717,10 +770,10 @@ class _tableReservationState extends State<tableReservation> {
                           errorText =
                               "Reservation duration must be at least 30 minutes. Please choose again!";
                         } else if (chooseTime >
-                            toDouble(_selectedStartTime) + 3) {
+                            toDouble(_selectedStartTime) + settingHour) {
                           invalidFlag = true;
                           errorText =
-                              "Reservation duration must not longer than 3 hours. Please choose again!";
+                              'Reservation duration must not longer than $settingHour hours. Please choose again!';
                         } else if (chooseTime < toDouble(_selectedStartTime)) {
                           invalidFlag = true;
                           errorText =
@@ -801,7 +854,7 @@ class _tableReservationState extends State<tableReservation> {
                                   startTime: _selectedStartTime,
                                   endTime: _selectedEndTime,
                                   tableTypeId: tableTypeId,
-                                  numberOfSeats: numberOfSeats * quantity,
+                                  numberOfSeats: numberOfSeats,
                                 )),
                       );
                     },

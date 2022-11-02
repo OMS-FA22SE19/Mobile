@@ -13,14 +13,14 @@ class menuFoodDetail extends StatefulWidget {
   final String foodId;
   final String categoryId;
   final bool isCourse;
-  final int tableId;
+  final int reservationId;
   const menuFoodDetail(
       {super.key,
       required this.price,
       required this.foodId,
       required this.categoryId,
       required this.isCourse,
-      required this.tableId});
+      required this.reservationId});
 
   @override
   State<menuFoodDetail> createState() => _menuFoodDetailState();
@@ -69,7 +69,7 @@ class _menuFoodDetailState extends State<menuFoodDetail> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => menuFood(
-                            tableId: widget.tableId,
+                            reservationId: widget.reservationId,
                             categoryId: int.parse(widget.categoryId),
                             isCourse: widget.isCourse,
                           )),

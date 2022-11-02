@@ -9,16 +9,18 @@ import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
 class menuCart extends StatefulWidget {
-  final int tableId;
+  final int reservationId;
   final int categoryId;
   final List<food>? foods;
+  String? orderId;
   final isCourse;
-  const menuCart(
+  menuCart(
       {super.key,
       required this.foods,
       required this.categoryId,
       this.isCourse,
-      required this.tableId});
+      this.orderId,
+      required this.reservationId});
 
   @override
   State<menuCart> createState() => _menuCartState();
@@ -27,7 +29,9 @@ class menuCart extends StatefulWidget {
 class _menuCartState extends State<menuCart> {
   int total = 0;
   var isLoaded = true;
-  order? newOrder;
+  Order? newOrder;
+  Order? currentOrder;
+  bool check = false;
 
   String changeFormat(int number) {
     String formated =
@@ -73,9 +77,11 @@ class _menuCartState extends State<menuCart> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => menuFood(
-                          tableId: widget.tableId,
+                          reservationId: widget.reservationId,
                           isCourse: widget.isCourse,
                           categoryId: widget.categoryId,
+                          // cartfoods: widget.foods,
+                          orderId: widget.orderId,
                         )),
               );
             },
@@ -84,22 +90,6 @@ class _menuCartState extends State<menuCart> {
               size: 30,
             )),
         automaticallyImplyLeading: false,
-        // actions: [
-        //   IconButton(
-        //       onPressed: () {
-        //         Navigator.push(
-        //           context,
-        //           MaterialPageRoute(
-        //               builder: (context) => menuStatus(
-        //                     orderId: newOrder?.id,
-        //                   )),
-        //         );
-        //       },
-        //       icon: Icon(
-        //         Icons.timer_rounded,
-        //         size: 30,
-        //       )),
-        // ],
       ),
       backgroundColor: Colors.grey[200],
       body: Visibility(
@@ -123,7 +113,7 @@ class _menuCartState extends State<menuCart> {
           itemBuilder: (context, index) {
             if (widget.foods![index].quantity != 0) {
               return Padding(
-                padding: const EdgeInsets.all(5.0),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                 child: Row(
                   children: [
                     Container(
@@ -134,131 +124,111 @@ class _menuCartState extends State<menuCart> {
                         color: Color.fromRGBO(232, 192, 125, 100),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
                         child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          widget.foods![index].name,
-                                          style: GoogleFonts.cabin(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black),
-                                        ),
-                                        Text(
-                                          'Price: ' +
-                                              changeFormat(
-                                                  widget.foods![index].price),
-                                          style: GoogleFonts.roboto(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.black),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Center(
-                                child: Row(
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          widget.foods![index].quantity =
-                                              widget.foods![index].quantity - 1;
-                                          if (widget.foods![index].quantity <=
-                                              0) {
-                                            widget.foods![index].quantity = 0;
-                                            widget.foods?.forEach((element) {
-                                              if (element.quantity != 0) {
-                                                isLoaded = true;
-                                              }
-                                            });
-                                          }
-                                        });
-                                        total = 0;
-                                        totalMoney();
-                                      },
-                                      child: Container(
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Color.fromRGBO(
-                                                232, 192, 125, 100),
-                                          ),
-                                          child: Icon(
-                                            Icons.remove_circle_outline_rounded,
-                                            color: Colors.black,
-                                            size: 30,
-                                          )),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
+                                    Text(
+                                      widget.foods![index].name,
+                                      style: GoogleFonts.cabin(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
                                     ),
                                     Text(
-                                      widget.foods![index].quantity.toString(),
-                                      style: GoogleFonts.bebasNeue(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 30,
-                                      ),
+                                      'Price: ' +
+                                          changeFormat(
+                                              widget.foods![index].price),
+                                      style: GoogleFonts.roboto(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.black),
                                     ),
-                                    SizedBox(
-                                      width: 20,
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        widget.foods![index].quantity =
+                                            widget.foods![index].quantity - 1;
+                                        if (widget.foods![index].quantity <=
+                                            0) {
+                                          widget.foods![index].quantity = 0;
+                                          widget.foods?.forEach((element) {
+                                            if (element.quantity != 0) {
+                                              isLoaded = true;
+                                            }
+                                          });
+                                        }
+                                      });
+                                      total = 0;
+                                      totalMoney();
+                                    },
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Color.fromRGBO(
+                                              232, 192, 125, 100),
+                                        ),
+                                        child: Icon(
+                                          Icons.remove_circle_outline_rounded,
+                                          color: Colors.black,
+                                          size: 30,
+                                        )),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Text(
+                                    widget.foods![index].quantity.toString(),
+                                    style: GoogleFonts.bebasNeue(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 30,
                                     ),
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          widget.foods![index].quantity =
-                                              widget.foods![index].quantity + 1;
-                                          if (widget.foods![index].quantity >
-                                              10) {
-                                            widget.foods![index].quantity = 10;
-                                          }
-                                        });
-                                        total = 0;
-                                        totalMoney();
-                                      },
-                                      child: Container(
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Color.fromRGBO(
-                                                232, 192, 125, 100),
-                                          ),
-                                          child: Icon(
-                                            Icons.add_circle_outline_rounded,
-                                            color: Colors.black,
-                                            size: 30,
-                                          )
-
-                                          // Text(
-                                          //   '+',
-                                          //   style: TextStyle(
-                                          //     color: Colors.white,
-                                          //     fontWeight: FontWeight.bold,
-                                          //     fontSize: 30,
-                                          //   ),
-                                          // ),
-                                          ),
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    InkWell(
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        widget.foods![index].quantity =
+                                            widget.foods![index].quantity + 1;
+                                      });
+                                      total = 0;
+                                      totalMoney();
+                                    },
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Color.fromRGBO(
+                                              232, 192, 125, 100),
+                                        ),
+                                        child: Icon(
+                                          Icons.add_circle_outline_rounded,
+                                          color: Colors.black,
+                                          size: 30,
+                                        )),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  InkWell(
                                       onTap: () {
                                         showDialog(
                                           barrierDismissible: false,
@@ -266,67 +236,118 @@ class _menuCartState extends State<menuCart> {
                                           builder: (BuildContext context) {
                                             return AlertDialog(
                                               title: Text(
-                                                'Remove',
+                                                "Note",
                                                 style: GoogleFonts.lato(
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              content: Text(
-                                                "Are you really want to remove this item?",
-                                                style: GoogleFonts.lato(
-                                                  color: Colors.black,
-                                                ),
+                                              content: TextFormField(
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    widget.foods![index].note =
+                                                        value;
+                                                  });
+                                                },
+                                                initialValue:
+                                                    widget.foods![index].note,
+                                                keyboardType:
+                                                    TextInputType.multiline,
+                                                maxLines: null,
+                                                decoration: InputDecoration(
+                                                    border:
+                                                        OutlineInputBorder(),
+                                                    helperText:
+                                                        "Input your note for the food"),
                                               ),
                                               actions: <Widget>[
                                                 TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          context, 'Cancel'),
-                                                  child: const Text('No'),
-                                                ),
-                                                TextButton(
                                                   onPressed: () {
-                                                    setState(() {
-                                                      widget.foods![index]
-                                                          .quantity = 0;
-                                                      widget.foods
-                                                          ?.forEach((element) {
-                                                        if (element.quantity !=
-                                                            0) {
-                                                          isLoaded = true;
-                                                        }
-                                                      });
-                                                    });
-                                                    total = 0;
-                                                    totalMoney();
                                                     Navigator.pop(
                                                         context, 'Cancel');
                                                   },
-                                                  child: const Text('Yes'),
+                                                  child: const Text('Done'),
                                                 ),
                                               ],
                                             );
                                           },
                                         );
-                                        total = 0;
-                                        totalMoney();
                                       },
-                                      child: Container(
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Color.fromRGBO(
-                                                232, 192, 125, 100),
-                                          ),
-                                          child: Icon(
-                                            Icons.highlight_remove_rounded,
-                                            color: Colors.red,
-                                            size: 20,
-                                          )),
-                                    ),
-                                  ],
-                                ),
+                                      child: Icon(
+                                        Icons.list_alt_rounded,
+                                        size: 20,
+                                        color: Colors.black,
+                                      )),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  InkWell(
+                                    onTap: () {
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text(
+                                              'Remove',
+                                              style: GoogleFonts.lato(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            content: Text(
+                                              "Are you really want to remove this item?",
+                                              style: GoogleFonts.lato(
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                    context, 'Cancel'),
+                                                child: const Text('No'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    widget.foods![index]
+                                                        .quantity = 0;
+                                                    widget.foods
+                                                        ?.forEach((element) {
+                                                      if (element.quantity !=
+                                                          0) {
+                                                        isLoaded = true;
+                                                      }
+                                                    });
+                                                  });
+                                                  total = 0;
+                                                  totalMoney();
+                                                  Navigator.pop(
+                                                      context, 'Cancel');
+                                                },
+                                                child: const Text('Yes'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                      total = 0;
+                                      totalMoney();
+                                    },
+                                    child: Container(
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Color.fromRGBO(
+                                              232, 192, 125, 100),
+                                        ),
+                                        child: Icon(
+                                          Icons.highlight_remove_rounded,
+                                          color: Colors.red,
+                                          size: 20,
+                                        )),
+                                  ),
+                                ],
                               ),
                             ]),
                       ),
@@ -380,13 +401,19 @@ class _menuCartState extends State<menuCart> {
                   ElevatedButton(
                     onPressed: isLoaded
                         ? () async {
-                            newOrder = await RemoteService()
-                                .createOrder(widget.tableId, widget.foods);
+                            if (widget.orderId?.isEmpty == false) {
+                              check = widget.orderId?.isEmpty ?? false;
+                              newOrder = await RemoteService()
+                                  .putOrder(widget.orderId ?? "", widget.foods);
+                            } else {
+                              newOrder = await RemoteService().createOrder(
+                                  widget.reservationId, widget.foods);
+                            }
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => menuStatus(
-                                        tableId: widget.tableId,
+                                        reservationId: widget.reservationId,
                                         isCourse: widget.isCourse,
                                         orderId: newOrder?.id,
                                       )),

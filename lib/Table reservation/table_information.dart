@@ -33,6 +33,9 @@ class tableInformation extends StatefulWidget {
 }
 
 class _tableInformationState extends State<tableInformation> {
+  String start = "";
+  String end = "";
+
   @override
   void initState() {
     super.initState();
@@ -159,14 +162,14 @@ class _tableInformationState extends State<tableInformation> {
                           ),
                         ),
                         Text(
-                          'Number of seats: ',
+                          'Number of seats : ',
                           style: GoogleFonts.roboto(
                               fontSize: 20,
                               color: Colors.white,
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '${widget.numberOfSeats}',
+                          '${widget.numberOfSeats}' + " x " '${widget.amount}',
                           textAlign: TextAlign.right,
                           style: GoogleFonts.roboto(
                               fontSize: 20,
@@ -174,6 +177,29 @@ class _tableInformationState extends State<tableInformation> {
                               fontWeight: FontWeight.bold),
                         ),
                       ]),
+                      // TableRow(children: [
+                      //   TableCell(
+                      //     child: Icon(
+                      //       Icons.number,
+                      //       color: Colors.white,
+                      //     ),
+                      //   ),
+                      //   Text(
+                      //     'Quantity: ',
+                      //     style: GoogleFonts.roboto(
+                      //         fontSize: 20,
+                      //         color: Colors.white,
+                      //         fontWeight: FontWeight.bold),
+                      //   ),
+                      //   Text(
+                      //     '${widget.amount}',
+                      //     textAlign: TextAlign.right,
+                      //     style: GoogleFonts.roboto(
+                      //         fontSize: 20,
+                      //         color: Colors.white,
+                      //         fontWeight: FontWeight.bold),
+                      //   ),
+                      // ]),
                       TableRow(children: [
                         TableCell(
                           child: Icon(
@@ -362,7 +388,6 @@ class _tableInformationState extends State<tableInformation> {
                         } else {
                           endHour = '0${widget.endTime.hour}';
                         }
-
                         // if (widget.time.minute.toString().length == 2) {
                         //   startTime =
                         //       '${widget.date.year}-${widget.date.month}-${widget.date.day}T${widget.time.hour}:${widget.time.minute}:00.000Z';
@@ -372,32 +397,53 @@ class _tableInformationState extends State<tableInformation> {
                         // }
 
                         // String endHour = (int.parse(startHour) + 1).toString();
-                        String start =
-                            '${widget.date.year}-$startMonth-$startDay' +
-                                'T' +
-                                '$startHour:$startMinute:00.000Z';
-                        String end =
-                            '${widget.date.year}-$startMonth-$startDay' +
-                                'T' +
-                                '$endHour:$endMinute:00.000Z';
-
-                        // postData(start, end, widget.numberOfSeats,
-                        //     widget.tableTypeId, false);
-
-                        postData(
-                            start,
-                            end,
-                            widget.numberOfSeats,
-                            widget.numberOfPeople,
-                            widget.tableTypeId,
-                            false,
-                            widget.amount);
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => homeScreen()),
-                        );
+                        start = '${widget.date.year}-$startMonth-$startDay' +
+                            'T' +
+                            '$startHour:$startMinute:00.000Z';
+                        end = '${widget.date.year}-$startMonth-$startDay' +
+                            'T' +
+                            '$endHour:$endMinute:00.000Z';
                       });
+                      postData(
+                          start,
+                          end,
+                          widget.numberOfSeats,
+                          widget.numberOfPeople,
+                          widget.tableTypeId,
+                          false,
+                          widget.amount);
+                      showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(
+                              'Remind',
+                              style: GoogleFonts.lato(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            content: Text(
+                              "You need to pay for your reservation 30 minutes after making a reservation or your reservation will be cancel !",
+                              style: GoogleFonts.lato(
+                                color: Colors.black,
+                              ),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context, 'Cancel'),
+                                child: const Text('I understand'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => homeScreen()),
+                      );
                     },
                     child: Text(
                       'Confirm'.toUpperCase(),

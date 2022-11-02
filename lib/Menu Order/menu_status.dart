@@ -10,14 +10,14 @@ import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
 
 class menuStatus extends StatefulWidget {
-  final int tableId;
+  final int reservationId;
   final String? orderId;
-  final bool isCourse;
-  const menuStatus(
+  bool? isCourse;
+  menuStatus(
       {super.key,
       required this.orderId,
-      required this.isCourse,
-      required this.tableId});
+      this.isCourse,
+      required this.reservationId});
 
   @override
   State<menuStatus> createState() => _menuStatusState();
@@ -97,8 +97,11 @@ class _menuStatusState extends State<menuStatus> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            menuCategory(tableId: widget.tableId)),
+                        builder: (context) => menuCategory(
+                              reservationId: widget.reservationId,
+                              isCourse: widget.isCourse,
+                              orderId: widget.orderId,
+                            )),
                   );
                 },
                 icon: Icon(
@@ -121,14 +124,25 @@ class _menuStatusState extends State<menuStatus> {
             itemBuilder: (context, index) {
               return InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => menuFood(
-                              tableId: widget.tableId,
-                              isCourse: widget.isCourse,
-                              categoryId: 1,
-                            )),
+                  showDialog(
+                    barrierDismissible: true,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(
+                          "Note",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.lato(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        content: Text(
+                          orderDetails![index].note,
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    },
                   );
                 },
                 child: Padding(
@@ -259,7 +273,7 @@ class _menuStatusState extends State<menuStatus> {
             MaterialPageRoute(
                 builder: (context) => orderConfirm(
                       orderId: id,
-                      tableId: widget.tableId,
+                      reservationId: widget.reservationId,
                     )),
           );
         },
@@ -353,7 +367,10 @@ class _menuStatusState extends State<menuStatus> {
         ),
       );
     } else {
-      return Icon(Icons.highlight_alt_rounded);
+      return Container(
+        height: 1,
+        width: 1,
+      );
     }
   }
 }
