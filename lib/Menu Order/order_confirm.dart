@@ -8,9 +8,10 @@ import 'package:oms_mobile/Menu%20Order/order_method.dart';
 import 'package:oms_mobile/Menu%20Order/order_method_online.dart';
 
 class orderConfirm extends StatefulWidget {
-  final int tableId;
+  final int reservationId;
   final String? orderId;
-  const orderConfirm({super.key, required this.orderId, required this.tableId});
+  const orderConfirm(
+      {super.key, required this.orderId, required this.reservationId});
 
   @override
   State<orderConfirm> createState() => _orderConfirmState();
@@ -46,7 +47,7 @@ class _orderConfirmState extends State<orderConfirm> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => menuCategory(
-                            tableId: widget.tableId,
+                            reservationId: widget.reservationId,
                           )),
                 );
               },
@@ -92,7 +93,7 @@ class _orderConfirmState extends State<orderConfirm> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => orderMethod(
-                              tableId: widget.tableId,
+                              reservationId: widget.reservationId,
                               orderId: widget.orderId,
                               method: "Cash",
                             )),
@@ -139,7 +140,7 @@ class _orderConfirmState extends State<orderConfirm> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => orderMethodOnline(
-                              tableId: widget.tableId,
+                              tableId: widget.reservationId,
                               orderId: widget.orderId,
                               method: "Online Method",
                             )),

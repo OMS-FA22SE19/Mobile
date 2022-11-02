@@ -13,14 +13,18 @@ import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
 
 class menuFood extends StatefulWidget {
-  const menuFood(
+  menuFood(
       {super.key,
       required this.categoryId,
       required this.isCourse,
-      required this.tableId});
-  final int tableId;
+      required this.reservationId,
+      this.orderId,
+      this.cartfoods});
+  final int reservationId;
   final int categoryId;
   final bool isCourse;
+  String? orderId;
+  List<food>? cartfoods;
 
   @override
   State<menuFood> createState() => _menuFoodState();
@@ -30,6 +34,7 @@ class _menuFoodState extends State<menuFood> {
   int counter = 0;
   List<menu>? menus;
   List<food>? foods;
+  List<food>? cartfoods;
   int menuId = 0;
   var isLoaded = false;
 
@@ -43,6 +48,13 @@ class _menuFoodState extends State<menuFood> {
     String formated =
         intl.NumberFormat.decimalPattern().format(number).toString();
     return formated;
+  }
+
+  count() {
+    counter = 0;
+    foods?.forEach((element) {
+      counter = element.quantity + counter;
+    });
   }
 
   getData() async {
@@ -76,7 +88,8 @@ class _menuFoodState extends State<menuFood> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => menuCategory(
-                          tableId: widget.tableId,
+                          reservationId: widget.reservationId,
+                          isCourse: widget.isCourse,
                         )),
               );
             },
@@ -92,7 +105,7 @@ class _menuFoodState extends State<menuFood> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => searchPage(
-                            tableId: widget.tableId,
+                            reservationId: widget.reservationId,
                             isCourse: widget.isCourse,
                             categoryId: widget.categoryId,
                             menuId: menuId,
@@ -123,7 +136,7 @@ class _menuFoodState extends State<menuFood> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => menuFoodDetail(
-                            tableId: widget.tableId,
+                            reservationId: widget.reservationId,
                             isCourse: widget.isCourse,
                             categoryId: widget.categoryId.toString(),
                             foodId: foods![index].id.toString(),
@@ -187,6 +200,8 @@ class _menuFoodState extends State<menuFood> {
                                     setState(() {
                                       foods![index].quantity =
                                           foods![index].quantity + 1;
+                                      count();
+                                      cartfoods = foods;
                                     });
                                   },
                                   child: Container(
@@ -223,9 +238,24 @@ class _menuFoodState extends State<menuFood> {
         // ),
       ),
       floatingActionButton: FloatingActionButton.large(
+        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => menuCart(
+                      reservationId: widget.reservationId,
+                      isCourse: widget.isCourse,
+                      categoryId: widget.categoryId,
+                      foods: cartfoods,
+                      orderId: widget.orderId,
+                    )),
+          );
+        },
         child: Badge(
           badgeContent: Text(
-            foods?.length.toString() ?? " ",
+            // cartfoods?.length.toString() ?? "",
+            counter.toString(),
             style: GoogleFonts.cabin(
                 fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
           ),
@@ -236,19 +266,6 @@ class _menuFoodState extends State<menuFood> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => menuCart(
-                      tableId: widget.tableId,
-                      isCourse: widget.isCourse,
-                      categoryId: widget.categoryId,
-                      foods: foods,
-                    )),
-          );
-        },
       ),
     );
   }

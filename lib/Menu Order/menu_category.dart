@@ -1,15 +1,20 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, camel_case_types
 import 'package:flutter/material.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_food.dart';
+import 'package:oms_mobile/Menu%20Order/menu_status.dart';
 import 'package:oms_mobile/Models/course_type.dart';
 import 'package:oms_mobile/Models/food_type.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
 class menuCategory extends StatefulWidget {
-  final int tableId;
-  const menuCategory({super.key, required this.tableId});
+  menuCategory(
+      {super.key, required this.reservationId, this.orderId, this.isCourse});
+  final int reservationId;
+  String? orderId;
+  bool? isCourse;
 
   @override
   State<menuCategory> createState() => _menuCategoryState();
@@ -61,19 +66,6 @@ class _menuCategoryState extends State<menuCategory> {
                   size: 30,
                 )),
             automaticallyImplyLeading: false,
-            // actions: [
-            //   IconButton(
-            //       onPressed: () {
-            //         Navigator.push(
-            //           context,
-            //           MaterialPageRoute(builder: (context) => menuStatus()),
-            //         );
-            //       },
-            //       icon: Icon(
-            //         Icons.timer_rounded,
-            //         size: 30,
-            //       )),
-            // ],
             bottom: const TabBar(
               indicatorColor: Colors.brown,
               indicatorWeight: 2.5,
@@ -108,9 +100,10 @@ class _menuCategoryState extends State<menuCategory> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => menuFood(
-                                    tableId: widget.tableId,
+                                    reservationId: widget.reservationId,
                                     isCourse: true,
                                     categoryId: courses![index].id,
+                                    orderId: widget.orderId,
                                   )),
                         );
                       },
@@ -182,9 +175,10 @@ class _menuCategoryState extends State<menuCategory> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => menuFood(
-                                    tableId: widget.tableId,
+                                    reservationId: widget.reservationId,
                                     isCourse: false,
                                     categoryId: foodTypes![index].id,
+                                    orderId: widget.orderId,
                                   )),
                         );
                       },
@@ -239,30 +233,66 @@ class _menuCategoryState extends State<menuCategory> {
               ),
             ],
           ),
-          // floatingActionButton: FloatingActionButton.large(
-          //   child: Badge(
-          //     badgeContent: Text(
-          //       '3',
-          //       style: GoogleFonts.cabin(
-          //           fontSize: 20,
-          //           fontWeight: FontWeight.bold,
-          //           color: Colors.white),
-          //     ),
-          //     badgeColor: Colors.teal,
-          //     child: Icon(
-          //       size: 70,
-          //       Icons.shopping_bag_rounded,
-          //       color: Colors.white,
-          //     ),
-          //   ),
-          //   backgroundColor: Color.fromRGBO(232, 192, 125, 100),
-          //   onPressed: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => menuCart()),
-          //     );
-          //   },
-          // ),
+          floatingActionButtonLocation: ExpandableFab.location,
+          floatingActionButton: ExpandableFab(
+            distance: 100,
+            // type: ExpandableFabType.left,
+            children: [
+              FloatingActionButton.small(
+                heroTag: "btn1",
+                child: const Icon(Icons.notifications_active_rounded),
+                onPressed: () {
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(
+                          'Notification',
+                          style: GoogleFonts.lato(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        content: Text(
+                          "Your request has already sent. A waiter will be at your service.",
+                          style: GoogleFonts.lato(
+                            color: Colors.black,
+                          ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                            child: const Text('I understand'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+              FloatingActionButton.small(
+                heroTag: "btn2",
+                child: const Icon(Icons.abc),
+                onPressed: () {},
+              ),
+              FloatingActionButton.small(
+                heroTag: "btn3",
+                child: const Icon(Icons.shopping_bag_rounded),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => menuStatus(
+                              reservationId: widget.reservationId,
+                              orderId: widget.orderId,
+                              isCourse: widget.isCourse,
+                            )),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

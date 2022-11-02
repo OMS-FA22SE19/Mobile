@@ -11,20 +11,20 @@ import 'package:intl/intl.dart' as intl;
 class orderMethod extends StatefulWidget {
   final String? orderId;
   final String method;
-  final int tableId;
+  final int reservationId;
 
   const orderMethod(
       {super.key,
       required this.orderId,
       required this.method,
-      required this.tableId});
+      required this.reservationId});
 
   @override
   State<orderMethod> createState() => _orderMethodState();
 }
 
 class _orderMethodState extends State<orderMethod> {
-  Orders? currentOrder;
+  Order? currentOrder;
   List<OrderDetail>? details;
   var isLoaded = false;
 
@@ -54,7 +54,7 @@ class _orderMethodState extends State<orderMethod> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor: const Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
         title: Text("Order",
             style: GoogleFonts.bebasNeue(
@@ -72,21 +72,21 @@ class _orderMethodState extends State<orderMethod> {
               size: 30,
             )),
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          menuCategory(tableId: widget.tableId)),
-                );
-              },
-              icon: const Icon(
-                Icons.menu_book_rounded,
-                size: 30,
-              )),
-        ],
+        // actions: [
+        //   IconButton(
+        //       onPressed: () {
+        //         Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //               builder: (context) =>
+        //                   menuCategory(reservationId: widget.reservationId)),
+        //         );
+        //       },
+        //       icon: const Icon(
+        //         Icons.menu_book_rounded,
+        //         size: 30,
+        //       )),
+        // ],
       ),
       backgroundColor: Colors.grey[200],
       body: Visibility(
@@ -229,6 +229,31 @@ class _orderMethodState extends State<orderMethod> {
                             ),
                             Text(
                               changeFormat(currentOrder?.total ?? 0),
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.cabin(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Deposit: ',
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.cabin(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            Text(
+                              changeFormat(currentOrder?.prePaid ?? 0),
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.cabin(
                                 fontSize: 20,

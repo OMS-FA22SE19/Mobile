@@ -78,6 +78,7 @@ class food {
     required this.isDeleted,
     required this.price,
     required this.quantity,
+    this.note = "None",
   });
 
   int quantity;
@@ -89,6 +90,7 @@ class food {
   bool available;
   String pictureUrl;
   int price;
+  String note;
 
   factory food.fromJson(Map<String, dynamic> json) => food(
         quantity: 0,

@@ -45,6 +45,7 @@ class orderDetail {
     required this.price,
     required this.status,
     required this.userId,
+    this.note = "",
   });
 
   String orderId;
@@ -55,6 +56,7 @@ class orderDetail {
   String foodName;
   int price;
   String status;
+  String note;
 
   factory orderDetail.fromJson(Map<String, dynamic> json) => orderDetail(
         id: json["id"],
@@ -65,6 +67,7 @@ class orderDetail {
         foodName: json["foodName"],
         status: json["status"],
         price: json["price"],
+        note: json["note"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -76,5 +79,6 @@ class orderDetail {
         "foodName": foodName,
         "status": status,
         "price": price,
+        "note": note,
       };
 }
