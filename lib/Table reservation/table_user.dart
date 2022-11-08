@@ -143,6 +143,8 @@ class _tableUserState extends State<tableUser> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => tableInformation(
+                                tableTypeName: "",
+                                deposit: 100,
                                 amount: widget.amount,
                                 numberOfPeople: widget.numberOfPeople,
                                 name: nameController1.text,

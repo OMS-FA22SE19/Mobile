@@ -49,7 +49,8 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
       appBar: AppBar(
         backgroundColor: Colors.greenAccent,
         centerTitle: true,
-        title: Text(currentOrder?.date ?? "",
+        title: Text(
+            '${currentOrder?.date.substring(0, 10)} | ${currentOrder?.date.substring(11, 16)}',
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),

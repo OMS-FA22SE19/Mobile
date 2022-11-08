@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
-import 'package:oms_mobile/Menu%20Order/menu_category.dart';
+import 'package:oms_mobile/Menu%20Order/order_success.dart';
 import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
@@ -24,9 +24,11 @@ class orderMethod extends StatefulWidget {
 }
 
 class _orderMethodState extends State<orderMethod> {
+  bool flag = false;
   Order? currentOrder;
   List<OrderDetail>? details;
   var isLoaded = false;
+  int total = 0;
 
   @override
   void initState() {
@@ -42,12 +44,18 @@ class _orderMethodState extends State<orderMethod> {
 
   getData() async {
     currentOrder = await RemoteService().getOrders(widget.orderId);
+    flag = currentOrder?.status.contains("Paid") ?? false;
     details = currentOrder?.orderDetails;
     if (currentOrder != null) {
       setState(() {
         isLoaded = true;
+        total = (currentOrder?.total ?? 0) + (currentOrder?.prePaid ?? 0);
       });
     }
+  }
+
+  CheckingOrder() {
+    RemoteService().checkingOrder(widget.orderId ?? "");
   }
 
   @override
@@ -72,21 +80,16 @@ class _orderMethodState extends State<orderMethod> {
               size: 30,
             )),
         automaticallyImplyLeading: false,
-        // actions: [
-        //   IconButton(
-        //       onPressed: () {
-        //         Navigator.push(
-        //           context,
-        //           MaterialPageRoute(
-        //               builder: (context) =>
-        //                   menuCategory(reservationId: widget.reservationId)),
-        //         );
-        //       },
-        //       icon: const Icon(
-        //         Icons.menu_book_rounded,
-        //         size: 30,
-        //       )),
-        // ],
+        actions: [
+          IconButton(
+              onPressed: () {
+                getData();
+              },
+              icon: const Icon(
+                Icons.refresh_rounded,
+                size: 30,
+              )),
+        ],
       ),
       backgroundColor: Colors.grey[200],
       body: Visibility(
@@ -212,65 +215,122 @@ class _orderMethodState extends State<orderMethod> {
                   ),
                 ),
                 Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Total: ',
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cabin(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
+                        padding: const EdgeInsets.all(2),
+                        child: Table(
+                          defaultVerticalAlignment:
+                              TableCellVerticalAlignment.middle,
+                          columnWidths: const <int, TableColumnWidth>{
+                            0: FixedColumnWidth(100),
+                            1: FixedColumnWidth(150),
+                          },
+                          children: <TableRow>[
+                            TableRow(children: [
+                              Text(
+                                'Total bill: ',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cabin(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
                               ),
-                            ),
-                            Text(
-                              changeFormat(currentOrder?.total ?? 0),
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cabin(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
+                              Text(
+                                '${changeFormat(total)}đ',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cabin(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Deposit: ',
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cabin(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
+                            ]),
+                            TableRow(children: [
+                              Text(
+                                'Deposit: ',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cabin(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
                               ),
-                            ),
-                            Text(
-                              changeFormat(currentOrder?.prePaid ?? 0),
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cabin(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
+                              Text(
+                                '- ${changeFormat(currentOrder?.prePaid ?? 0)}đ',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cabin(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
                               ),
-                            ),
+                            ]),
+                            TableRow(children: [
+                              Text(
+                                'Total pay: ',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cabin(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                              Text(
+                                '${changeFormat(currentOrder?.total ?? 0)}đ',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cabin(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ]),
                           ],
                         ),
                       ),
                       InkWell(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => homeScreen()),
-                          );
+                          if (flag == true) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => orderSuccess(
+                                        orderId: widget.orderId ?? "",
+                                      )),
+                            );
+                          } else {
+                            CheckingOrder();
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    'Remind',
+                                    style: GoogleFonts.lato(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  content: Text(
+                                    "A staff will come and checked-out the order for you! Please wait and don't push any button!",
+                                    style: GoogleFonts.lato(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, 'Cancel'),
+                                      child: const Text('I understand'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -278,15 +338,7 @@ class _orderMethodState extends State<orderMethod> {
                               borderRadius: BorderRadius.circular(15)),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Text(
-                              'CONFIRM',
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.cabin(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey[700],
-                              ),
-                            ),
+                            child: conditionalButton(),
                           ),
                         ),
                       ),
@@ -298,5 +350,29 @@ class _orderMethodState extends State<orderMethod> {
         color: Colors.white,
       ),
     );
+  }
+
+  conditionalButton() {
+    if (flag) {
+      return Text(
+        'Continue',
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.cabin(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey[700],
+        ),
+      );
+    } else {
+      return Text(
+        'Process',
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.cabin(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey[700],
+        ),
+      );
+    }
   }
 }

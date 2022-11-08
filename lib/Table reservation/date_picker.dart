@@ -244,9 +244,16 @@ class _datePickerState extends State<datePicker> {
                   ),
                   onPressed: () async {
                     TimeOfDay? newTime = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay(hour: 11, minute: 00),
-                    );
+                        context: context,
+                        initialTime: TimeOfDay(hour: 11, minute: 00),
+                        builder: (context, childWidget) {
+                          return MediaQuery(
+                              data: MediaQuery.of(context).copyWith(
+                                  // Using 24-Hour format
+                                  alwaysUse24HourFormat: true),
+                              // If you want 12-Hour format, just change alwaysUse24HourFormat to false or remove all the builder argument
+                              child: childWidget!);
+                        });
                     //CANCEL
                     if (newTime == null) return;
                     //OK
@@ -356,6 +363,8 @@ class _datePickerState extends State<datePicker> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => tableInformation(
+                                        tableTypeName: "",
+                                        deposit: 100,
                                         amount: widget.amount,
                                         numberOfPeople: widget.numberOfPeople,
                                         name: "Default User",

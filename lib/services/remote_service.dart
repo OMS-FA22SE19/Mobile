@@ -1,7 +1,8 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:oms_mobile/Models/available_date.dart';
-// import 'package:http/http.dart' as http;
 import 'package:oms_mobile/Models/course_type.dart';
 import 'package:oms_mobile/Models/food.dart';
 import 'package:oms_mobile/Models/food_type.dart';
@@ -11,6 +12,7 @@ import 'package:oms_mobile/Models/orderDetail.dart';
 import 'package:oms_mobile/Models/payment_url.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Models/table.dart';
+import 'package:oms_mobile/Models/table_type.dart';
 import 'package:oms_mobile/main.dart';
 
 // class RemoteService {
@@ -343,20 +345,21 @@ class RemoteService {
       }
     }
   }
-  // void confirmOrder(String id) async {
-  //   final Dio dio = Dio();
-  //   HttpOverrides.global = MyHttpOverrides();
-  //   try {
-  //     final response = await dio.post(
-  //         'https://10.0.2.2:7246/api/Orders/$id/Confirm'); //header, author
-  //   } on DioError catch (e) {
-  //     if (e.response?.statusCode == 404) {
-  //       return null;
-  //     } else {
-  //       return null;
-  //     }
-  //   }
-  // }
+
+  void checkingOrder(String id) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio.put(
+          'https://10.0.2.2:7246/api/v1/Orders/$id/Check'); //header, author
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      } else {
+        return null;
+      }
+    }
+  }
 
   void foodCancelled(String id) async {
     final Dio dio = Dio();
@@ -410,6 +413,42 @@ class RemoteService {
     }
   }
 
+  Future<int> getTableChargePerSeat(int typeId) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio.get(
+          'https://10.0.2.2:7246/api/v1/TableTypes/$typeId'); //header, author
+      var result = responseTableType.fromJson(response.data);
+      int deposit = result.data.chargePerSeat;
+      return deposit;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return 0;
+      } else {
+        return 0;
+      }
+    }
+  }
+
+  Future<String> getTableTypeName(int typeId) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio.get(
+          'https://10.0.2.2:7246/api/v1/TableTypes/$typeId'); //header, author
+      var result = responseTableType.fromJson(response.data);
+      String name = result.data.name;
+      return name;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return "";
+      } else {
+        return "";
+      }
+    }
+  }
+
   Future<List<availableDate>?> getTimeAvailable(
       int numberOfSeats, int tableTypeId, String date, int quantity) async {
     final Dio dio = Dio();
@@ -433,11 +472,23 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.get('https://10.0.2.2:7246/api/v1/Orders'); //header, author
+      final response = await dio.get(
+          'https://10.0.2.2:7246/api/v1/Orders?Status=Paid'); //header, author
       var result = ResponseOrder.fromJson(response.data);
       List<Order> orderList = result.data;
-      return orderList;
+
+      final response_2 = await dio.get(
+          'https://10.0.2.2:7246/api/v1/Orders?Status=Processing'); //header, author
+      var result_2 = ResponseOrder.fromJson(response_2.data);
+      List<Order> orderList_2 = result_2.data;
+
+      final response_3 = await dio.get(
+          'https://10.0.2.2:7246/api/v1/Orders?Status=Checking'); //header, author
+      var result_3 = ResponseOrder.fromJson(response_3.data);
+      List<Order> orderList_3 = result_3.data;
+
+      List<Order> orderList_total = orderList + orderList_2 + orderList_3;
+      return orderList_total;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         return null;
@@ -507,6 +558,7 @@ class RemoteService {
           startTime: DateTime.now(),
           endTime: DateTime.now(),
           status: "",
+          prePaid: 0,
           isPriorFoodOrder: false,
           user: User(
               id: "",
@@ -528,6 +580,7 @@ class RemoteService {
           startTime: DateTime.now(),
           endTime: DateTime.now(),
           status: "",
+          prePaid: 0,
           isPriorFoodOrder: false,
           user: User(
               id: "",
@@ -593,7 +646,7 @@ class RemoteService {
         "numOfSeats": numberOfSeats,
         "tableTypeId": tableTypeId,
         "quantity": quantity,
-        "isPriorFoodOrder": false
+        "isPriorFoodOrder": isPriorFoodOrder
       }); //header, author
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
