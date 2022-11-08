@@ -11,10 +11,15 @@ import 'package:oms_mobile/services/remote_service.dart';
 
 class menuCategory extends StatefulWidget {
   menuCategory(
-      {super.key, required this.reservationId, this.orderId, this.isCourse});
+      {super.key,
+      required this.reservationId,
+      this.orderId,
+      this.isCourse,
+      this.orderFood});
   final int reservationId;
   String? orderId;
   bool? isCourse;
+  bool? orderFood;
 
   @override
   State<menuCategory> createState() => _menuCategoryState();
@@ -104,6 +109,7 @@ class _menuCategoryState extends State<menuCategory> {
                                     isCourse: true,
                                     categoryId: courses![index].id,
                                     orderId: widget.orderId,
+                                    orderFood: widget.orderFood,
                                   )),
                         );
                       },

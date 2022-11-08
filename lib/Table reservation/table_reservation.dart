@@ -6,7 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Models/available_date.dart';
 import 'package:oms_mobile/Models/table.dart';
-import 'package:oms_mobile/Table%20reservation/table_user.dart';
+import 'package:intl/intl.dart';
+import 'package:oms_mobile/Table%20reservation/table_information.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
 class tableReservation extends StatefulWidget {
@@ -27,9 +28,10 @@ class _tableReservationState extends State<tableReservation> {
   bool isLoadedTime = false;
   int numberOfPeople = 0;
   int numberOfSeats = 0;
-  int amount = 0;
   int tableTypeId = 0;
   int quantity = 0;
+  int deposit = 0;
+  String tableTypeName = "";
   Color onSelected = Color.fromRGBO(232, 192, 125, 50);
 
   String selectedDate = "";
@@ -77,6 +79,10 @@ class _tableReservationState extends State<tableReservation> {
     }
   }
 
+  getdab() {
+    DateTime date2 = DateFormat("hh:mma").parse("6:45PM");
+  }
+
   getTimeAvailable(String date) async {
     dates = await RemoteService().getTimeAvailable(
         numberOfSeats, tableTypeId, date.substring(0, 10), quantity);
@@ -85,6 +91,12 @@ class _tableReservationState extends State<tableReservation> {
         isLoadedTime = true;
       });
     }
+  }
+
+  getTableType(int typeId) async {
+    int charge = await RemoteService().getTableChargePerSeat(tableTypeId);
+    deposit = charge * numberOfSeats * quantity;
+    tableTypeName = await RemoteService().getTableTypeName(tableTypeId);
   }
 
   double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
@@ -99,17 +111,17 @@ class _tableReservationState extends State<tableReservation> {
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
-        leading: IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => homeScreen()),
-              );
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_rounded,
-              size: 30,
-            )),
+        // leading: IconButton(
+        //     onPressed: () {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(builder: (context) => homeScreen()),
+        //       );
+        //     },
+        //     icon: Icon(
+        //       Icons.arrow_back_ios_rounded,
+        //       size: 30,
+        //     )),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -166,49 +178,6 @@ class _tableReservationState extends State<tableReservation> {
       backgroundColor: Colors.grey[200],
       body: ListView(
         children: [
-          // SizedBox(
-          //   height: 20,
-          // ),
-          // Container(
-          //   decoration: BoxDecoration(
-          //     color: Color.fromRGBO(232, 192, 125, 100),
-          //     borderRadius: BorderRadius.circular(10),
-          //   ),
-          //   child: Padding(
-          //     padding: const EdgeInsets.all(10),
-          //     child: Column(
-          //       children: [
-          //         Text(
-          //           'WE\'RE OPEN!',
-          //           textAlign: TextAlign.center,
-          //           style: GoogleFonts.cabin(
-          //             fontWeight: FontWeight.bold,
-          //             color: Colors.black,
-          //             fontSize: 20,
-          //           ),
-          //         ),
-          //         Text(
-          //           'Business Hour: ${_openTime.format(context)} - ${_closeTime.format(context)}',
-          //           textAlign: TextAlign.center,
-          //           style: GoogleFonts.cabin(
-          //             fontWeight: FontWeight.bold,
-          //             color: Colors.black,
-          //             fontSize: 20,
-          //           ),
-          //         ),
-          //         Text(
-          //           'Business Day: from Mon to Sun',
-          //           textAlign: TextAlign.center,
-          //           style: GoogleFonts.cabin(
-          //             fontWeight: FontWeight.bold,
-          //             color: Colors.black,
-          //             fontSize: 20,
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
           SizedBox(
             height: 10,
           ),
@@ -345,7 +314,7 @@ class _tableReservationState extends State<tableReservation> {
           ),
           Visibility(
             visible: isLoaded,
-            // ignore: sort_child_properties_last
+            replacement: Center(),
             child: Container(
               height: 180,
               child: ListView.builder(
@@ -357,7 +326,7 @@ class _tableReservationState extends State<tableReservation> {
                   return InkWell(
                     // focusColor: Colors.yellow,
                     highlightColor: Colors.red,
-                    canRequestFocus: true,
+                    canRequestFocus: false,
                     onTap: () {
                       setState(() {
                         numberOfSeats = tables![index].numOfSeats;
@@ -366,6 +335,7 @@ class _tableReservationState extends State<tableReservation> {
                         hiddenFlag = false;
                       });
                       getTimeAvailable(_selectedDate.toString());
+                      getTableType(tableTypeId);
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -433,26 +403,6 @@ class _tableReservationState extends State<tableReservation> {
                 },
               ),
             ),
-            replacement: Center(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                child: Container(
-                  height: 170,
-                  width: MediaQuery.of(context).size.width - 10,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color.fromRGBO(232, 192, 125, 50),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'None table available!',
-                    style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ),
           ),
           SizedBox(
             height: 10,
@@ -482,27 +432,7 @@ class _tableReservationState extends State<tableReservation> {
             height: 100,
             child: Visibility(
               visible: isLoadedTime,
-              replacement: Center(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  child: Container(
-                    height: 170,
-                    width: MediaQuery.of(context).size.width - 10,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color.fromRGBO(232, 192, 125, 50),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      'None table available!',
-                      style:
-                          GoogleFonts.cabin(fontSize: 20, color: Colors.white),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
+              replacement: Center(),
               child: ListView.builder(
                 shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
@@ -573,9 +503,14 @@ class _tableReservationState extends State<tableReservation> {
                   ),
                   onPressed: () async {
                     TimeOfDay? newTime = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay(hour: 11, minute: 00),
-                    );
+                        context: context,
+                        initialTime: TimeOfDay(hour: 11, minute: 00),
+                        builder: (context, childWidget) {
+                          return MediaQuery(
+                              data: MediaQuery.of(context)
+                                  .copyWith(alwaysUse24HourFormat: true),
+                              child: childWidget!);
+                        });
                     //CANCEL
                     if (newTime == null) return;
                     //OK
@@ -715,9 +650,14 @@ class _tableReservationState extends State<tableReservation> {
                   ),
                   onPressed: () async {
                     TimeOfDay? newTime = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay(hour: 11, minute: 00),
-                    );
+                        context: context,
+                        initialTime: TimeOfDay(hour: 11, minute: 00),
+                        builder: (context, childWidget) {
+                          return MediaQuery(
+                              data: MediaQuery.of(context)
+                                  .copyWith(alwaysUse24HourFormat: true),
+                              child: childWidget!);
+                        });
                     //CANCEL
                     if (newTime == null) return;
                     //OK
@@ -845,7 +785,9 @@ class _tableReservationState extends State<tableReservation> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => tableUser(
+                            builder: (context) => tableInformation(
+                                  tableTypeName: tableTypeName,
+                                  deposit: deposit,
                                   amount: quantity,
                                   numberOfPeople: numberOfPeople,
                                   name: "Default User",

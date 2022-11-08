@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:oms_mobile/Table%20reservation/table_reservation.dart';
+import 'package:oms_mobile/test.dart';
 import '../Home/home_screen.dart';
 
 class loginScreen extends StatefulWidget {
@@ -14,6 +14,18 @@ class loginScreen extends StatefulWidget {
 
 class _loginScreenState extends State<loginScreen> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
+
+  getData() async {
+    // final fcmToken = await FirebaseMessaging.instance.getToken();
+    // print(fcmToken);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
@@ -24,9 +36,17 @@ class _loginScreenState extends State<loginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               // ignore: prefer_const_literals_to_create_immutables
               children: [
-                Icon(
-                  Icons.restaurant_menu_rounded,
-                  size: 100,
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Test()),
+                    );
+                  },
+                  child: Icon(
+                    Icons.restaurant_menu_rounded,
+                    size: 100,
+                  ),
                 ),
                 //welcome text
                 Text('Hello Customer',
@@ -136,7 +156,7 @@ class _loginScreenState extends State<loginScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => homeScreen()),
+                          MaterialPageRoute(builder: (context) => Test()),
                         );
                       },
                       child: Text(

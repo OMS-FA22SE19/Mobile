@@ -7,6 +7,7 @@ import 'package:oms_mobile/Models/food.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/services/remote_service.dart';
+import 'package:oms_mobile/test2.dart';
 
 class menuCart extends StatefulWidget {
   final int reservationId;
@@ -14,12 +15,14 @@ class menuCart extends StatefulWidget {
   final List<food>? foods;
   String? orderId;
   final isCourse;
+  bool? orderFood;
   menuCart(
       {super.key,
       required this.foods,
       required this.categoryId,
       this.isCourse,
       this.orderId,
+      this.orderFood,
       required this.reservationId});
 
   @override
@@ -428,6 +431,33 @@ class _menuCartState extends State<menuCart> {
                     ),
                     child: Text(
                       'CONFIRM',
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.cabin(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => testPrior(
+                                  reservationId: widget.reservationId,
+                                  foodList: widget.foods,
+                                )),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                    ),
+                    child: Text(
+                      'CHECK',
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.cabin(
                         fontSize: 20,

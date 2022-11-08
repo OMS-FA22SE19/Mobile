@@ -1,9 +1,7 @@
 // ignore_for_file: prefer_const_constructors, camel_case_types
 import 'package:flutter/material.dart';
-import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/User%20History/history_page.dart';
-import 'package:oms_mobile/services/remote_service.dart';
 import '../Table reservation/table_reservation.dart';
 
 class homeScreen extends StatefulWidget {
@@ -23,9 +21,11 @@ class _homeScreenState extends State<homeScreen> {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (mounted) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override

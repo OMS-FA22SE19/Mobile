@@ -19,12 +19,14 @@ class menuFood extends StatefulWidget {
       required this.isCourse,
       required this.reservationId,
       this.orderId,
-      this.cartfoods});
+      this.cartfoods,
+      this.orderFood});
   final int reservationId;
   final int categoryId;
   final bool isCourse;
   String? orderId;
   List<food>? cartfoods;
+  bool? orderFood;
 
   @override
   State<menuFood> createState() => _menuFoodState();
@@ -60,7 +62,7 @@ class _menuFoodState extends State<menuFood> {
   getData() async {
     menus = await RemoteService().getMenuAvailable();
     menus?.forEach((menu) {
-      if (menu.isHidden == false) menuId = menu.id;
+      if (menu.available == false) menuId = menu.id;
     });
 
     foods = await RemoteService()
@@ -249,6 +251,7 @@ class _menuFoodState extends State<menuFood> {
                       categoryId: widget.categoryId,
                       foods: cartfoods,
                       orderId: widget.orderId,
+                      orderFood: widget.orderFood,
                     )),
           );
         },

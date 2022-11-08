@@ -313,6 +313,7 @@ class ReservationNoTable {
     required this.status,
     required this.isPriorFoodOrder,
     required this.user,
+    required this.prePaid,
     this.reservationTables = const [],
   });
 
@@ -328,6 +329,7 @@ class ReservationNoTable {
   String status;
   bool isPriorFoodOrder;
   User user;
+  int prePaid;
   List<ReservationTable> reservationTables;
 
   factory ReservationNoTable.fromJson(Map<String, dynamic> json) =>
@@ -342,6 +344,7 @@ class ReservationNoTable {
         startTime: DateTime.parse(json["startTime"]),
         endTime: DateTime.parse(json["endTime"]),
         status: json["status"],
+        prePaid: json["prePaid"],
         isPriorFoodOrder: json["isPriorFoodOrder"],
         user: User.fromJson(json["user"]),
         reservationTables: List<ReservationTable>.from(
@@ -359,6 +362,7 @@ class ReservationNoTable {
         "startTime": startTime.toIso8601String(),
         "endTime": endTime.toIso8601String(),
         "status": status,
+        "prePaid": prePaid,
         "isPriorFoodOrder": isPriorFoodOrder,
         "user": user.toJson(),
         "reservationTables":

@@ -26,7 +26,6 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
   List<OrderDetail>? details;
   var isLoaded = false;
   bool flag = false;
-  int count = 0;
   int total = 0;
 
   @override

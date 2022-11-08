@@ -2,12 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
 import 'package:oms_mobile/Models/payment_url.dart';
 import 'package:oms_mobile/Models/reservation.dart';
+import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart' as intl;
 
 class reservationDetail extends StatefulWidget {
   final int id;
@@ -28,11 +29,11 @@ class _reservationDetailState extends State<reservationDetail> {
   void initState() {
     super.initState();
     getData();
-    getVNPAYurl();
   }
 
   getData() async {
     reservation = await RemoteService().getReservationBeforeCheckin(widget.id);
+    getVNPAYurl();
     if (reservation != null) {
       setState(() {
         isLoaded = true;
@@ -41,10 +42,17 @@ class _reservationDetailState extends State<reservationDetail> {
   }
 
   getVNPAYurl() async {
-    payment = await RemoteService().getPaymentURLReservation(widget.id, 100000);
+    payment = await RemoteService()
+        .getPaymentURLReservation(widget.id, reservation?.prePaid);
   }
 
   double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
+
+  String changeFormat(int number) {
+    String formated =
+        intl.NumberFormat.decimalPattern().format(number).toString();
+    return formated;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +68,8 @@ class _reservationDetailState extends State<reservationDetail> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const homeScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const reservationList()),
               );
             },
             icon: const Icon(
@@ -120,821 +129,886 @@ class _reservationDetailState extends State<reservationDetail> {
 
   conditionalWidget(String status) {
     if (status.contains("CheckIn")) {
-      return Column(
-        children: [
-          const Icon(
-            Icons.table_restaurant_rounded,
-            size: 80,
-            color: Colors.black,
-          ),
-          Text(
-            'YOUR RESERVATION',
-            maxLines: 2,
-            style: GoogleFonts.cabin(fontSize: 30, color: Colors.black),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Reservation information',
-            maxLines: 2,
-            style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Container(
-              // height: 400,
-              width: MediaQuery.of(context).size.width - 20,
-              decoration: BoxDecoration(
-                color: Colors.greenAccent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: FixedColumnWidth(180),
-                    1: FlexColumnWidth(),
-                  },
-                  children: <TableRow>[
-                    TableRow(children: [
-                      Text(
-                        'Date:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.startTime
-                                .toString()
-                                .substring(0, 10)
-                                .replaceAll('-', '/') ??
-                            "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Start Time:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.startTime.toString().substring(11, 16) ??
-                            "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'End Time:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.endTime.toString().substring(11, 16) ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Number of People:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.numOfPeople.toString() ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Number of Seats:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        '${reservation?.numOfSeats.toString()} x ${reservation?.quantity.toString()}',
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Table type:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.tableType ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                  ],
-                ),
-              ),
+      return RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            getData();
+          });
+          return Future<void>.delayed(const Duration(seconds: 1));
+        },
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            const Icon(
+              Icons.table_restaurant_rounded,
+              size: 80,
+              color: Colors.black,
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            'User information',
-            maxLines: 2,
-            style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Container(
-              width: MediaQuery.of(context).size.width - 20,
-              decoration: BoxDecoration(
-                color: Colors.greenAccent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: FixedColumnWidth(180),
-                    1: FlexColumnWidth(),
-                  },
-                  children: [
-                    TableRow(children: [
-                      Text(
-                        'Full Name',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.user.fullName ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Phone Number',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.user.phoneNumber ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                  ],
-                ),
-              ),
+            Text(
+              'YOUR RESERVATION',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.cabin(fontSize: 30, color: Colors.black),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Table information',
-            maxLines: 2,
-            style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Container(
-              width: MediaQuery.of(context).size.width - 20,
-              decoration: BoxDecoration(
-                color: Colors.greenAccent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: FixedColumnWidth(180),
-                    1: FlexColumnWidth(),
-                  },
-                  children: [
-                    TableRow(children: [
-                      Text(
-                        'Status: ',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.status ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Table Id: ',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.reservationTables
-                                .elementAt(0)
-                                .tableId
-                                .toString() ??
-                            "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                  ],
-                ),
-              ),
+            const SizedBox(
+              height: 10,
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => menuCategory(
-                              reservationId:
-                                  int.parse(reservation?.id.toString() ?? ""),
-                            )),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+            Text(
+              'Reservation information',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Container(
+                // height: 400,
+                width: MediaQuery.of(context).size.width - 20,
+                decoration: BoxDecoration(
+                  color: Colors.greenAccent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    columnWidths: const <int, TableColumnWidth>{
+                      0: FixedColumnWidth(180),
+                      1: FlexColumnWidth(),
+                    },
+                    children: <TableRow>[
+                      TableRow(children: [
+                        Text(
+                          'Date:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.startTime
+                                  .toString()
+                                  .substring(0, 10)
+                                  .replaceAll('-', '/') ??
+                              "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Start Time:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.startTime.toString().substring(11, 16) ??
+                              "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'End Time:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.endTime.toString().substring(11, 16) ??
+                              "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Number of People:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.numOfPeople.toString() ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Number of Seats:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          '${reservation?.numOfSeats.toString()} x ${reservation?.quantity.toString()}',
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Table type:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.tableType ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Deposit:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          '${changeFormat(reservation?.prePaid ?? 0)}đ',
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                    ],
                   ),
                 ),
-                child: Text(
-                  'Order Food',
-                  style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              'User information',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Container(
+                width: MediaQuery.of(context).size.width - 20,
+                decoration: BoxDecoration(
+                  color: Colors.greenAccent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    columnWidths: const <int, TableColumnWidth>{
+                      0: FixedColumnWidth(180),
+                      1: FlexColumnWidth(),
+                    },
+                    children: [
+                      TableRow(children: [
+                        Text(
+                          'Full Name',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.user.fullName ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Phone Number',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.user.phoneNumber ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                    ],
+                  ),
                 ),
               ),
-            ],
-          )
-        ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              'Table information',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Container(
+                width: MediaQuery.of(context).size.width - 20,
+                decoration: BoxDecoration(
+                  color: Colors.greenAccent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    columnWidths: const <int, TableColumnWidth>{
+                      0: FixedColumnWidth(180),
+                      1: FlexColumnWidth(),
+                    },
+                    children: [
+                      TableRow(children: [
+                        Text(
+                          'Status: ',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.status ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Table Id: ',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.reservationTables
+                                  .elementAt(0)
+                                  .tableId
+                                  .toString() ??
+                              "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => menuCategory(
+                                reservationId:
+                                    int.parse(reservation?.id.toString() ?? ""),
+                              )),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                  child: Text(
+                    'Order Food',
+                    style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       );
     } else if ((status.contains("Reserved"))) {
-      return Column(
-        children: [
-          const Icon(
-            Icons.table_restaurant_rounded,
-            size: 80,
-            color: Colors.black,
-          ),
-          Text(
-            'YOUR RESERVATION',
-            maxLines: 2,
-            style: GoogleFonts.cabin(fontSize: 30, color: Colors.black),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Reservation information',
-            maxLines: 2,
-            style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Container(
-              // height: 400,
-              width: MediaQuery.of(context).size.width - 20,
-              decoration: BoxDecoration(
-                color: Colors.yellow[600],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: FixedColumnWidth(180),
-                    1: FlexColumnWidth(),
-                  },
-                  children: <TableRow>[
-                    TableRow(children: [
-                      Text(
-                        'Date:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.startTime
-                                .toString()
-                                .substring(0, 10)
-                                .replaceAll('-', '/') ??
-                            "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Start Time:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.startTime.toString().substring(11, 16) ??
-                            "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'End Time:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.endTime.toString().substring(11, 16) ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Number of People:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.numOfPeople.toString() ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Number of Seats:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        '${reservation?.numOfSeats.toString()} x ${reservation?.quantity.toString()}',
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Table type:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.tableType ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                  ],
-                ),
-              ),
+      return RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            getData();
+          });
+          return Future<void>.delayed(const Duration(seconds: 1));
+        },
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            const Icon(
+              Icons.table_restaurant_rounded,
+              size: 80,
+              color: Colors.black,
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            'User information',
-            maxLines: 2,
-            style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Container(
-              width: MediaQuery.of(context).size.width - 20,
-              decoration: BoxDecoration(
-                color: Colors.yellow[600],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: FixedColumnWidth(180),
-                    1: FlexColumnWidth(),
-                  },
-                  children: [
-                    TableRow(children: [
-                      Text(
-                        'Full Name',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.user.fullName ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Phone Number',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.user.phoneNumber ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                  ],
-                ),
-              ),
+            Text(
+              'YOUR RESERVATION',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.cabin(fontSize: 30, color: Colors.black),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Table information',
-            maxLines: 2,
-            style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Container(
-              width: MediaQuery.of(context).size.width - 20,
-              decoration: BoxDecoration(
-                color: Colors.yellow[600],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: FixedColumnWidth(180),
-                    1: FlexColumnWidth(),
-                  },
-                  children: [
-                    TableRow(children: [
-                      Text(
-                        'Status: ',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.status ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                  ],
-                ),
-              ),
+            const SizedBox(
+              height: 10,
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  RemoteService().cancelReservation(reservation?.id);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const homeScreen()),
-                  );
-                },
-                child: Text(
-                  'Cancel',
-                  style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+            Text(
+              'Reservation information',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Container(
+                // height: 400,
+                width: MediaQuery.of(context).size.width - 20,
+                decoration: BoxDecoration(
+                  color: Colors.yellow[600],
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    columnWidths: const <int, TableColumnWidth>{
+                      0: FixedColumnWidth(180),
+                      1: FlexColumnWidth(),
+                    },
+                    children: <TableRow>[
+                      TableRow(children: [
+                        Text(
+                          'Date:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.startTime
+                                  .toString()
+                                  .substring(0, 10)
+                                  .replaceAll('-', '/') ??
+                              "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Start Time:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.startTime.toString().substring(11, 16) ??
+                              "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'End Time:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.endTime.toString().substring(11, 16) ??
+                              "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Number of People:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.numOfPeople.toString() ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Number of Seats:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          '${reservation?.numOfSeats.toString()} x ${reservation?.quantity.toString()}',
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Table type:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.tableType ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Deposit:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          '${changeFormat(reservation?.prePaid ?? 0)}đ',
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                    ],
                   ),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  launchUrl(
-                    Uri.parse(payment?.url ?? "NULL URL"),
-                    mode: LaunchMode.externalApplication,
-                  );
-                },
-                child: Text(
-                  'Deposit',
-                  style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              'User information',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Container(
+                width: MediaQuery.of(context).size.width - 20,
+                decoration: BoxDecoration(
+                  color: Colors.yellow[600],
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    columnWidths: const <int, TableColumnWidth>{
+                      0: FixedColumnWidth(180),
+                      1: FlexColumnWidth(),
+                    },
+                    children: [
+                      TableRow(children: [
+                        Text(
+                          'Full Name',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.user.fullName ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Phone Number',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.user.phoneNumber ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                    ],
                   ),
                 ),
               ),
-              conditionalButtonCheckin(reservation?.startTime ?? DateTime.now())
-            ],
-          )
-        ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              'Table information',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Container(
+                width: MediaQuery.of(context).size.width - 20,
+                decoration: BoxDecoration(
+                  color: Colors.yellow[600],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    columnWidths: const <int, TableColumnWidth>{
+                      0: FixedColumnWidth(180),
+                      1: FlexColumnWidth(),
+                    },
+                    children: [
+                      TableRow(children: [
+                        Text(
+                          'Status: ',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.status ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    RemoteService().cancelReservation(reservation?.id);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const reservationList()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+                  ),
+                ),
+                conditionalButtonCheckin(
+                    reservation?.startTime ?? DateTime.now())
+              ],
+            )
+          ],
+        ),
       );
     } else {
-      return Column(
-        children: [
-          const Icon(
-            Icons.table_restaurant_rounded,
-            size: 80,
-            color: Colors.black,
-          ),
-          Text(
-            'YOUR RESERVATION',
-            maxLines: 2,
-            style: GoogleFonts.cabin(fontSize: 30, color: Colors.black),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Reservation information',
-            maxLines: 2,
-            style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Container(
-              // height: 400,
-              width: MediaQuery.of(context).size.width - 20,
-              decoration: BoxDecoration(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: FixedColumnWidth(180),
-                    1: FlexColumnWidth(),
-                  },
-                  children: <TableRow>[
-                    TableRow(children: [
-                      Text(
-                        'Date:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.startTime
-                                .toString()
-                                .substring(0, 10)
-                                .replaceAll('-', '/') ??
-                            "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Start Time:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.startTime.toString().substring(11, 16) ??
-                            "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'End Time:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.endTime.toString().substring(11, 16) ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Number of People:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.numOfPeople.toString() ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Number of Seats:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        '${reservation?.numOfSeats.toString()} x ${reservation?.quantity.toString()}',
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Table type:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.tableType ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                  ],
-                ),
-              ),
+      return RefreshIndicator(
+        onRefresh: () async {
+          setState(() {
+            getData();
+          });
+          return Future<void>.delayed(const Duration(seconds: 1));
+        },
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            const Icon(
+              Icons.table_restaurant_rounded,
+              size: 80,
+              color: Colors.black,
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            'User information',
-            maxLines: 2,
-            style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Container(
-              width: MediaQuery.of(context).size.width - 20,
-              decoration: BoxDecoration(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: FixedColumnWidth(180),
-                    1: FlexColumnWidth(),
-                  },
-                  children: [
-                    TableRow(children: [
-                      Text(
-                        'Full Name',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.user.fullName ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Text(
-                        'Phone Number',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.user.phoneNumber ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                  ],
-                ),
-              ),
+            Text(
+              'YOUR RESERVATION',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.cabin(fontSize: 30, color: Colors.black),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Table information',
-            maxLines: 2,
-            style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Container(
-              width: MediaQuery.of(context).size.width - 20,
-              decoration: BoxDecoration(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Table(
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                  columnWidths: const <int, TableColumnWidth>{
-                    0: FixedColumnWidth(180),
-                    1: FlexColumnWidth(),
-                  },
-                  children: [
-                    TableRow(children: [
-                      Text(
-                        'Status: ',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                      Text(
-                        reservation?.status ?? "",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.cabin(
-                            fontSize: 20, color: Colors.white),
-                      ),
-                    ]),
-                  ],
-                ),
-              ),
+            const SizedBox(
+              height: 10,
             ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  RemoteService().cancelReservation(reservation?.id);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const homeScreen()),
-                  );
-                },
-                child: Text(
-                  'Cancel',
-                  style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+            Text(
+              'Reservation information',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Container(
+                // height: 400,
+                width: MediaQuery.of(context).size.width - 20,
+                decoration: BoxDecoration(
+                  color: Colors.blueAccent,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    columnWidths: const <int, TableColumnWidth>{
+                      0: FixedColumnWidth(180),
+                      1: FlexColumnWidth(),
+                    },
+                    children: <TableRow>[
+                      TableRow(children: [
+                        Text(
+                          'Date:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.startTime
+                                  .toString()
+                                  .substring(0, 10)
+                                  .replaceAll('-', '/') ??
+                              "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Start Time:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.startTime.toString().substring(11, 16) ??
+                              "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'End Time:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.endTime.toString().substring(11, 16) ??
+                              "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Number of People:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.numOfPeople.toString() ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Number of Seats:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          '${reservation?.numOfSeats.toString()} x ${reservation?.quantity.toString()}',
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Table type:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.tableType ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Deposit:',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          '${changeFormat(reservation?.prePaid ?? 0)}đ',
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                    ],
                   ),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  launchUrl(
-                    Uri.parse(payment?.url ?? "NULL URL"),
-                    mode: LaunchMode.externalApplication,
-                  );
-                },
-                child: Text(
-                  'Deposit',
-                  style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              'User information',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Container(
+                width: MediaQuery.of(context).size.width - 20,
+                decoration: BoxDecoration(
+                  color: Colors.blueAccent,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    columnWidths: const <int, TableColumnWidth>{
+                      0: FixedColumnWidth(180),
+                      1: FlexColumnWidth(),
+                    },
+                    children: [
+                      TableRow(children: [
+                        Text(
+                          'Full Name',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.user.fullName ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                      TableRow(children: [
+                        Text(
+                          'Phone Number',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.user.phoneNumber ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                    ],
                   ),
                 ),
               ),
-              conditionalButtonCheckin(reservation?.startTime ?? DateTime.now())
-            ],
-          )
-        ],
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              'Table information',
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Container(
+                width: MediaQuery.of(context).size.width - 20,
+                decoration: BoxDecoration(
+                  color: Colors.blueAccent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Table(
+                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    columnWidths: const <int, TableColumnWidth>{
+                      0: FixedColumnWidth(180),
+                      1: FlexColumnWidth(),
+                    },
+                    children: [
+                      TableRow(children: [
+                        Text(
+                          'Status: ',
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                        Text(
+                          reservation?.status ?? "",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cabin(
+                              fontSize: 20, color: Colors.white),
+                        ),
+                      ]),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    RemoteService().cancelReservation(reservation?.id);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const reservationList()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.redAccent,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                  child: Text(
+                    'Cancel',
+                    style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    launchUrl(
+                      Uri.parse(payment?.url ?? "NULL URL"),
+                      mode: LaunchMode.externalApplication,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                  ),
+                  child: Text(
+                    'Deposit',
+                    style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
       );
     }
   }

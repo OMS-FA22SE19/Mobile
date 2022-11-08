@@ -39,24 +39,24 @@ class menu {
       {required this.id,
       required this.name,
       required this.description,
-      required this.isHidden});
+      required this.available});
 
   int id;
   String name;
   String description;
-  bool isHidden;
+  bool available;
 
   factory menu.fromJson(Map<String, dynamic> json) => menu(
         id: json["id"],
         name: json["name"],
         description: json["description"],
-        isHidden: json["isHidden"],
+        available: json["available"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
         "description": description,
-        "isHidden": isHidden,
+        "available": available,
       };
 }

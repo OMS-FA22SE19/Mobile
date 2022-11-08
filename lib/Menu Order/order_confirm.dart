@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
-import 'package:oms_mobile/Menu%20Order/order_method.dart';
+import 'package:oms_mobile/Menu%20Order/order_method_cash.dart';
 import 'package:oms_mobile/Menu%20Order/order_method_online.dart';
 
 class orderConfirm extends StatefulWidget {
