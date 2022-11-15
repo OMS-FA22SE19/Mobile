@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:oms_mobile/Login/register_page.dart';
 import 'package:oms_mobile/test.dart';
 import '../Home/home_screen.dart';
 
@@ -15,7 +16,6 @@ class loginScreen extends StatefulWidget {
 class _loginScreenState extends State<loginScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getData();
   }
@@ -156,7 +156,8 @@ class _loginScreenState extends State<loginScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Test()),
+                          MaterialPageRoute(
+                              builder: (context) => registerPage()),
                         );
                       },
                       child: Text(

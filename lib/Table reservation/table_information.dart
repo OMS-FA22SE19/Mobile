@@ -5,9 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
+import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Table%20reservation/table_reservation.dart';
 import 'package:oms_mobile/services/remote_service.dart';
-import 'package:oms_mobile/test2.dart';
+import 'package:oms_mobile/reservation_preorder_food.dart';
 
 class tableInformation extends StatefulWidget {
   final int numberOfPeople;
@@ -49,11 +50,13 @@ class _tableInformationState extends State<tableInformation> {
     super.initState();
   }
 
-  postData(String start, String end, int numberOfSeats, int numberOfPeople,
-      int tableTypeId, bool isPriorFoodOrder, int quantity) async {
-    RemoteService().createReservations(start, end, numberOfSeats,
-        numberOfPeople, tableTypeId, isPriorFoodOrder, quantity);
-  }
+  // postData(String start, String end, int numberOfSeats, int numberOfPeople,
+  //     int tableTypeId, bool isPriorFoodOrder, int quantity) async {
+  //   ReservationNoTable? returnReserv;
+  //   returnReserv = await RemoteService().createReservations(start, end,
+  //       numberOfSeats, numberOfPeople, tableTypeId, isPriorFoodOrder, quantity);
+  //   return returnId;
+  // }
 
   String changeFormat(int number) {
     String formated =
@@ -456,47 +459,6 @@ class _tableInformationState extends State<tableInformation> {
                   height: 10,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Pre-Order Food",
-                        textAlign: TextAlign.right,
-                        style: GoogleFonts.roboto(
-                            fontSize: 20,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Row(
-                        children: [
-                          Switch(
-                            value: orderFood,
-                            activeColor: Colors.greenAccent,
-                            onChanged: (bool value) {
-                              setState(() {
-                                orderFood = value;
-                              });
-                            },
-                          ),
-                          Text(
-                            orderFood ? "yes" : "no",
-                            textAlign: TextAlign.right,
-                            style: GoogleFonts.roboto(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -507,7 +469,7 @@ class _tableInformationState extends State<tableInformation> {
                         borderRadius: BorderRadius.all(Radius.circular(15)),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       setState(() {
                         String startMinute;
                         String startHour;
@@ -546,14 +508,6 @@ class _tableInformationState extends State<tableInformation> {
                         } else {
                           endHour = '0${widget.endTime.hour}';
                         }
-                        // if (widget.time.minute.toString().length == 2) {
-                        //   startTime =
-                        //       '${widget.date.year}-${widget.date.month}-${widget.date.day}T${widget.time.hour}:${widget.time.minute}:00.000Z';
-                        // } else {
-                        //   startTime =
-                        //       '${widget.date.year}-${widget.date.month}-${widget.date.day}T${widget.time.hour}:0${widget.time.minute}:00.000Z';
-                        // }
-                        // String endHour = (int.parse(startHour) + 1).toString();
                         start = '${widget.date.year}-$startMonth-$startDay' +
                             'T' +
                             '$startHour:$startMinute:00.000Z';
@@ -561,14 +515,68 @@ class _tableInformationState extends State<tableInformation> {
                             'T' +
                             '$endHour:$endMinute:00.000Z';
                       });
-                      postData(
+                      int? returnReservId;
+                      returnReservId = await RemoteService().createReservations(
                           start,
                           end,
                           widget.numberOfSeats,
                           widget.numberOfPeople,
                           widget.tableTypeId,
-                          orderFood,
                           widget.amount);
+                      showDialog(
+                        barrierDismissible: true,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(
+                              'Remind',
+                              style: GoogleFonts.lato(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            content: Text(
+                              "Do you want to pre-order food with this reservation?",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    Navigator.pop(context, 'Cancel');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => menuCategory(
+                                              orderFood: true,
+                                              reservationId:
+                                                  returnReservId ?? 0)),
+                                    );
+                                  });
+                                },
+                                child: const Text('Yes'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    Navigator.pop(context, 'Cancel');
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => homeScreen()),
+                                    );
+                                  });
+                                },
+                                child: const Text('No'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
                       showDialog(
                         barrierDismissible: false,
                         context: context,
@@ -581,33 +589,41 @@ class _tableInformationState extends State<tableInformation> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            content: Text(
-                              "You need to pay for your reservation 30 minutes after making a reservation or your reservation will be cancel !",
-                              style: GoogleFonts.lato(
-                                color: Colors.black,
+                            content: Container(
+                              height: 120,
+                              child: Column(
+                                children: [
+                                  Text(
+                                    "You need to pay for your reservation 30 minutes after making a reservation or your reservation will be cancel !",
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.lato(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    "Pre-order food will be include in this reservation.",
+                                    style: GoogleFonts.lato(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             actions: <Widget>[
                               TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context, 'Cancel'),
+                                onPressed: () {
+                                  Navigator.pop(context, 'Cancel');
+                                },
                                 child: const Text('I understand'),
                               ),
                             ],
                           );
                         },
                       );
-                      orderFood
-                          ? Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => homeScreen()),
-                            )
-                          : Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => homeScreen()),
-                            );
                     },
                     child: Text(
                       'Confirm'.toUpperCase(),
@@ -615,44 +631,6 @@ class _tableInformationState extends State<tableInformation> {
                           color: Color.fromRGBO(232, 192, 125, 100),
                           fontSize: 15,
                           fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    orderFood
-                        ? Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => menuCategory(
-                                      orderFood: orderFood,
-                                      reservationId: 8,
-                                    )),
-                          )
-                        : Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => homeScreen()),
-                          );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Container(
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: Text(
-                          'Confirm Test'.toUpperCase(),
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
                     ),
                   ),
                 ),

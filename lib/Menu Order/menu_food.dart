@@ -62,7 +62,7 @@ class _menuFoodState extends State<menuFood> {
   getData() async {
     menus = await RemoteService().getMenuAvailable();
     menus?.forEach((menu) {
-      if (menu.available == false) menuId = menu.id;
+      if (menu.available == true) menuId = menu.id;
     });
 
     foods = await RemoteService()

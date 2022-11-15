@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Models/food.dart';
+import 'package:oms_mobile/Models/payment_url.dart';
 import 'package:oms_mobile/Models/reservation.dart';
-import 'package:oms_mobile/Table%20reservation/table_reservation.dart';
+import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:url_launcher/url_launcher.dart';
 
 class testPrior extends StatefulWidget {
   final int reservationId;
@@ -22,6 +24,8 @@ class testPrior extends StatefulWidget {
 class _testPriorState extends State<testPrior> {
   ReservationNoTable? currentReservation;
   int total = 0;
+  paymentURL? payment;
+  bool isDone = false;
 
   @override
   void initState() {
@@ -32,10 +36,27 @@ class _testPriorState extends State<testPrior> {
   getData() async {
     currentReservation =
         await RemoteService().getReservationBeforeCheckin(widget.reservationId);
-    total = 0;
+    getVNPAYurl();
+    getDirect();
+    setState(() {
+      total = 0;
+    });
     widget.foodList?.forEach((element) {
       total += (element.price * element.quantity);
     });
+  }
+
+  getVNPAYurl() async {
+    payment = await RemoteService().getPaymentURLReservation(
+        widget.reservationId, (currentReservation?.prePaid ?? 0) + total);
+  }
+
+  getDirect() {
+    if (currentReservation?.status.contains("Reserved") ?? false) {
+      setState(() {
+        isDone = true;
+      });
+    }
   }
 
   String changeFormat(int number) {
@@ -59,7 +80,7 @@ class _testPriorState extends State<testPrior> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const tableReservation()),
+                    builder: (context) => const reservationList()),
               );
             },
             icon: const Icon(
@@ -70,13 +91,36 @@ class _testPriorState extends State<testPrior> {
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const homeScreen()),
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text(
+                        'Remind',
+                        style: GoogleFonts.lato(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      content: Text(
+                        "You can only checkin before / after 30 minutes of the start time of the reservation",
+                        style: GoogleFonts.lato(
+                          color: Colors.black,
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'Cancel'),
+                          child: const Text('I understand'),
+                        ),
+                      ],
+                    );
+                  },
                 );
               },
               icon: const Icon(
-                Icons.home_rounded,
+                Icons.info_outline_rounded,
                 size: 30,
               )),
         ],
@@ -141,7 +185,7 @@ class _testPriorState extends State<testPrior> {
                                     color: Colors.black),
                               ),
                               Text(
-                                "Status: Pending",
+                                'Status: ${currentReservation?.status}',
                                 style: GoogleFonts.roboto(
                                     fontSize: 15,
                                     fontWeight: FontWeight.normal,
@@ -536,7 +580,7 @@ class _testPriorState extends State<testPrior> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '${changeFormat(((currentReservation?.prePaid ?? 0) + total))} đ',
+                          '${changeFormat(currentReservation?.prePaid ?? 0)} đ',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: GoogleFonts.cabin(
@@ -552,7 +596,24 @@ class _testPriorState extends State<testPrior> {
           Padding(
             padding: const EdgeInsets.all(10),
             child: InkWell(
-              onTap: () {},
+              onTap: () {
+                if (isDone) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const reservationList()),
+                  );
+                } else {
+                  setState(() {
+                    RemoteService().createPreorderFood(
+                        widget.reservationId, widget.foodList);
+                  });
+                  launchUrl(
+                    Uri.parse(payment?.url ?? "NULL URL"),
+                    mode: LaunchMode.externalApplication,
+                  );
+                }
+              },
               child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Container(
@@ -563,14 +624,15 @@ class _testPriorState extends State<testPrior> {
                       color: Colors.greenAccent),
                   child: Padding(
                     padding: const EdgeInsets.all(10),
-                    child: Text(
-                      'Pay',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.cabin(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                    ),
+                    child: conditionalText(isDone),
+                    //     Text(
+                    //   isDone.toString(),
+                    //   textAlign: TextAlign.center,
+                    //   style: GoogleFonts.cabin(
+                    //       fontSize: 18,
+                    //       fontWeight: FontWeight.bold,
+                    //       color: Colors.black),
+                    // ),
                   ),
                 ),
               ),
@@ -579,5 +641,23 @@ class _testPriorState extends State<testPrior> {
         ]),
       ),
     );
+  }
+
+  conditionalText(bool check) {
+    if (check) {
+      return Text(
+        'Back to menu',
+        textAlign: TextAlign.center,
+        style: GoogleFonts.cabin(
+            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+      );
+    } else {
+      return Text(
+        'Confirm & Pay',
+        textAlign: TextAlign.center,
+        style: GoogleFonts.cabin(
+            fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+      );
+    }
   }
 }

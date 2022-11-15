@@ -198,7 +198,7 @@ class _reservationListState extends State<reservationList> {
                     itemCount: reservationsCheckIn?.length,
                     itemBuilder: (context, index) {
                       return Padding(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         child: InkWell(
                           onTap: () {
                             Navigator.push(
