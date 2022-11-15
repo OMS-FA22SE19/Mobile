@@ -122,10 +122,8 @@ class RemoteService {
         response = await dio.get(
             'https://10.0.2.2:7246/api/v1/Menus/$menuId/Food?typeId=$categoryId');
       }
-      //header, author
       var result = responseData3.fromJson(response.data);
       List<food> foods = result.data;
-
       return foods;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
@@ -543,8 +541,8 @@ class RemoteService {
       final response = await dio.get(
           'https://10.0.2.2:7246/api/v1/Reservations/$id'); //header, author
       var result = responseOneReservation.fromJson(response.data);
-      ReservationNoTable reservationList = result.data;
-      return reservationList;
+      ReservationNoTable reservation = result.data;
+      return reservation;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         return ReservationNoTable(
@@ -627,14 +625,8 @@ class RemoteService {
     }
   }
 
-  void createReservations(
-      String start,
-      String end,
-      int numberOfSeats,
-      int numberOfPeople,
-      int tableTypeId,
-      bool isPriorFoodOrder,
-      int quantity) async {
+  Future<int>? createReservations(String start, String end, int numberOfSeats,
+      int numberOfPeople, int tableTypeId, int quantity) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
@@ -645,14 +637,62 @@ class RemoteService {
         "numOfPeople": numberOfPeople,
         "numOfSeats": numberOfSeats,
         "tableTypeId": tableTypeId,
-        "quantity": quantity,
-        "isPriorFoodOrder": isPriorFoodOrder
-      }); //header, author
+        "quantity": quantity
+      });
+      // var result = responseOneReservation.fromJson(response.data);
+      // ReservationNoTable reservation = result.data;
+      // return reservation.id;
+      var result = response.data.toString();
+      String returnId = result.toString().substring(12, 14).trim();
+      return int.parse(returnId);
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
-        return null;
+        return 0;
+        // ReservationNoTable(
+        //     id: 0,
+        //     userId: '${e.response?.statusCode}',
+        //     numOfPeople: 0,
+        //     tableTypeId: 0,
+        //     tableType: "404",
+        //     numOfSeats: 0,
+        //     quantity: quantity,
+        //     startTime: DateTime.now(),
+        //     endTime: DateTime.now(),
+        //     status: "",
+        //     isPriorFoodOrder: false,
+        //     user: User(
+        //         id: "",
+        //         userName: "",
+        //         fullName: "",
+        //         phoneNumber: "",
+        //         isDeleted: false),
+        //     prePaid: 0);
       } else {
-        return null;
+        return 0;
+      }
+    }
+  }
+
+  void createPreorderFood(int reservationId, List<food>? foods) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    Map<String, Detail> map1 = {
+      for (var e in foods!)
+        e.id.toString(): Detail(quantity: e.quantity, note: e.note)
+    };
+    var formData =
+        PostFood(reservationId: reservationId, orderDetails: map1).toJson();
+    try {
+      final response = await dio.post(
+          'https://10.0.2.2:7246/api/v1/Orders/PriorFood',
+          data: formData);
+      var result = responseData15.fromJson(response.data);
+      result.data;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return;
+      } else {
+        return;
       }
     }
   }
@@ -694,6 +734,23 @@ class RemoteService {
         return paymentURL(url: "NULL URL");
       } else {
         return paymentURL(url: "NULL URL");
+      }
+    }
+  }
+
+  void postFCMtoken(String userId, String deviceToken) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      await dio.post('https://10.0.2.2:7246/api/v1/UserDeviceTokens', data: {
+        "userId": userId,
+        "deviceToken": deviceToken,
+      }); //header, author
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      } else {
+        return null;
       }
     }
   }

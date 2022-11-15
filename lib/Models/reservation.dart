@@ -299,6 +299,58 @@ class User {
       };
 }
 
+class orderDetailss {
+  orderDetailss({
+    required this.orderId,
+    // this.userId,
+    required this.date,
+    required this.foodId,
+    required this.foodName,
+    required this.status,
+    required this.price,
+    // this.note,
+    required this.quantity,
+    required this.amount,
+  });
+
+  String orderId;
+  // String userId;
+  DateTime date;
+  int foodId;
+  String foodName;
+  String status;
+  int price;
+  // String note;
+  int quantity;
+  int amount;
+
+  factory orderDetailss.fromJson(Map<String, dynamic> json) => orderDetailss(
+        orderId: json["orderId"],
+        // userId: json["userId"],
+        date: DateTime.parse(json["date"]),
+        foodId: json["foodId"],
+        foodName: json["foodName"],
+        status: json["status"],
+        price: json["price"],
+        // note: json["note"],
+        quantity: json["quantity"],
+        amount: json["amount"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "orderId": orderId,
+        // "userId": userId,
+        "date": date.toIso8601String(),
+        "foodId": foodId,
+        "foodName": foodName,
+        "status": status,
+        "price": price,
+        // "note": note,
+        "quantity": quantity,
+        "amount": amount,
+      };
+}
+
 class ReservationNoTable {
   ReservationNoTable({
     required this.id,
@@ -315,6 +367,7 @@ class ReservationNoTable {
     required this.user,
     required this.prePaid,
     this.reservationTables = const [],
+    this.orderDetails = const [],
   });
 
   int id;
@@ -331,6 +384,7 @@ class ReservationNoTable {
   User user;
   int prePaid;
   List<ReservationTable> reservationTables;
+  List<orderDetailss> orderDetails;
 
   factory ReservationNoTable.fromJson(Map<String, dynamic> json) =>
       ReservationNoTable(
@@ -349,6 +403,8 @@ class ReservationNoTable {
         user: User.fromJson(json["user"]),
         reservationTables: List<ReservationTable>.from(
             json["reservationTables"].map((x) => ReservationTable.fromJson(x))),
+        orderDetails: List<orderDetailss>.from(
+            json["orderDetails"].map((x) => orderDetailss.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -367,6 +423,7 @@ class ReservationNoTable {
         "user": user.toJson(),
         "reservationTables":
             List<dynamic>.from(reservationTables.map((x) => x.toJson())),
+        "orderDetails": List<dynamic>.from(orderDetails.map((x) => x.toJson())),
       };
 }
 
