@@ -185,6 +185,7 @@ class _menuCategoryState extends State<menuCategory> {
                                     isCourse: false,
                                     categoryId: foodTypes![index].id,
                                     orderId: widget.orderId,
+                                    orderFood: widget.orderFood,
                                   )),
                         );
                       },

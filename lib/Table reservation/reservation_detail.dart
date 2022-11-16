@@ -8,6 +8,8 @@ import 'package:oms_mobile/Menu%20Order/menu_status.dart';
 import 'package:oms_mobile/Models/payment_url.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
+import 'package:oms_mobile/Table%20reservation/table_reservation.dart';
+import 'package:oms_mobile/Table%20reservation/table_reservation_edit.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart' as intl;
@@ -125,10 +127,60 @@ class _reservationDetailState extends State<reservationDetail> {
               )),
           IconButton(
               onPressed: () {
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      alignment: Alignment.center,
+                      icon: Icon(Icons.info_outline_rounded),
+                      title: Text(
+                        'Remind',
+                        style: GoogleFonts.lato(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      content: Container(
+                        height: 100,
+                        child: Column(
+                          children: [
+                            Text(
+                              "Please remember, any overcharged money won't be refund!"
+                                  .toUpperCase(),
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              "If you choose a different table type, the deposit money might be changed",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.lato(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'Cancel'),
+                          child: const Text('I understand'),
+                        ),
+                      ],
+                    );
+                  },
+                );
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const reservationList()),
+                      builder: (context) => tableReservationEdit(
+                            reservationId: widget.id,
+                          )),
                 );
               },
               icon: const Icon(

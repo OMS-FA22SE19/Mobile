@@ -5,10 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
-import 'package:oms_mobile/Models/reservation.dart';
-import 'package:oms_mobile/Table%20reservation/table_reservation.dart';
 import 'package:oms_mobile/services/remote_service.dart';
-import 'package:oms_mobile/reservation_preorder_food.dart';
 
 class tableInformation extends StatefulWidget {
   final int numberOfPeople;
@@ -78,27 +75,14 @@ class _tableInformationState extends State<tableInformation> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => tableReservation()),
+                MaterialPageRoute(builder: (context) => homeScreen()),
               );
             },
             icon: Icon(
-              Icons.arrow_back_ios_rounded,
+              Icons.home_rounded,
               size: 30,
             )),
         automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => homeScreen()),
-                );
-              },
-              icon: Icon(
-                Icons.home_rounded,
-                size: 30,
-              )),
-        ],
       ),
       backgroundColor: Colors.grey[200],
       body: SingleChildScrollView(
@@ -118,11 +102,11 @@ class _tableInformationState extends State<tableInformation> {
                 SizedBox(
                   height: 20,
                 ),
-                Icon(
-                  Icons.table_restaurant_rounded,
-                  size: 150,
-                  color: Colors.white,
-                ),
+                // Icon(
+                //   Icons.table_restaurant_rounded,
+                //   size: 150,
+                //   color: Colors.white,
+                // ),
                 Text('RESERVATION INFO',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.lato(
@@ -132,19 +116,6 @@ class _tableInformationState extends State<tableInformation> {
                 SizedBox(
                   height: 20,
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: 10),
-                //   child: Table(
-                //     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                //     columnWidths: const <int, TableColumnWidth>{
-                //       0: FixedColumnWidth(50),
-                //       1: FixedColumnWidth(180),
-                //       2: FlexColumnWidth(),
-                //     },
-                //     children: <TableRow>[
-                //     ],
-                //   ),
-                // ),
                 Text(
                   'Table',
                   style: GoogleFonts.roboto(
