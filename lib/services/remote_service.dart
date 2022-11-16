@@ -418,8 +418,8 @@ class RemoteService {
       final response = await dio.get(
           'https://10.0.2.2:7246/api/v1/TableTypes/$typeId'); //header, author
       var result = responseTableType.fromJson(response.data);
-      int deposit = result.data.chargePerSeat;
-      return deposit;
+      int chargePerSeat = result.data.chargePerSeat;
+      return chargePerSeat;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         return 0;
@@ -669,6 +669,40 @@ class RemoteService {
         //     prePaid: 0);
       } else {
         return 0;
+      }
+    }
+  }
+
+  void updateReservations(
+      String start,
+      String end,
+      int numberOfSeats,
+      int numberOfPeople,
+      int tableTypeId,
+      int quantity,
+      int? reservationId) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio.put(
+          'https://10.0.2.2:7246/api/v1/Reservations/$reservationId',
+          data: {
+            "id": reservationId,
+            "startTime": start,
+            "endTime": end,
+            "numOfPeople": numberOfPeople,
+            "numOfSeats": numberOfSeats,
+            "tableTypeId": tableTypeId,
+            "quantity": quantity
+          });
+      // var result = response.data.toString();
+      // String returnId = result.toString().substring(12, 14).trim();
+      // return int.parse(returnId);
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return;
+      } else {
+        return;
       }
     }
   }

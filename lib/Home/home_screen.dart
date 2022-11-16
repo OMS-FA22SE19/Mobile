@@ -1,9 +1,7 @@
 // ignore_for_file: prefer_const_constructors, camel_case_types
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:oms_mobile/Login/login_page.dart';
 import 'package:oms_mobile/Models/reservation.dart';
-import 'package:oms_mobile/Table%20reservation/reservation_detail.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/User%20History/history_page.dart';
 import 'package:oms_mobile/services/remote_service.dart';

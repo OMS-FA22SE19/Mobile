@@ -401,71 +401,7 @@ class _menuCartState extends State<menuCart> {
                       ],
                     ),
                   ),
-                  ElevatedButton(
-                    onPressed: isLoaded
-                        ? () async {
-                            if (widget.orderId?.isEmpty == false) {
-                              check = widget.orderId?.isEmpty ?? false;
-                              newOrder = await RemoteService()
-                                  .putOrder(widget.orderId ?? "", widget.foods);
-                            } else {
-                              newOrder = await RemoteService().createOrder(
-                                  widget.reservationId, widget.foods);
-                            }
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => menuStatus(
-                                        reservationId: widget.reservationId,
-                                        isCourse: widget.isCourse,
-                                        orderId: newOrder?.id,
-                                      )),
-                            );
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(232, 192, 125, 100),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                      ),
-                    ),
-                    child: Text(
-                      'CONFIRM',
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.cabin(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => testPrior(
-                                  reservationId: widget.reservationId,
-                                  foodList: widget.foods,
-                                )),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(232, 192, 125, 100),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                      ),
-                    ),
-                    child: Text(
-                      'CHECK',
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.cabin(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[700],
-                      ),
-                    ),
-                  )
+                  conditionalButton(widget.orderFood ?? false),
                 ]),
           ),
         ),
@@ -474,5 +410,74 @@ class _menuCartState extends State<menuCart> {
     );
   }
 
-  conditionalWidget(int index) {}
+  conditionalButton(bool flag) {
+    if (flag) {
+      return ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => testPrior(
+                      reservationId: widget.reservationId,
+                      foodList: widget.foods,
+                    )),
+          );
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+        ),
+        child: Text(
+          'CHECK',
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.cabin(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[700],
+          ),
+        ),
+      );
+    } else {
+      return ElevatedButton(
+        onPressed: isLoaded
+            ? () async {
+                if (widget.orderId?.isEmpty == false) {
+                  check = widget.orderId?.isEmpty ?? false;
+                  newOrder = await RemoteService()
+                      .putOrder(widget.orderId ?? "", widget.foods);
+                } else {
+                  newOrder = await RemoteService()
+                      .createOrder(widget.reservationId, widget.foods);
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => menuStatus(
+                            reservationId: widget.reservationId,
+                            isCourse: widget.isCourse,
+                            orderId: newOrder?.id,
+                          )),
+                );
+              }
+            : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+        ),
+        child: Text(
+          'CONFIRM',
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.cabin(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[700],
+          ),
+        ),
+      );
+    }
+  }
 }
