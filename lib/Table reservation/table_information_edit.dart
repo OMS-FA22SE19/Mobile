@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Models/reservation.dart';
+import 'package:oms_mobile/Table%20reservation/table_reservation_edit.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
 class tableInformationEdit extends StatefulWidget {
@@ -20,6 +21,7 @@ class tableInformationEdit extends StatefulWidget {
   final int deposit;
   final String tableTypeName;
   final ReservationNoTable? currentReservation;
+  final int overcharged;
   const tableInformationEdit(
       {super.key,
       required this.name,
@@ -33,7 +35,8 @@ class tableInformationEdit extends StatefulWidget {
       required this.amount,
       required this.deposit,
       required this.tableTypeName,
-      required this.currentReservation});
+      required this.currentReservation,
+      required this.overcharged});
 
   @override
   State<tableInformationEdit> createState() => _tableInformationEditState();
@@ -69,11 +72,14 @@ class _tableInformationEditState extends State<tableInformationEdit> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => homeScreen()),
+                MaterialPageRoute(
+                    builder: (context) => tableReservationEdit(
+                          reservationId: widget.currentReservation?.id,
+                        )),
               );
             },
             icon: Icon(
-              Icons.home_rounded,
+              Icons.arrow_back_ios_new_rounded,
               size: 30,
             )),
         automaticallyImplyLeading: false,
@@ -218,6 +224,29 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                 ),
                                 Text(
                                   '${changeFormat(widget.currentReservation?.prePaid ?? 0)} đ',
+                                  textAlign: TextAlign.right,
+                                  style: GoogleFonts.roboto(
+                                      fontSize: 20,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ]),
+                              TableRow(children: [
+                                TableCell(
+                                  child: Icon(
+                                    Icons.info_outline_rounded,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Text(
+                                  'Status: ',
+                                  style: GoogleFonts.roboto(
+                                      fontSize: 20,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  '${widget.currentReservation?.status}',
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
@@ -568,6 +597,37 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ]),
+                              TableRow(children: [
+                                TableCell(
+                                  child: Icon(
+                                    Icons.info_outline_rounded,
+                                    color: widget.overcharged >= 0
+                                        ? Colors.red
+                                        : Colors.black,
+                                  ),
+                                ),
+                                Text(
+                                  'Status: ',
+                                  style: GoogleFonts.roboto(
+                                      fontSize: 20,
+                                      color: widget.overcharged >= 0
+                                          ? Colors.red
+                                          : Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  widget.overcharged >= 0
+                                      ? 'Available'
+                                      : '${widget.currentReservation?.status}',
+                                  textAlign: TextAlign.right,
+                                  style: GoogleFonts.roboto(
+                                      fontSize: 20,
+                                      color: widget.overcharged >= 0
+                                          ? Colors.red
+                                          : Colors.black,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ]),

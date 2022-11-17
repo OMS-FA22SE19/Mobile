@@ -20,13 +20,15 @@ class menuFood extends StatefulWidget {
       required this.reservationId,
       this.orderId,
       this.cartfoods,
-      this.orderFood});
+      this.orderFood,
+      this.edit});
   final int reservationId;
   final int categoryId;
   final bool isCourse;
   String? orderId;
   List<food>? cartfoods;
   bool? orderFood;
+  bool? edit;
 
   @override
   State<menuFood> createState() => _menuFoodState();
@@ -252,6 +254,7 @@ class _menuFoodState extends State<menuFood> {
                       foods: cartfoods,
                       orderId: widget.orderId,
                       orderFood: widget.orderFood,
+                      edit: widget.edit,
                     )),
           );
         },

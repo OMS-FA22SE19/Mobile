@@ -15,11 +15,13 @@ class menuCategory extends StatefulWidget {
       required this.reservationId,
       this.orderId,
       this.isCourse,
-      this.orderFood});
+      this.orderFood,
+      this.edit});
   final int reservationId;
   String? orderId;
   bool? isCourse;
   bool? orderFood;
+  bool? edit;
 
   @override
   State<menuCategory> createState() => _menuCategoryState();
@@ -110,6 +112,7 @@ class _menuCategoryState extends State<menuCategory> {
                                     categoryId: courses![index].id,
                                     orderId: widget.orderId,
                                     orderFood: widget.orderFood,
+                                    edit: widget.edit,
                                   )),
                         );
                       },
@@ -186,6 +189,7 @@ class _menuCategoryState extends State<menuCategory> {
                                     categoryId: foodTypes![index].id,
                                     orderId: widget.orderId,
                                     orderFood: widget.orderFood,
+                                    edit: widget.edit,
                                   )),
                         );
                       },

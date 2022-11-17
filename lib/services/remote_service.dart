@@ -557,6 +557,7 @@ class RemoteService {
           endTime: DateTime.now(),
           status: "",
           prePaid: 0,
+          paid: 0,
           isPriorFoodOrder: false,
           user: User(
               id: "",
@@ -579,6 +580,7 @@ class RemoteService {
           endTime: DateTime.now(),
           status: "",
           prePaid: 0,
+          paid: 0,
           isPriorFoodOrder: false,
           user: User(
               id: "",
@@ -719,6 +721,30 @@ class RemoteService {
     try {
       final response = await dio.post(
           'https://10.0.2.2:7246/api/v1/Orders/PriorFood',
+          data: formData);
+      var result = responseData15.fromJson(response.data);
+      result.data;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return;
+      } else {
+        return;
+      }
+    }
+  }
+
+  void updatePreorderFood(int reservationId, List<food>? foods) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    Map<String, Detail> map1 = {
+      for (var e in foods!)
+        e.id.toString(): Detail(quantity: e.quantity, note: e.note)
+    };
+    var formData =
+        PostFood(reservationId: reservationId, orderDetails: map1).toJson();
+    try {
+      final response = await dio.put(
+          'https://10.0.2.2:7246/api/v1/Orders/PriorFood/$reservationId',
           data: formData);
       var result = responseData15.fromJson(response.data);
       result.data;

@@ -629,7 +629,7 @@ class _tableReservationState extends State<tableReservation> {
                   onPressed: () async {
                     TimeOfDay? newTime = await showTimePicker(
                         context: context,
-                        initialTime: TimeOfDay(hour: 11, minute: 00),
+                        initialTime: TimeOfDay(hour: 12, minute: 00),
                         builder: (context, childWidget) {
                           return MediaQuery(
                               data: MediaQuery.of(context)
@@ -746,50 +746,63 @@ class _tableReservationState extends State<tableReservation> {
               ),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromRGBO(232, 192, 125, 100),
-                minimumSize: Size(double.infinity, 35),
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
-              ),
-              onPressed: invalidFlag || ocupiedFlag
-                  ? null
-                  : () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => tableInformation(
-                                  tableTypeName: tableTypeName,
-                                  deposit: deposit,
-                                  amount: quantity,
-                                  numberOfPeople:
-                                      int.parse(inputController.text),
-                                  name: "Default User",
-                                  phone: "0941767748",
-                                  date: _selectedDate,
-                                  startTime: _selectedStartTime,
-                                  endTime: _selectedEndTime,
-                                  tableTypeId: tableTypeId,
-                                  numberOfSeats: numberOfSeats,
-                                )),
-                      );
-                    },
-              child: Text(
-                'Finish'.toUpperCase(),
-                style: GoogleFonts.cabin(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 20,
-                ),
-              ),
-            ),
+          SizedBox(
+            height: 10,
+          ),
+          conditionalButtonFinish(),
+          SizedBox(
+            height: 10,
           ),
         ],
+      );
+    }
+  }
+
+  conditionalButtonFinish() {
+    if (ocupiedFlag || invalidFlag) {
+      return Container();
+    } else {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+            minimumSize: Size(double.infinity, 35),
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+            ),
+          ),
+          onPressed: invalidFlag || ocupiedFlag
+              ? null
+              : () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => tableInformation(
+                              tableTypeName: tableTypeName,
+                              deposit: deposit,
+                              amount: quantity,
+                              numberOfPeople: int.parse(inputController.text),
+                              name: "Default User",
+                              phone: "0941767748",
+                              date: _selectedDate,
+                              startTime: _selectedStartTime,
+                              endTime: _selectedEndTime,
+                              tableTypeId: tableTypeId,
+                              numberOfSeats: numberOfSeats,
+                            )),
+                  );
+                },
+          child: Text(
+            'Finish'.toUpperCase(),
+            style: GoogleFonts.cabin(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              fontSize: 20,
+            ),
+          ),
+        ),
       );
     }
   }

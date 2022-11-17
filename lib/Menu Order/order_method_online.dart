@@ -149,7 +149,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                                   height: 2,
                                 ),
                                 Text(
-                                  'Price: ${details![index].price.toString()}',
+                                  'Price: ${changeFormat(details![index].price)} đ',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.cabin(
