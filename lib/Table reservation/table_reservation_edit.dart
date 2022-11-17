@@ -39,6 +39,7 @@ class _tableReservationEditState extends State<tableReservationEdit> {
   int tableTypeId = 0;
   int quantity = 0;
   int deposit = 0;
+  int overcharged = 0;
   String tableTypeName = "";
   Color onSelected = Color.fromRGBO(232, 192, 125, 50);
 
@@ -167,6 +168,7 @@ class _tableReservationEditState extends State<tableReservationEdit> {
   getTableType(int typeId) async {
     int charge = await RemoteService().getTableChargePerSeat(tableTypeId);
     deposit = charge * numberOfSeats * quantity;
+    overcharged = (deposit - (currentReservation?.prePaid ?? 0));
     tableTypeName = await RemoteService().getTableTypeName(tableTypeId);
   }
 
@@ -222,7 +224,7 @@ class _tableReservationEditState extends State<tableReservationEdit> {
                               height: 5,
                             ),
                             Text(
-                              "If you choose a different table type, the deposit money might be changed",
+                              "If you choose a different table type, table information might be changed",
                               textAlign: TextAlign.center,
                               style: GoogleFonts.lato(
                                 color: Colors.black,
@@ -433,13 +435,6 @@ class _tableReservationEditState extends State<tableReservationEdit> {
                                       style: GoogleFonts.cabin(
                                           fontSize: 18, color: Colors.white),
                                     ),
-                                    Text(
-                                      'Deposit: ${changeFormat(100000)} đ',
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.cabin(
-                                          fontSize: 18, color: Colors.white),
-                                    ),
                                   ],
                                 ),
                               ),
@@ -458,6 +453,9 @@ class _tableReservationEditState extends State<tableReservationEdit> {
             height: 10,
           ),
           conditionalWidget(hiddenFlag),
+          SizedBox(
+            height: 10,
+          ),
         ],
       ),
     );
@@ -472,22 +470,46 @@ class _tableReservationEditState extends State<tableReservationEdit> {
           SizedBox(
             height: 10,
           ),
-          Text(
-            'Deposit money: ${changeFormat(deposit)} đ',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.cabin(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontSize: 20,
+          Container(
+            width: MediaQuery.of(context).size.width - 50,
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(232, 192, 125, 100),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  Text(
+                    'Deposit: ${changeFormat(deposit)} đ',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.cabin(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    'Overcharged: ${changeFormat(overcharged <= 0 ? 0 : (deposit - (currentReservation?.paid ?? 0)))} đ',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.cabin(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           SizedBox(
             height: 10,
           ),
           Text(
-            isLoadedTime
-                ? 'Occupied Time: '
-                : "This table have no occupied reservation!",
+            isLoadedTime ? 'Occupied Time: ' : "",
             textAlign: TextAlign.center,
             style: GoogleFonts.cabin(
               fontWeight: FontWeight.bold,
@@ -837,51 +859,65 @@ class _tableReservationEditState extends State<tableReservationEdit> {
               ),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromRGBO(232, 192, 125, 100),
-                minimumSize: Size(double.infinity, 35),
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
-              ),
-              onPressed: invalidFlag || ocupiedFlag
-                  ? null
-                  : () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => tableInformationEdit(
-                                  tableTypeName: tableTypeName,
-                                  deposit: deposit,
-                                  amount: quantity,
-                                  numberOfPeople:
-                                      int.parse(inputController.text),
-                                  name: "Default User",
-                                  phone: "0941767748",
-                                  date: _selectedDate,
-                                  startTime: _selectedStartTime,
-                                  endTime: _selectedEndTime,
-                                  tableTypeId: tableTypeId,
-                                  numberOfSeats: numberOfSeats,
-                                  currentReservation: currentReservation,
-                                )),
-                      );
-                    },
-              child: Text(
-                'Finish'.toUpperCase(),
-                style: GoogleFonts.cabin(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 20,
-                ),
-              ),
-            ),
+          SizedBox(
+            height: 10,
+          ),
+          conditionalButtonFinish(),
+          SizedBox(
+            height: 10,
           ),
         ],
+      );
+    }
+  }
+
+  conditionalButtonFinish() {
+    if (ocupiedFlag || invalidFlag) {
+      return Container();
+    } else {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+            minimumSize: Size(double.infinity, 35),
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+            ),
+          ),
+          onPressed: invalidFlag || ocupiedFlag
+              ? null
+              : () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => tableInformationEdit(
+                              currentReservation: currentReservation,
+                              overcharged: overcharged,
+                              tableTypeName: tableTypeName,
+                              deposit: deposit,
+                              amount: quantity,
+                              numberOfPeople: int.parse(inputController.text),
+                              name: "Default User",
+                              phone: "0941767748",
+                              date: _selectedDate,
+                              startTime: _selectedStartTime,
+                              endTime: _selectedEndTime,
+                              tableTypeId: tableTypeId,
+                              numberOfSeats: numberOfSeats,
+                            )),
+                  );
+                },
+          child: Text(
+            'Finish'.toUpperCase(),
+            style: GoogleFonts.cabin(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              fontSize: 20,
+            ),
+          ),
+        ),
       );
     }
   }
@@ -1004,6 +1040,19 @@ class _tableReservationEditState extends State<tableReservationEdit> {
                       ),
                       Text(
                         '${changeFormat(currentReservation?.prePaid ?? 0)} đ',
+                        textAlign: TextAlign.right,
+                        style: GoogleFonts.cabin(
+                            fontSize: 20, color: Colors.white),
+                      ),
+                    ]),
+                    TableRow(children: [
+                      Text(
+                        'Paid:',
+                        style: GoogleFonts.cabin(
+                            fontSize: 20, color: Colors.white),
+                      ),
+                      Text(
+                        '${changeFormat(currentReservation?.paid ?? 0)} đ',
                         textAlign: TextAlign.right,
                         style: GoogleFonts.cabin(
                             fontSize: 20, color: Colors.white),
