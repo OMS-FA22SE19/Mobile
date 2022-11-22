@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:oms_mobile/firebase_options.dart';
 import 'package:oms_mobile/locale_string.dart';
 import 'Login/login_page.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {

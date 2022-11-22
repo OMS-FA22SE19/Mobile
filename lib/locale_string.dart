@@ -32,7 +32,7 @@ class LocaleString extends Translations {
           'Table information': 'Table information',
           'Type': 'Type:',
           'Normal': 'Normal',
-          'Ourdoor': 'Ourdoor',
+          'Outdoor': 'Outdoor',
           'Dining': 'Dining',
           'Number of Seats': 'Number of Seats',
           'Charge per seats': 'Charge per seats',
@@ -48,6 +48,39 @@ class LocaleString extends Translations {
           'Total Pay': 'Total Pay',
           'Available': 'Available',
           'Check In': 'Check In',
+          'reservation information': 'RESERVATION INFORMATION',
+          'date': 'Date',
+          'Start Time': 'Start Time',
+          'End Time': 'End Time',
+          'Remind': 'Remind',
+          'Business Hours': 'Business Hours',
+          'Guest Amount': 'Guest Amount',
+          'Input number of guest': 'Input number of guest',
+          'Please input a number!': 'Please input a number!',
+          'Selected Date': 'Selected Date',
+          'Open calendar': 'Open calendar',
+          'This table have no occupied reservation!':
+              'This table have no occupied reservation!',
+          'The time you choose is already occupied, Please choose again!':
+              'The time you choose is already occupied, Please choose again!',
+          'Our restaurant close at 10:00PM. Please choose again!':
+              'Our restaurant close at 10:00PM. Please choose again!',
+          'Our bussiness hour is from 11:00AM - 10:00PM. Please choose again!':
+              'Our bussiness hour is from 11:00AM - 10:00PM. Please choose again!',
+          'Our restaurant open at 11:00AM. Please choose again!':
+              'Our restaurant open at 11:00AM. Please choose again!',
+          'Reservation duration must be at least 30 minutes. Please choose again!':
+              'Reservation duration must be at least 30 minutes. Please choose again!',
+          'End time must not smaller than Start time. Please choose again!':
+              'End time must not smaller than Start time. Please choose again!',
+          'Occupied Time': 'Occupied Time',
+          'Selection End Time': 'Selection End Time',
+          'Selection Start Time': 'Selection Start Time',
+          'Invalid Time': 'Invalid Time',
+          'Cancel': 'Cancel',
+          'I understand': 'I understand',
+          'Time Picker': 'Time Picker',
+          'Finish': 'Finish',
         },
         'vi_VN': {
           "hello": "Xin chào",
@@ -78,7 +111,7 @@ class LocaleString extends Translations {
           'Table information': 'Thông tin bàn',
           'Type': 'Loại',
           'Normal': 'Thường',
-          'Ourdoor': 'Ngoài trời',
+          'Outdoor': 'Ngoài trời',
           'Dining': 'Phòng riêng',
           'Number of Seats': 'Số ghế',
           'Charge per seats': 'Giá ghế',
@@ -94,6 +127,38 @@ class LocaleString extends Translations {
           'Total Pay': 'Tổng',
           'Available': 'Sẵn sàng',
           'Check In': 'Check In',
+          'reservation information': 'Thông tin đặt bàn',
+          'date': 'Ngày',
+          'Start Time': 'Giờ bắt đầu',
+          'End Time': 'Giờ kết thúc',
+          'Remind': 'Thông báo',
+          'Business Hours': 'Giờ hoạt động',
+          'Guest Amount': 'Số lượng khách',
+          'Input number of guest': 'Nhập số lượng',
+          'Please input a number!': 'Vui lòng nhập số!',
+          'Selected Date': 'Ngày',
+          'Open calendar': 'Mở lịch',
+          'This table have no occupied reservation!': 'Bàn này chưa được đặt!',
+          'The time you choose is already occupied, Please choose again!':
+              'Giờ bạn chọn bị trùng với giờ của người khác, Vui lòng chọn lại',
+          'Our restaurant close at 10:00PM. Please choose again!':
+              'Nhà hàng đóng của lức 10:00PM, Vui lòng chọn lại!',
+          'Our bussiness hour is from 11:00AM - 10:00PM. Please choose again!':
+              'Giờ hoạt động của nhà hàng là từ 11:00AM - 10:00PM, Vui lòng chọn lại',
+          'Our restaurant open at 11:00AM. Please choose again!':
+              'Nhà hàng mở của lức 11:00AM, Vui lòng chọn lại!',
+          'Reservation duration must be at least 30 minutes. Please choose again!':
+              'Thời gian đặt bàn tối thiểu 30 phút. Vui lòng chọn lại!',
+          'End time must not smaller than Start time. Please choose again!':
+              'Thời gian kết thúc phải lớn hơn thời gian bắt đầu. Vui lòng chọn lại!',
+          'Occupied Time': 'Giờ bận',
+          'Selection End Time': 'Giờ kết thúc',
+          'Selection Start Time': 'Giờ bắt đầu',
+          'Invalid Time': 'Giờ không hợp lệ',
+          'Cancel': 'Hủy',
+          'I understand': 'Tôi đã rõ',
+          'Time Picker': 'Chọn giờ',
+          'Finish': 'Hoàn thành',
         },
       };
 }

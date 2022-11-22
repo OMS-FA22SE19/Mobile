@@ -142,7 +142,7 @@ class _reservationListState extends State<reservationList> {
                                       )),
                             );
                           },
-                          child: ReservationBox(
+                          child: ReservationAvailable(
                               reservationsAvailable![index].status, index),
                         ),
                       );
@@ -177,7 +177,7 @@ class _reservationListState extends State<reservationList> {
                                       )),
                             );
                           },
-                          child: ReservationBox(
+                          child: ReservationReserved(
                               reservationsReserved![index].status, index),
                         ),
                       );
@@ -212,7 +212,7 @@ class _reservationListState extends State<reservationList> {
                                       )),
                             );
                           },
-                          child: ReservationBox(
+                          child: ReservationCheckIn(
                               reservationsCheckIn![index].status, index),
                         ),
                       );
@@ -227,16 +227,16 @@ class _reservationListState extends State<reservationList> {
     );
   }
 
-  ReservationBox(String status, int index) {
+  ReservationCheckIn(String status, int index) {
     return Container(
       height: 230,
       width: MediaQuery.of(context).size.width - 20,
       decoration: BoxDecoration(
-        color: status.contains("Check In")
-            ? Colors.greenAccent
+        color: (status.contains("Reserved"))
+            ? Colors.yellow[600]
             : status.contains("Available")
                 ? Colors.blueAccent
-                : Colors.yellow[600],
+                : Colors.greenAccent,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
@@ -251,7 +251,7 @@ class _reservationListState extends State<reservationList> {
                 color: Colors.white,
               ),
               Text(
-                'RESERVATION INFORMATION',
+                'reservation information'.tr.toUpperCase(),
                 maxLines: 2,
                 style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
               ),
@@ -267,7 +267,7 @@ class _reservationListState extends State<reservationList> {
                 children: <TableRow>[
                   TableRow(children: [
                     Text(
-                      'Date:',
+                      '${'date'.tr}:',
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                     ),
@@ -287,7 +287,7 @@ class _reservationListState extends State<reservationList> {
                   ]),
                   TableRow(children: [
                     Text(
-                      'Start Time:',
+                      '${'Start Time'.tr}:',
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                     ),
@@ -303,7 +303,7 @@ class _reservationListState extends State<reservationList> {
                   ]),
                   TableRow(children: [
                     Text(
-                      'End Time:',
+                      '${'End Time'.tr}:',
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                     ),
@@ -319,12 +319,12 @@ class _reservationListState extends State<reservationList> {
                   ]),
                   TableRow(children: [
                     Text(
-                      'Status:',
+                      '${'status'.tr}:',
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                     ),
                     Text(
-                      reservationsCheckIn![index].status,
+                      reservationsCheckIn![index].status.tr,
                       textAlign: TextAlign.right,
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
@@ -357,7 +357,7 @@ class _reservationListState extends State<reservationList> {
                 color: Colors.white,
               ),
               Text(
-                'RESERVATION INFORMATION',
+                'reservation information'.tr.toUpperCase(),
                 maxLines: 2,
                 style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
               ),
@@ -373,7 +373,7 @@ class _reservationListState extends State<reservationList> {
                 children: <TableRow>[
                   TableRow(children: [
                     Text(
-                      'Date:',
+                      '${'date'.tr}:',
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                     ),
@@ -396,7 +396,7 @@ class _reservationListState extends State<reservationList> {
                   ]),
                   TableRow(children: [
                     Text(
-                      'Start Time:',
+                      '${'Start Time'.tr}:',
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                     ),
@@ -412,7 +412,7 @@ class _reservationListState extends State<reservationList> {
                   ]),
                   TableRow(children: [
                     Text(
-                      'End Time:',
+                      '${'End Time'.tr}:',
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                     ),
@@ -428,12 +428,12 @@ class _reservationListState extends State<reservationList> {
                   ]),
                   TableRow(children: [
                     Text(
-                      'Status:',
+                      '${'status'.tr}:',
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                     ),
                     Text(
-                      reservationsReserved![index].status,
+                      reservationsReserved![index].status.tr,
                       textAlign: TextAlign.right,
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
@@ -448,7 +448,7 @@ class _reservationListState extends State<reservationList> {
 
   ReservationAvailable(String status, int index) {
     return Container(
-      height: 220,
+      height: 230,
       width: MediaQuery.of(context).size.width - 20,
       decoration: BoxDecoration(
         color: Colors.blueAccent,
@@ -466,7 +466,7 @@ class _reservationListState extends State<reservationList> {
                 color: Colors.white,
               ),
               Text(
-                'RESERVATION INFORMATION',
+                'reservation information'.tr.toUpperCase(),
                 maxLines: 2,
                 style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
               ),
@@ -482,7 +482,7 @@ class _reservationListState extends State<reservationList> {
                 children: <TableRow>[
                   TableRow(children: [
                     Text(
-                      'Date:',
+                      '${'date'.tr}:',
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                     ),
@@ -505,7 +505,7 @@ class _reservationListState extends State<reservationList> {
                   ]),
                   TableRow(children: [
                     Text(
-                      'Start Time:',
+                      '${'Start Time'.tr}:',
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                     ),
@@ -521,7 +521,7 @@ class _reservationListState extends State<reservationList> {
                   ]),
                   TableRow(children: [
                     Text(
-                      'End Time:',
+                      '${'End Time'.tr}:',
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                     ),
@@ -530,6 +530,19 @@ class _reservationListState extends State<reservationList> {
                           .endTime
                           .toString()
                           .substring(11, 16),
+                      textAlign: TextAlign.right,
+                      style:
+                          GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+                    ),
+                  ]),
+                  TableRow(children: [
+                    Text(
+                      '${'status'.tr}:',
+                      style:
+                          GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+                    ),
+                    Text(
+                      reservationsAvailable![index].status.tr,
                       textAlign: TextAlign.right,
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
