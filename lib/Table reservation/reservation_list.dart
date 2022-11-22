@@ -6,6 +6,7 @@ import 'package:oms_mobile/Login/login_page.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_detail.dart';
 import 'package:oms_mobile/services/remote_service.dart';
+import 'package:get/get.dart';
 
 class reservationList extends StatefulWidget {
   const reservationList({super.key});
@@ -93,20 +94,22 @@ class _reservationListState extends State<reservationList> {
                     size: 30,
                   )),
             ],
-            bottom: const TabBar(
+            bottom: TabBar(
               indicatorColor: Color.fromRGBO(232, 192, 125, 100),
               indicatorWeight: 2.5,
               indicatorSize: TabBarIndicatorSize.label,
               tabs: [
                 Tab(
-                  text: "Available",
-                  icon: Icon(Icons.restaurant_rounded),
+                  text: 'Available'.tr,
+                  icon: const Icon(Icons.restaurant_rounded),
                 ),
                 Tab(
-                  text: "Reserved",
-                  icon: Icon(Icons.restaurant_rounded),
+                  text: 'Reserved'.tr,
+                  icon: const Icon(Icons.restaurant_rounded),
                 ),
-                Tab(text: "Check In", icon: Icon(Icons.restaurant_rounded)),
+                Tab(
+                    text: 'Check In'.tr,
+                    icon: const Icon(Icons.restaurant_rounded)),
               ],
             ),
           ),
@@ -139,7 +142,7 @@ class _reservationListState extends State<reservationList> {
                                       )),
                             );
                           },
-                          child: ReservationAvailable(
+                          child: ReservationBox(
                               reservationsAvailable![index].status, index),
                         ),
                       );
@@ -174,7 +177,7 @@ class _reservationListState extends State<reservationList> {
                                       )),
                             );
                           },
-                          child: ReservationReserved(
+                          child: ReservationBox(
                               reservationsReserved![index].status, index),
                         ),
                       );
@@ -209,7 +212,7 @@ class _reservationListState extends State<reservationList> {
                                       )),
                             );
                           },
-                          child: ReservationCheckIn(
+                          child: ReservationBox(
                               reservationsCheckIn![index].status, index),
                         ),
                       );
@@ -224,12 +227,16 @@ class _reservationListState extends State<reservationList> {
     );
   }
 
-  ReservationCheckIn(String status, int index) {
+  ReservationBox(String status, int index) {
     return Container(
       height: 230,
       width: MediaQuery.of(context).size.width - 20,
       decoration: BoxDecoration(
-        color: Colors.greenAccent,
+        color: status.contains("Check In")
+            ? Colors.greenAccent
+            : status.contains("Available")
+                ? Colors.blueAccent
+                : Colors.yellow[600],
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(

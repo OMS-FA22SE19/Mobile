@@ -8,7 +8,7 @@ import 'package:oms_mobile/Menu%20Order/menu_category.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Table%20reservation/table_reservation.dart';
 import 'package:oms_mobile/services/remote_service.dart';
-import 'package:oms_mobile/reservation_preorder_food.dart';
+import 'package:oms_mobile/Table%20reservation/reservation_preorder_food.dart';
 
 class tableInformation extends StatefulWidget {
   final int numberOfPeople;

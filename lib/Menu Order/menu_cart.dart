@@ -6,7 +6,7 @@ import 'package:oms_mobile/Menu%20Order/menu_status.dart';
 import 'package:oms_mobile/Models/food.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Models/order.dart';
-import 'package:oms_mobile/reservation_preorder_food.dart';
+import 'package:oms_mobile/Table%20reservation/reservation_preorder_food.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
 class menuCart extends StatefulWidget {

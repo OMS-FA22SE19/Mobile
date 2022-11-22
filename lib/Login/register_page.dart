@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Login/login_page.dart';
+import 'package:get/get.dart';
 
 class registerPage extends StatefulWidget {
   const registerPage({super.key});
@@ -61,7 +62,7 @@ class _registerPageState extends State<registerPage> {
                         color: Colors.white, size: 100),
                   ),
                   Text(
-                    'Register',
+                    'register'.tr.toUpperCase(),
                     textAlign: TextAlign.end,
                     style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                   ),
@@ -104,9 +105,10 @@ class _registerPageState extends State<registerPage> {
                         autofocus: false,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Phone number',
-                          errorText:
-                              flagPhoneEmpty ? 'This field is required!' : null,
+                          hintText: 'phone number'.tr,
+                          errorText: flagPhoneEmpty
+                              ? 'This field is required!'.tr
+                              : null,
                         ),
                       ),
                     ),
@@ -146,9 +148,10 @@ class _registerPageState extends State<registerPage> {
                         autofocus: false,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Full name',
-                          errorText:
-                              flagNameEmpty ? 'This field is required!' : null,
+                          hintText: 'full name'.tr,
+                          errorText: flagNameEmpty
+                              ? 'This field is required!'.tr
+                              : null,
                         ),
                       ),
                     ),
@@ -186,8 +189,9 @@ class _registerPageState extends State<registerPage> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Email',
-                          errorText:
-                              flagEmailEmpty ? 'This field is required!' : null,
+                          errorText: flagEmailEmpty
+                              ? 'This field is required!'.tr
+                              : null,
                         ),
                       ),
                     ),
@@ -224,9 +228,9 @@ class _registerPageState extends State<registerPage> {
                         autofocus: false,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Password',
+                          hintText: 'password'.tr,
                           errorText: flagPasswordEmpty
-                              ? 'This field is required!'
+                              ? 'This field is required!'.tr
                               : null,
                         ),
                       ),
@@ -246,7 +250,7 @@ class _registerPageState extends State<registerPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                const Text('Already have an account ? '),
+                Text('Already have an account ?'.tr),
                 InkWell(
                   onTap: () {
                     Navigator.push(
@@ -255,8 +259,8 @@ class _registerPageState extends State<registerPage> {
                           builder: (context) => const loginScreen()),
                     );
                   },
-                  child: const Text(
-                    'Login here!',
+                  child: Text(
+                    ' ${'Login here!'.tr}',
                     style: TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
