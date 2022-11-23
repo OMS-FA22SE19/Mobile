@@ -1,4 +1,4 @@
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -54,7 +54,7 @@ class _orderMethodState extends State<orderMethod> {
     }
   }
 
-  CheckingOrder() {
+  checkingOrder() {
     RemoteService().checkingOrder(widget.orderId ?? "");
   }
 
@@ -149,7 +149,7 @@ class _orderMethodState extends State<orderMethod> {
                                   height: 2,
                                 ),
                                 Text(
-                                  'Price: ' + details![index].price.toString(),
+                                  'Price: ${details![index].price.toString()}',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.cabin(
@@ -174,8 +174,7 @@ class _orderMethodState extends State<orderMethod> {
                                       color: Colors.brown[600],
                                       borderRadius: BorderRadius.circular(10)),
                                   child: Text(
-                                    'Quantity:  ' +
-                                        details![index].quantity.toString(),
+                                    'Quantity: ${details![index].quantity.toString()}',
                                     style: GoogleFonts.cabin(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
@@ -206,7 +205,7 @@ class _orderMethodState extends State<orderMethod> {
             child: Column(
               children: [
                 Text(
-                  'Payment Method: ' + widget.method,
+                  'Payment Method: ${widget.method}',
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.cabin(
                     fontSize: 20,
@@ -301,7 +300,7 @@ class _orderMethodState extends State<orderMethod> {
                                       )),
                             );
                           } else {
-                            CheckingOrder();
+                            checkingOrder();
                             showDialog(
                               barrierDismissible: false,
                               context: context,

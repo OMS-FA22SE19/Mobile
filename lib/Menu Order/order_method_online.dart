@@ -149,7 +149,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                                   height: 2,
                                 ),
                                 Text(
-                                  'Price: ' + details![index].price.toString(),
+                                  'Price: ${changeFormat(details![index].price)} đ',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.cabin(
@@ -174,8 +174,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                                       color: Colors.brown[600],
                                       borderRadius: BorderRadius.circular(10)),
                                   child: Text(
-                                    'Quantity:  ' +
-                                        details![index].quantity.toString(),
+                                    'Quantity:  ${details![index].quantity.toString()}',
                                     style: GoogleFonts.cabin(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
@@ -206,7 +205,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
             child: Column(
               children: [
                 Text(
-                  'Payment Method: ' + widget.method,
+                  'Payment Method: ${widget.method}',
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.cabin(
                     fontSize: 20,

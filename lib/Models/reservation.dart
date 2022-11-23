@@ -366,6 +366,7 @@ class ReservationNoTable {
     required this.isPriorFoodOrder,
     required this.user,
     required this.prePaid,
+    required this.paid,
     this.reservationTables = const [],
     this.orderDetails = const [],
   });
@@ -383,6 +384,7 @@ class ReservationNoTable {
   bool isPriorFoodOrder;
   User user;
   int prePaid;
+  int paid;
   List<ReservationTable> reservationTables;
   List<orderDetailss> orderDetails;
 
@@ -399,6 +401,7 @@ class ReservationNoTable {
         endTime: DateTime.parse(json["endTime"]),
         status: json["status"],
         prePaid: json["prePaid"],
+        paid: json["paid"],
         isPriorFoodOrder: json["isPriorFoodOrder"],
         user: User.fromJson(json["user"]),
         reservationTables: List<ReservationTable>.from(
@@ -419,6 +422,7 @@ class ReservationNoTable {
         "endTime": endTime.toIso8601String(),
         "status": status,
         "prePaid": prePaid,
+        "paid": paid,
         "isPriorFoodOrder": isPriorFoodOrder,
         "user": user.toJson(),
         "reservationTables":

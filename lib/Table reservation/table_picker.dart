@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Models/table.dart';
 import 'package:oms_mobile/Table%20reservation/date_picker.dart';
-import 'package:oms_mobile/Table%20reservation/table_reservation.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
 class tablePicker extends StatefulWidget {
@@ -53,7 +52,7 @@ class _tablePickerState extends State<tablePicker> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => tableReservation()),
+                  MaterialPageRoute(builder: (context) => homeScreen()),
                 );
               },
               icon: Icon(
@@ -137,15 +136,14 @@ class _tablePickerState extends State<tablePicker> {
                                     color: Colors.white),
                               ),
                               Text(
-                                "Number of seats: " +
-                                    tables![index].numOfSeats.toString(),
+                                'Number of seats: ${tables![index].numOfSeats.toString()}',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.cabin(
                                     fontSize: 18, color: Colors.white),
                               ),
                               Text(
-                                "Amount: " + tables![index].quantity.toString(),
+                                'Amount: ${tables![index].quantity.toString()}',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.cabin(

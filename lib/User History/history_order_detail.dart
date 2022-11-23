@@ -25,7 +25,6 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getData();
   }
