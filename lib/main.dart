@@ -1,10 +1,13 @@
 // ignore_for_file: prefer_const_constructors, avoid_print
 import 'dart:io';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:oms_mobile/firebase_options.dart';
+import 'package:oms_mobile/locale_string.dart';
 import 'Login/login_page.dart';
+import 'package:get/get.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -58,7 +61,7 @@ void main() async {
     print("check main.dart");
   });
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyHttpOverrides extends HttpOverrides {
@@ -70,32 +73,16 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        print('data: ${message.data}');
-      } else {
-        print("check main.dart");
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
+      translations: LocaleString(),
+      locale: Locale('en', 'US'),
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -104,3 +91,44 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+// class _MyAppState extends State<MyApp> {
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//     return GetMaterialApp(
+//       translations: LocaleString(),
+//       locale: Locale('en', 'US'),
+//       title: 'Flutter Demo',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       // supportedLocales: const [
+//       //   Locale('en', ''),
+//       //   Locale('vi', ''),
+//       // ],
+//       // localizationsDelegates: const [
+//       //   AppLocalizations.delegate,
+//       //   GlobalMaterialLocalizations.delegate,
+//       //   GlobalWidgetsLocalizations.delegate,
+//       //   GlobalCupertinoLocalizations.delegate,
+//       // ],
+//       // localeResolutionCallback: (locale, supportedLocales) {
+//       //   for (var supportedLocale in supportedLocales) {
+//       //     if (supportedLocale.languageCode == locale.languageCode &&
+//       //         supportedLocale.countryCode == locale.countryCode) {
+//       //       return supportedLocale;
+//       //     }
+//       //   }
+//       //   return supportedLocales.first;
+//       // },
+//       home: loginScreen(),
+//     );
+//     // BlocProvider<LanguageCubit>(
+//     //   create: (context) => LanguageCubit(context),
+//     //   child: BlocBuilder<LanguageCubit, Locale?>(builder: (context, locale) {
+//     //     return
+//     //   }),
+//     // );
+//   }
+// }

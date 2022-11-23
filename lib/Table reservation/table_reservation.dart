@@ -8,9 +8,9 @@ import 'package:oms_mobile/Models/table.dart';
 import 'package:intl/intl.dart';
 import 'package:oms_mobile/Table%20reservation/table_information.dart';
 import 'package:oms_mobile/services/remote_service.dart';
+import 'package:get/get.dart';
 
 class tableReservation extends StatefulWidget {
-  // final int? reservationId;
   const tableReservation({super.key});
 
   @override
@@ -21,12 +21,9 @@ class _tableReservationState extends State<tableReservation> {
   final inputController = TextEditingController(text: "2");
   List<tableAvailable>? tables;
   List<availableDate>? dates;
-  // ReservationNoTable? currentReservation;
-  // bool checkflag = false;
-  // int checkId = -1;
-
   bool chooseFlag = false;
-  int chooseIndex = -1;
+  int chooseIndex =
+      -1; //TODO: 1000 is not valid when too many table on the list
   bool flag = true;
   bool flagText = false;
   bool hiddenFlag = true;
@@ -65,14 +62,14 @@ class _tableReservationState extends State<tableReservation> {
   @override
   void initState() {
     super.initState();
+    //fetch data from API
     getData(2);
   }
 
   getData(int people) async {
     tables = await RemoteService().getTablesAvailable(people);
-    // currentReservation = await RemoteService()
-    //     .getReservationBeforeCheckin(widget.reservationId ?? 0);
     int? check = tables?.length;
+    bool? checkb = tables?.isEmpty;
     if (tables != null) {
       setState(() {
         isLoaded = true;
@@ -93,6 +90,7 @@ class _tableReservationState extends State<tableReservation> {
     dates = await RemoteService().getTimeAvailable(
         numberOfSeats, tableTypeId, date.substring(0, 10), quantity);
     int? check = dates?.length;
+    bool? checkb = dates?.isEmpty;
     if (dates != null) {
       setState(() {
         isLoadedTime = true;
@@ -119,7 +117,7 @@ class _tableReservationState extends State<tableReservation> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
-        title: Text('Reservation',
+        title: Text('reservation'.tr,
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
@@ -135,7 +133,7 @@ class _tableReservationState extends State<tableReservation> {
                       alignment: Alignment.center,
                       icon: Icon(Icons.info_outline_rounded),
                       title: Text(
-                        'Remind',
+                        'Remind'.tr,
                         style: GoogleFonts.lato(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -146,7 +144,7 @@ class _tableReservationState extends State<tableReservation> {
                         child: Column(
                           children: [
                             Text(
-                              "Business Hours:",
+                              '${'Business Hours'.tr}:',
                               style: GoogleFonts.lato(
                                 color: Colors.black,
                               ),
@@ -163,7 +161,7 @@ class _tableReservationState extends State<tableReservation> {
                       actions: <Widget>[
                         TextButton(
                           onPressed: () => Navigator.pop(context, 'Cancel'),
-                          child: const Text('I understand'),
+                          child: Text('I understand'.tr),
                         ),
                       ],
                     );
@@ -183,7 +181,7 @@ class _tableReservationState extends State<tableReservation> {
             height: 10,
           ),
           Text(
-            'Guest Amount: ',
+            '${'Guest Amount'.tr}:',
             style: GoogleFonts.cabin(
               color: Colors.black,
               fontWeight: FontWeight.bold,
@@ -227,16 +225,16 @@ class _tableReservationState extends State<tableReservation> {
                   autofocus: false,
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'Input number of guest',
+                    hintText: 'Input number of guest'.tr,
                     // labelText: 'Input number of guest',
-                    errorText: flagText ? 'Please input a number!' : null,
+                    errorText: flagText ? 'Please input a number!'.tr : null,
                   ),
                 ),
               ),
             ),
           ),
           Text(
-            'Selected Date: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
+            '${'Selected Date'.tr}: ${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}',
             style: GoogleFonts.cabin(
               color: Colors.black,
               fontWeight: FontWeight.bold,
@@ -271,7 +269,7 @@ class _tableReservationState extends State<tableReservation> {
                 getTimeAvailable(_selectedDate.toString());
               },
               child: Text(
-                'Open calendar',
+                'Open calendar'.tr,
                 style: GoogleFonts.cabin(
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -339,7 +337,7 @@ class _tableReservationState extends State<tableReservation> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      tables![index].tableTypeName,
+                                      tables![index].tableTypeName.tr,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.cabin(
@@ -348,14 +346,16 @@ class _tableReservationState extends State<tableReservation> {
                                           color: Colors.white),
                                     ),
                                     Text(
-                                      'Number of seats: ${tables![index].numOfSeats.toString()}',
+                                      '${'Number of Seats'.tr}: ' +
+                                          tables![index].numOfSeats.toString(),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.cabin(
                                           fontSize: 18, color: Colors.white),
                                     ),
                                     Text(
-                                      'Amount: ${tables![index].quantity.toString()}',
+                                      '${'Amount'.tr}: ' +
+                                          tables![index].quantity.toString(),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.cabin(
@@ -378,13 +378,13 @@ class _tableReservationState extends State<tableReservation> {
           SizedBox(
             height: 10,
           ),
-          conditionalWidget(hiddenFlag),
+          ConditionalWidget(hiddenFlag),
         ],
       ),
     );
   }
 
-  conditionalWidget(bool check) {
+  ConditionalWidget(bool check) {
     if (check) {
       return Container();
     } else {
@@ -395,8 +395,8 @@ class _tableReservationState extends State<tableReservation> {
           ),
           Text(
             isLoadedTime
-                ? 'Occupied Time: '
-                : "This table have no occupied reservation!",
+                ? '${'Occupied Time'.tr}:'
+                : 'This table have no occupied reservation!'.tr,
             textAlign: TextAlign.center,
             style: GoogleFonts.cabin(
               fontWeight: FontWeight.bold,
@@ -428,7 +428,9 @@ class _tableReservationState extends State<tableReservation> {
                             color: Colors.grey,
                             borderRadius: BorderRadius.circular(20)),
                         child: Text(
-                          '${dates![index].startTime.substring(11, 16)}  -  ${dates![index].endTime.substring(11, 16)}',
+                          dates![index].startTime.substring(11, 16) +
+                              '  -  ' +
+                              dates![index].endTime.substring(11, 16),
                           style: GoogleFonts.lato(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -450,7 +452,7 @@ class _tableReservationState extends State<tableReservation> {
               Column(
                 children: [
                   Text(
-                    'Selection Start Time:',
+                    '${'Selection Start Time'.tr}:',
                     style: GoogleFonts.cabin(
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -520,7 +522,8 @@ class _tableReservationState extends State<tableReservation> {
                             chooseTime < _ocupiedEnd) {
                           ocupiedFlag = true;
                           errorText =
-                              "The time you choose is already occupied, Please choose again!";
+                              'The time you choose is already occupied, Please choose again!'
+                                  .tr;
                         }
                       });
 
@@ -528,10 +531,12 @@ class _tableReservationState extends State<tableReservation> {
                         invalidFlag = true;
                         if (chooseTime == closeTime) {
                           errorText =
-                              "Our restaurant close at 10:00PM. Please choose again!";
+                              'Our restaurant close at 10:00PM. Please choose again!'
+                                  .tr;
                         } else {
                           errorText =
-                              "Our bussiness hour is from 11:00AM - 10:00PM. Please choose again!";
+                              'Our bussiness hour is from 11:00AM - 10:00PM. Please choose again!'
+                                  .tr;
                         }
                       }
                       // else {
@@ -549,7 +554,7 @@ class _tableReservationState extends State<tableReservation> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: Text(
-                                'Invalid Time',
+                                'Invalid Time'.tr,
                                 style: GoogleFonts.lato(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -565,7 +570,7 @@ class _tableReservationState extends State<tableReservation> {
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.pop(context, 'Cancel'),
-                                  child: const Text('I understand'),
+                                  child: Text('I understand'.tr),
                                 ),
                               ],
                             );
@@ -578,7 +583,7 @@ class _tableReservationState extends State<tableReservation> {
                     });
                   },
                   child: Text(
-                    'Time Picker',
+                    'Time Picker'.tr,
                     style: GoogleFonts.cabin(
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -598,7 +603,7 @@ class _tableReservationState extends State<tableReservation> {
               Column(
                 children: [
                   Text(
-                    'Selection End Time:',
+                    '${'Selection End Time'.tr}:',
                     style: GoogleFonts.cabin(
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -629,7 +634,7 @@ class _tableReservationState extends State<tableReservation> {
                   onPressed: () async {
                     TimeOfDay? newTime = await showTimePicker(
                         context: context,
-                        initialTime: TimeOfDay(hour: 12, minute: 00),
+                        initialTime: TimeOfDay(hour: 11, minute: 00),
                         builder: (context, childWidget) {
                           return MediaQuery(
                               data: MediaQuery.of(context)
@@ -668,7 +673,8 @@ class _tableReservationState extends State<tableReservation> {
                             chooseTime <= _ocupiedEnd) {
                           ocupiedFlag = true;
                           errorText =
-                              "The time you choose is already occupied, Please choose again!";
+                              'The time you choose is already occupied, Please choose again!'
+                                  .tr;
                         }
                       });
 
@@ -676,26 +682,30 @@ class _tableReservationState extends State<tableReservation> {
                         invalidFlag = true;
                         if (chooseTime == openTime) {
                           errorText =
-                              "Our restaurant open at 11:00AM. Please choose again!";
+                              'Our restaurant open at 11:00AM. Please choose again!'
+                                  .tr;
                         } else {
                           errorText =
-                              "Our bussiness hour is from 11:00AM - 10:00PM. Please choose again!";
+                              'Our bussiness hour is from 11:00AM - 10:00PM. Please choose again!'
+                                  .tr;
                         }
                       } else {
                         if (chooseTime >= toDouble(_selectedStartTime) &&
                             chooseTime < toDouble(_selectedStartTime) + 0.5) {
                           invalidFlag = true;
                           errorText =
-                              "Reservation duration must be at least 30 minutes. Please choose again!";
+                              'Reservation duration must be at least 30 minutes. Please choose again!'
+                                  .tr;
                         } else if (chooseTime >
                             toDouble(_selectedStartTime) + settingHour) {
                           invalidFlag = true;
                           errorText =
-                              'Reservation duration must not longer than $settingHour hours. Please choose again!';
+                              'Reservation duration must not longer than $settingHour hours. Please choose again!'
+                                  .tr;
                         } else if (chooseTime < toDouble(_selectedStartTime)) {
                           invalidFlag = true;
                           errorText =
-                              "End time must not smaller than Start time. Please choose again!";
+                              'End time must not smaller than Start time. Please choose again!';
                         }
                       }
 
@@ -706,7 +716,7 @@ class _tableReservationState extends State<tableReservation> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: Text(
-                                'Invalid Time',
+                                'Invalid Time'.tr,
                                 style: GoogleFonts.lato(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -722,7 +732,7 @@ class _tableReservationState extends State<tableReservation> {
                                 TextButton(
                                   onPressed: () =>
                                       Navigator.pop(context, 'Cancel'),
-                                  child: const Text('I understand'),
+                                  child: Text('I understand'.tr),
                                 ),
                               ],
                             );
@@ -735,7 +745,7 @@ class _tableReservationState extends State<tableReservation> {
                     });
                   },
                   child: Text(
-                    'Time Picker',
+                    'Time Picker'.tr,
                     style: GoogleFonts.cabin(
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -746,63 +756,162 @@ class _tableReservationState extends State<tableReservation> {
               ),
             ],
           ),
-          SizedBox(
-            height: 10,
-          ),
-          conditionalButtonFinish(),
-          SizedBox(
-            height: 10,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                minimumSize: Size(double.infinity, 35),
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
+                ),
+              ),
+              onPressed: invalidFlag || ocupiedFlag
+                  ? null
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => tableInformation(
+                                  tableTypeName: tableTypeName,
+                                  deposit: deposit,
+                                  amount: quantity,
+                                  numberOfPeople:
+                                      int.parse(inputController.text),
+                                  name: "Default User",
+                                  phone: "0941767748",
+                                  date: _selectedDate,
+                                  startTime: _selectedStartTime,
+                                  endTime: _selectedEndTime,
+                                  tableTypeId: tableTypeId,
+                                  numberOfSeats: numberOfSeats,
+                                )),
+                      );
+                    },
+              child: Text(
+                'Finish'.tr.toUpperCase(),
+                style: GoogleFonts.cabin(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontSize: 20,
+                ),
+              ),
+            ),
           ),
         ],
       );
     }
   }
 
-  conditionalButtonFinish() {
-    if (ocupiedFlag || invalidFlag) {
-      return Container();
-    } else {
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromRGBO(232, 192, 125, 100),
-            minimumSize: Size(double.infinity, 35),
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
-            ),
-          ),
-          onPressed: invalidFlag || ocupiedFlag
-              ? null
-              : () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => tableInformation(
-                              tableTypeName: tableTypeName,
-                              deposit: deposit,
-                              amount: quantity,
-                              numberOfPeople: int.parse(inputController.text),
-                              name: "Default User",
-                              phone: "0941767748",
-                              date: _selectedDate,
-                              startTime: _selectedStartTime,
-                              endTime: _selectedEndTime,
-                              tableTypeId: tableTypeId,
-                              numberOfSeats: numberOfSeats,
-                            )),
-                  );
-                },
-          child: Text(
-            'Finish'.toUpperCase(),
-            style: GoogleFonts.cabin(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontSize: 20,
-            ),
-          ),
+  conditionalTable(bool flag, int index) {
+    if (flag) {
+      return Container(
+        height: 120,
+        width: 300,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.greenAccent,
         ),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          SizedBox(
+            width: 10,
+          ),
+          Icon(
+            Icons.table_bar_rounded,
+            size: 80,
+            color: Colors.white,
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Flexible(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  tables![index].tableTypeName,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.cabin(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+                Text(
+                  '${'Number of Seats'.tr}: ' +
+                      tables![index].numOfSeats.toString(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.cabin(fontSize: 18, color: Colors.white),
+                ),
+                Text(
+                  '${'Amount'.tr}: ' + tables![index].quantity.toString(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.cabin(fontSize: 18, color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+        ]),
+      );
+    } else {
+      return Container(
+        height: 120,
+        width: 300,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Color.fromRGBO(232, 192, 125, 50),
+        ),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          SizedBox(
+            width: 10,
+          ),
+          Icon(
+            Icons.table_bar_rounded,
+            size: 80,
+            color: Colors.white,
+          ),
+          SizedBox(
+            width: 20,
+          ),
+          Flexible(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  tables![index].tableTypeName,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.cabin(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+                Text(
+                  '${'Number of Seats'.tr}: ' +
+                      tables![index].numOfSeats.toString(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.cabin(fontSize: 18, color: Colors.white),
+                ),
+                Text(
+                  '${'Amount'.tr}: ' + tables![index].quantity.toString(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.cabin(fontSize: 18, color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 20,
+          ),
+        ]),
       );
     }
   }

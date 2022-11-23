@@ -3,8 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Login/register_page.dart';
-import 'package:oms_mobile/test.dart';
+import 'package:oms_mobile/noti_test.dart';
 import '../Home/home_screen.dart';
+import 'package:get/get.dart';
 
 class loginScreen extends StatefulWidget {
   const loginScreen({super.key});
@@ -40,7 +41,7 @@ class _loginScreenState extends State<loginScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Test()),
+                      MaterialPageRoute(builder: (context) => MyWidget()),
                     );
                   },
                   child: Icon(
@@ -49,7 +50,7 @@ class _loginScreenState extends State<loginScreen> {
                   ),
                 ),
                 //welcome text
-                Text('Hello Customer',
+                Text('hello customer'.tr,
                     style: GoogleFonts.bebasNeue(
                       fontSize: 36,
                     )),
@@ -59,7 +60,7 @@ class _loginScreenState extends State<loginScreen> {
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
-                    'Long time no see, you have been missed!',
+                    'Long time no see, you have been missed!'.tr,
                     style: TextStyle(fontStyle: FontStyle.italic, fontSize: 20),
                   ),
                 ),
@@ -81,7 +82,7 @@ class _loginScreenState extends State<loginScreen> {
                       child: TextField(
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Input your phone number',
+                          hintText: 'Input your phone number'.tr,
                         ),
                       ),
                     ),
@@ -106,7 +107,7 @@ class _loginScreenState extends State<loginScreen> {
                         obscureText: true,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Input your password',
+                          hintText: 'Input your password'.tr,
                         ),
                       ),
                     ),
@@ -135,7 +136,7 @@ class _loginScreenState extends State<loginScreen> {
                       );
                     },
                     child: Text(
-                      'Đăng nhập'.toUpperCase(),
+                      'login'.tr.toUpperCase(),
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 15,
@@ -151,7 +152,7 @@ class _loginScreenState extends State<loginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Not a customer? '),
+                    Text('Not a customer?'.tr),
                     InkWell(
                       onTap: () {
                         Navigator.push(
@@ -161,7 +162,7 @@ class _loginScreenState extends State<loginScreen> {
                         );
                       },
                       child: Text(
-                        'Register now!',
+                        ' ${'Register now!'.tr}',
                         style: TextStyle(
                           color: Colors.blue,
                           fontWeight: FontWeight.bold,
