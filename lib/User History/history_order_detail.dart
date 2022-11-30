@@ -204,7 +204,7 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                                           color: Colors.black),
                                     ),
                                     Text(
-                                      '${'Type'.tr}: ${currentReservation?.reservationTables.elementAt(index).table.tableType.name.tr}',
+                                      '${'Type'.tr}: ${currentReservation?.reservationTables.elementAt(index).table.tableType.name}',
                                       style: GoogleFonts.cabin(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -218,7 +218,7 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                                           color: Colors.black),
                                     ),
                                     Text(
-                                      '${'Number of Seats'.tr}: ${currentReservation?.reservationTables.elementAt(index).table.numOfSeats}',
+                                      '${'Number of seats'.tr}: ${currentReservation?.reservationTables.elementAt(index).table.numOfSeats}',
                                       style: GoogleFonts.roboto(
                                           fontSize: 15,
                                           fontWeight: FontWeight.normal,
@@ -335,6 +335,13 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                                         style: GoogleFonts.cabin(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
+                                            color: Colors.black),
+                                      ),
+                                      Text(
+                                        '${'Price'.tr}: ${changeFormat(currentOrder?.orderDetails.elementAt(index).price ?? 0)} đ',
+                                        style: GoogleFonts.roboto(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.normal,
                                             color: Colors.black),
                                       ),
                                       Text(

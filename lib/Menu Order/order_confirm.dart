@@ -6,6 +6,7 @@ import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
 import 'package:oms_mobile/Menu%20Order/order_method_cash.dart';
 import 'package:oms_mobile/Menu%20Order/order_method_online.dart';
+import 'package:get/get.dart';
 
 class orderConfirm extends StatefulWidget {
   final int reservationId;
@@ -24,7 +25,7 @@ class _orderConfirmState extends State<orderConfirm> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
-        title: Text("Order",
+        title: Text('Order'.tr,
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
@@ -72,7 +73,8 @@ class _orderConfirmState extends State<orderConfirm> {
             height: 10,
           ),
           Text(
-            'Your order has already completed! please choose payment method to continue proceed.',
+            'Your order has already completed! please choose payment method to continue proceed.'
+                .tr,
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.cabin(
@@ -119,7 +121,7 @@ class _orderConfirmState extends State<orderConfirm> {
                             color: Colors.grey,
                           ),
                           Text(
-                            'Cash',
+                            'Cash'.tr,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.cabin(
                                 fontSize: 20,
@@ -166,7 +168,7 @@ class _orderConfirmState extends State<orderConfirm> {
                             color: Colors.grey,
                           ),
                           Text(
-                            'Online Method',
+                            'Online Method'.tr,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.cabin(
                                 fontSize: 20,

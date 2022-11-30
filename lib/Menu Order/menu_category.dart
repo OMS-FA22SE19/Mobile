@@ -8,6 +8,7 @@ import 'package:oms_mobile/Menu%20Order/menu_status.dart';
 import 'package:oms_mobile/Models/course_type.dart';
 import 'package:oms_mobile/Models/food_type.dart';
 import 'package:oms_mobile/services/remote_service.dart';
+import 'package:get/get.dart';
 
 class menuCategory extends StatefulWidget {
   menuCategory(
@@ -57,7 +58,7 @@ class _menuCategoryState extends State<menuCategory> {
           appBar: AppBar(
             backgroundColor: Color.fromRGBO(232, 192, 125, 100),
             centerTitle: true,
-            title: Text('Menu',
+            title: Text('Menu'.tr,
                 style: GoogleFonts.bebasNeue(
                   fontSize: 25,
                 )),
@@ -73,16 +74,16 @@ class _menuCategoryState extends State<menuCategory> {
                   size: 30,
                 )),
             automaticallyImplyLeading: false,
-            bottom: const TabBar(
+            bottom: TabBar(
               indicatorColor: Colors.brown,
               indicatorWeight: 2.5,
               indicatorSize: TabBarIndicatorSize.label,
               tabs: [
                 Tab(
-                  text: "Courses",
+                  text: 'Courses'.tr,
                   icon: Icon(Icons.ramen_dining_rounded),
                 ),
-                Tab(text: "Foods", icon: Icon(Icons.brunch_dining_rounded)),
+                Tab(text: 'Foods'.tr, icon: Icon(Icons.brunch_dining_rounded)),
               ],
             ),
           ),

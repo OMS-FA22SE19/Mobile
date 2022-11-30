@@ -43,7 +43,7 @@ class _tableReservationState extends State<tableReservation> {
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedStartTime = TimeOfDay(hour: 11, minute: 0);
   TimeOfDay _selectedEndTime = TimeOfDay(hour: 12, minute: 0);
-  final TimeOfDay _openTime = TimeOfDay(hour: 11, minute: 0);
+  final TimeOfDay _openTime = TimeOfDay(hour: 09, minute: 0);
   final TimeOfDay _closeTime = TimeOfDay(hour: 22, minute: 0);
   bool ocupiedFlag = true;
   bool invalidFlag = true;
@@ -337,7 +337,7 @@ class _tableReservationState extends State<tableReservation> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      tables![index].tableTypeName.tr,
+                                      tables![index].tableTypeName,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.cabin(
@@ -346,16 +346,14 @@ class _tableReservationState extends State<tableReservation> {
                                           color: Colors.white),
                                     ),
                                     Text(
-                                      '${'Number of Seats'.tr}: ' +
-                                          tables![index].numOfSeats.toString(),
+                                      '${'Number of seats'.tr}: ${tables![index].numOfSeats}',
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.cabin(
                                           fontSize: 18, color: Colors.white),
                                     ),
                                     Text(
-                                      '${'Amount'.tr}: ' +
-                                          tables![index].quantity.toString(),
+                                      '${'Amount'.tr}: ${tables![index].quantity}',
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.cabin(
@@ -705,7 +703,8 @@ class _tableReservationState extends State<tableReservation> {
                         } else if (chooseTime < toDouble(_selectedStartTime)) {
                           invalidFlag = true;
                           errorText =
-                              'End time must not smaller than Start time. Please choose again!';
+                              'End time must not smaller than Start time. Please choose again!'
+                                  .tr;
                         }
                       }
 

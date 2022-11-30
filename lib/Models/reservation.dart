@@ -410,6 +410,26 @@ class ReservationNoTable {
             json["orderDetails"].map((x) => orderDetailss.fromJson(x))),
       );
 
+  factory ReservationNoTable.fromJsonResponse(Map<String, dynamic> json) =>
+      ReservationNoTable(
+        id: json["id"],
+        userId: json["userId"],
+        numOfPeople: json["numOfPeople"],
+        tableTypeId: json["tableTypeId"],
+        tableType: json["tableType"],
+        numOfSeats: json["numOfSeats"],
+        quantity: json["quantity"],
+        startTime: DateTime.parse(json["startTime"]),
+        endTime: DateTime.parse(json["endTime"]),
+        status: json["status"],
+        prePaid: json["prePaid"],
+        paid: json["paid"],
+        isPriorFoodOrder: json["isPriorFoodOrder"],
+        user: User.fromJson(json["user"]),
+        reservationTables: List<ReservationTable>.from(
+            json["reservationTables"].map((x) => ReservationTable.fromJson(x))),
+      );
+
   Map<String, dynamic> toJson() => {
         "id": id,
         "userId": userId,
@@ -483,6 +503,35 @@ class responseOneReservation {
   factory responseOneReservation.fromJson(Map<String, dynamic> json) =>
       responseOneReservation(
         data: ReservationNoTable.fromJson(json["data"]),
+        succeeded: json["succeeded"],
+        statusCode: json["statusCode"],
+        message: json["message"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "data": data,
+        "succeeded": succeeded,
+        "statusCode": statusCode,
+        "message": message,
+      };
+}
+
+class responseReservationPreorder {
+  responseReservationPreorder({
+    required this.data,
+    required this.succeeded,
+    required this.statusCode,
+    required this.message,
+  });
+
+  ReservationNoTable data;
+  bool succeeded;
+  String statusCode;
+  dynamic message;
+
+  factory responseReservationPreorder.fromJson(Map<String, dynamic> json) =>
+      responseReservationPreorder(
+        data: ReservationNoTable.fromJsonResponse(json["data"]),
         succeeded: json["succeeded"],
         statusCode: json["statusCode"],
         message: json["message"],

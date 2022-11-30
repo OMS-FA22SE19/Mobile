@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:oms_mobile/Home/person_page.dart';
 import 'package:oms_mobile/Login/login_page.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_detail.dart';
@@ -81,16 +82,27 @@ class _reservationListState extends State<reservationList> {
                 style: GoogleFonts.bebasNeue(
                   fontSize: 25,
                 )),
+            leading: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => loginScreen()),
+                  );
+                },
+                icon: Icon(
+                  Icons.home_rounded,
+                  size: 30,
+                )),
             actions: [
               IconButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => loginScreen()),
+                      MaterialPageRoute(builder: (context) => PersonPage()),
                     );
                   },
                   icon: Icon(
-                    Icons.home_rounded,
+                    Icons.person,
                     size: 30,
                   )),
             ],
@@ -229,7 +241,7 @@ class _reservationListState extends State<reservationList> {
 
   ReservationCheckIn(String status, int index) {
     return Container(
-      height: 230,
+      height: 250,
       width: MediaQuery.of(context).size.width - 20,
       decoration: BoxDecoration(
         color: (status.contains("Reserved"))
@@ -325,6 +337,23 @@ class _reservationListState extends State<reservationList> {
                     ),
                     Text(
                       reservationsCheckIn![index].status.tr,
+                      textAlign: TextAlign.right,
+                      style:
+                          GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+                    ),
+                  ]),
+                  TableRow(children: [
+                    Text(
+                      '${'table'.tr}:',
+                      style:
+                          GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+                    ),
+                    Text(
+                      reservationsCheckIn![index]
+                          .reservationTables
+                          .elementAt(0)
+                          .tableId
+                          .toString(),
                       textAlign: TextAlign.right,
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),

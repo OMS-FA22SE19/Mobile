@@ -6,6 +6,7 @@ import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
 import 'package:oms_mobile/services/remote_service.dart';
+import 'package:get/get.dart';
 
 class tableInformation extends StatefulWidget {
   final int numberOfPeople;
@@ -67,7 +68,7 @@ class _tableInformationState extends State<tableInformation> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
-        title: Text('Reservation',
+        title: Text('reservation'.tr,
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
@@ -107,7 +108,7 @@ class _tableInformationState extends State<tableInformation> {
                 //   size: 150,
                 //   color: Colors.white,
                 // ),
-                Text('RESERVATION INFO',
+                Text('RESERVATION INFO'.tr,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.lato(
                         color: Colors.white,
@@ -117,7 +118,7 @@ class _tableInformationState extends State<tableInformation> {
                   height: 20,
                 ),
                 Text(
-                  'Table',
+                  'table'.tr,
                   style: GoogleFonts.roboto(
                       fontSize: 20,
                       color: Colors.black,
@@ -151,7 +152,7 @@ class _tableInformationState extends State<tableInformation> {
                               ),
                             ),
                             Text(
-                              'Number of people:',
+                              '${'Number of people'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.black,
@@ -174,7 +175,7 @@ class _tableInformationState extends State<tableInformation> {
                               ),
                             ),
                             Text(
-                              'Number of seats: ',
+                              '${'Number of seats'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.black,
@@ -198,14 +199,14 @@ class _tableInformationState extends State<tableInformation> {
                               ),
                             ),
                             Text(
-                              'Table type:',
+                              '${'Type'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              widget.tableTypeName,
+                              widget.tableTypeName.tr,
                               textAlign: TextAlign.right,
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
@@ -221,7 +222,7 @@ class _tableInformationState extends State<tableInformation> {
                               ),
                             ),
                             Text(
-                              'Deposit: ',
+                              '${'deposit'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.black,
@@ -245,7 +246,7 @@ class _tableInformationState extends State<tableInformation> {
                   height: 20,
                 ),
                 Text(
-                  'Date time',
+                  'datetime'.tr,
                   style: GoogleFonts.roboto(
                       fontSize: 20,
                       color: Colors.black,
@@ -279,7 +280,7 @@ class _tableInformationState extends State<tableInformation> {
                               ),
                             ),
                             Text(
-                              'Date: ',
+                              '${'date'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.black,
@@ -302,7 +303,7 @@ class _tableInformationState extends State<tableInformation> {
                               ),
                             ),
                             Text(
-                              'Start time: ',
+                              '${'Start Time'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.black,
@@ -325,7 +326,7 @@ class _tableInformationState extends State<tableInformation> {
                               ),
                             ),
                             Text(
-                              'End time: ',
+                              '${'End Time'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.black,
@@ -349,7 +350,7 @@ class _tableInformationState extends State<tableInformation> {
                   height: 20,
                 ),
                 Text(
-                  'Customer information',
+                  'customer information'.tr,
                   style: GoogleFonts.roboto(
                       fontSize: 20,
                       color: Colors.black,
@@ -383,7 +384,7 @@ class _tableInformationState extends State<tableInformation> {
                               ),
                             ),
                             Text(
-                              'User: ',
+                              '${'full name'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.black,
@@ -406,7 +407,7 @@ class _tableInformationState extends State<tableInformation> {
                               ),
                             ),
                             Text(
-                              'Phone: ',
+                              '${'phone number'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.black,
@@ -500,14 +501,15 @@ class _tableInformationState extends State<tableInformation> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: Text(
-                              'Remind',
+                              'Remind'.tr,
                               style: GoogleFonts.lato(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             content: Text(
-                              "Do you want to pre-order food with this reservation?",
+                              'Do you want to pre-order food with this reservation?'
+                                  .tr,
                               textAlign: TextAlign.center,
                               style: GoogleFonts.lato(
                                 color: Colors.black,
@@ -529,7 +531,7 @@ class _tableInformationState extends State<tableInformation> {
                                     );
                                   });
                                 },
-                                child: const Text('Yes'),
+                                child: Text('yes'.tr),
                               ),
                               TextButton(
                                 onPressed: () {
@@ -542,7 +544,7 @@ class _tableInformationState extends State<tableInformation> {
                                     );
                                   });
                                 },
-                                child: const Text('No'),
+                                child: Text('no'.tr),
                               ),
                             ],
                           );
@@ -554,7 +556,7 @@ class _tableInformationState extends State<tableInformation> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: Text(
-                              'Remind',
+                              'Remind'.tr,
                               style: GoogleFonts.lato(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
@@ -565,7 +567,9 @@ class _tableInformationState extends State<tableInformation> {
                               child: Column(
                                 children: [
                                   Text(
-                                    "You need to pay for your reservation 30 minutes after making a reservation or your reservation will be cancel !",
+                                    'You need to pay for your reservation 30 minutes after making a reservation or your reservation will be cancel!'
+                                        .tr
+                                        .tr,
                                     textAlign: TextAlign.center,
                                     style: GoogleFonts.lato(
                                       color: Colors.black,
@@ -576,7 +580,9 @@ class _tableInformationState extends State<tableInformation> {
                                     height: 5,
                                   ),
                                   Text(
-                                    "Pre-order food will be include in this reservation.",
+                                    'Pre-order food will be include in this reservation'
+                                        .tr
+                                        .tr,
                                     style: GoogleFonts.lato(
                                       color: Colors.black,
                                     ),
@@ -589,7 +595,7 @@ class _tableInformationState extends State<tableInformation> {
                                 onPressed: () {
                                   Navigator.pop(context, 'Cancel');
                                 },
-                                child: const Text('I understand'),
+                                child: Text('I understand'.tr),
                               ),
                             ],
                           );
@@ -597,7 +603,7 @@ class _tableInformationState extends State<tableInformation> {
                       );
                     },
                     child: Text(
-                      'Confirm'.toUpperCase(),
+                      'Finish'.tr.toUpperCase(),
                       style: TextStyle(
                           color: Color.fromRGBO(232, 192, 125, 100),
                           fontSize: 15,

@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Login/register_page.dart';
-import 'package:oms_mobile/noti_test.dart';
 import '../Home/home_screen.dart';
 import 'package:get/get.dart';
 
@@ -41,7 +40,7 @@ class _loginScreenState extends State<loginScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MyWidget()),
+                      MaterialPageRoute(builder: (context) => homeScreen()),
                     );
                   },
                   child: Icon(

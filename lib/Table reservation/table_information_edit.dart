@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Table%20reservation/table_reservation_edit.dart';
 import 'package:oms_mobile/services/remote_service.dart';
+import 'package:get/get.dart';
 
 class tableInformationEdit extends StatefulWidget {
   final int numberOfPeople;
@@ -64,7 +65,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
-        title: Text('Reservation',
+        title: Text('reservation'.tr,
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
@@ -103,7 +104,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                     SizedBox(
                       height: 20,
                     ),
-                    Text('OLD RESERVATION INFO',
+                    Text('OLD RESERVATION INFO'.tr,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.lato(
                             color: Colors.white,
@@ -113,7 +114,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                       height: 20,
                     ),
                     Text(
-                      'Table',
+                      'table'.tr,
                       style: GoogleFonts.roboto(
                           fontSize: 20,
                           color: Colors.black,
@@ -147,7 +148,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Number of people:',
+                                  '${'Number of people'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -170,7 +171,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Number of seats: ',
+                                  '${'Number of seats'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -193,7 +194,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Table type:',
+                                  '${'Type'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -216,7 +217,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Deposit: ',
+                                  '${'deposit'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -239,14 +240,14 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Status: ',
+                                  '${'status'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${widget.currentReservation?.status}',
+                                  '${widget.currentReservation?.status.tr}',
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
@@ -263,7 +264,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                       height: 20,
                     ),
                     Text(
-                      'Date time',
+                      'datetime'.tr,
                       style: GoogleFonts.roboto(
                           fontSize: 20,
                           color: Colors.black,
@@ -297,7 +298,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Date: ',
+                                  '${'date'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -321,7 +322,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Start time: ',
+                                  '${'Start Time'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -344,7 +345,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'End time: ',
+                                  '${'End Time'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -368,7 +369,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                       height: 20,
                     ),
                     Text(
-                      'Customer information',
+                      'customer information'.tr,
                       style: GoogleFonts.roboto(
                           fontSize: 20,
                           color: Colors.black,
@@ -402,7 +403,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'User: ',
+                                  '${'full name'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -425,7 +426,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Phone: ',
+                                  '${'phone number'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -471,7 +472,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                     SizedBox(
                       height: 20,
                     ),
-                    Text('NEW RESERVATION INFO',
+                    Text('NEW RESERVATION INFO'.tr,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.lato(
                             color: Colors.white,
@@ -481,7 +482,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                       height: 20,
                     ),
                     Text(
-                      'Table',
+                      'table'.tr,
                       style: GoogleFonts.roboto(
                           fontSize: 20,
                           color: Colors.black,
@@ -515,7 +516,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Number of people:',
+                                  '${'Number of people'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -538,7 +539,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Number of seats: ',
+                                  '${'Number of seats'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -562,7 +563,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Table type:',
+                                  '${'Type'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -585,7 +586,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Deposit: ',
+                                  '${'deposit'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -604,28 +605,28 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                 TableCell(
                                   child: Icon(
                                     Icons.info_outline_rounded,
-                                    color: widget.overcharged >= 0
+                                    color: widget.overcharged > 0
                                         ? Colors.red
                                         : Colors.black,
                                   ),
                                 ),
                                 Text(
-                                  'Status: ',
+                                  '${'status'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
-                                      color: widget.overcharged >= 0
+                                      color: widget.overcharged > 0
                                           ? Colors.red
                                           : Colors.black,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  widget.overcharged >= 0
-                                      ? 'Available'
-                                      : '${widget.currentReservation?.status}',
+                                  widget.overcharged > 0
+                                      ? 'Available'.tr
+                                      : '${widget.currentReservation?.status.tr}',
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
-                                      color: widget.overcharged >= 0
+                                      color: widget.overcharged > 0
                                           ? Colors.red
                                           : Colors.black,
                                       fontWeight: FontWeight.bold),
@@ -640,7 +641,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                       height: 20,
                     ),
                     Text(
-                      'Date time',
+                      'datetime'.tr,
                       style: GoogleFonts.roboto(
                           fontSize: 20,
                           color: Colors.black,
@@ -674,7 +675,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Date: ',
+                                  '${'date'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -697,7 +698,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Start time: ',
+                                  '${'Start Time'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -720,7 +721,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'End time: ',
+                                  '${'End Time'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -744,7 +745,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                       height: 20,
                     ),
                     Text(
-                      'Customer information',
+                      'customer information'.tr,
                       style: GoogleFonts.roboto(
                           fontSize: 20,
                           color: Colors.black,
@@ -778,7 +779,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'User: ',
+                                  '${'full name'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -801,7 +802,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   ),
                                 ),
                                 Text(
-                                  'Phone: ',
+                                  '${'phone number'.tr}:',
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
                                       color: Colors.black,
@@ -956,7 +957,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: Text(
-                                  'Remind',
+                                  'Remind'.tr,
                                   style: GoogleFonts.lato(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
@@ -967,7 +968,8 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                   child: Column(
                                     children: [
                                       Text(
-                                        "Your reservation is changed. Process to the menu to check your reservation!",
+                                        'Your reservation is changed. Process to the menu to check your reservation!'
+                                            .tr,
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.lato(
                                           color: Colors.black,
@@ -996,7 +998,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                             builder: (context) => homeScreen()),
                                       );
                                     },
-                                    child: const Text('I understand'),
+                                    child: Text('I understand'.tr),
                                   ),
                                 ],
                               );
@@ -1004,7 +1006,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                           );
                         },
                         child: Text(
-                          'Confirm'.toUpperCase(),
+                          'Finish'.tr.toUpperCase(),
                           style: TextStyle(
                               color: Color.fromRGBO(232, 192, 125, 100),
                               fontSize: 15,

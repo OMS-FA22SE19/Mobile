@@ -8,6 +8,7 @@ import 'package:oms_mobile/Models/payment_url.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:get/get.dart';
 
 class orderMethodOnline extends StatefulWidget {
   final String? orderId;
@@ -64,7 +65,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
-        title: Text("Order",
+        title: Text("Order".tr,
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
@@ -149,7 +150,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                                   height: 2,
                                 ),
                                 Text(
-                                  'Price: ${changeFormat(details![index].price)} đ',
+                                  '${'Price'.tr}: ${changeFormat(details![index].price)} đ',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.cabin(
@@ -174,7 +175,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                                       color: Colors.brown[600],
                                       borderRadius: BorderRadius.circular(10)),
                                   child: Text(
-                                    'Quantity:  ${details![index].quantity.toString()}',
+                                    '${'Amount'.tr}:  ${details![index].quantity.toString()}',
                                     style: GoogleFonts.cabin(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
@@ -205,7 +206,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
             child: Column(
               children: [
                 Text(
-                  'Payment Method: ${widget.method}',
+                  '${'Payment Method'.tr}: ${widget.method}',
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.cabin(
                     fontSize: 20,
@@ -228,7 +229,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                           children: <TableRow>[
                             TableRow(children: [
                               Text(
-                                'Total bill: ',
+                                '${'Total Pay'.tr}: ',
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.cabin(
                                   fontSize: 20,
@@ -248,7 +249,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                             ]),
                             TableRow(children: [
                               Text(
-                                'Deposit: ',
+                                '${'deposit'.tr}: ',
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.cabin(
                                   fontSize: 20,
@@ -268,7 +269,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                             ]),
                             TableRow(children: [
                               Text(
-                                'Total pay: ',
+                                '${'Must pay'.tr}: ',
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.cabin(
                                   fontSize: 20,
@@ -329,7 +330,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
   conditionalButton() {
     if (flag) {
       return Text(
-        'Continue',
+        'Continue'.tr,
         overflow: TextOverflow.ellipsis,
         style: GoogleFonts.cabin(
           fontSize: 20,
@@ -339,7 +340,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
       );
     } else {
       return Text(
-        'Pay',
+        'Process'.tr,
         overflow: TextOverflow.ellipsis,
         style: GoogleFonts.cabin(
           fontSize: 20,

@@ -9,6 +9,7 @@ import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:get/get.dart';
 
 class testPrior extends StatefulWidget {
   final int reservationId;
@@ -70,7 +71,7 @@ class _testPriorState extends State<testPrior> {
       appBar: AppBar(
         backgroundColor: Colors.greenAccent,
         centerTitle: true,
-        title: Text('reservation',
+        title: Text('reservation'.tr,
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
@@ -96,14 +97,15 @@ class _testPriorState extends State<testPrior> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: Text(
-                        'Remind',
+                        'Remind'.tr,
                         style: GoogleFonts.lato(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       content: Text(
-                        "You can only checkin before / after 30 minutes of the start time of the reservation",
+                        'You can only checkin before / after 30 minutes of the start time of the reservation'
+                            .tr,
                         style: GoogleFonts.lato(
                           color: Colors.black,
                         ),
@@ -111,7 +113,7 @@ class _testPriorState extends State<testPrior> {
                       actions: <Widget>[
                         TextButton(
                           onPressed: () => Navigator.pop(context, 'Cancel'),
-                          child: const Text('I understand'),
+                          child: Text('I understand'.tr),
                         ),
                       ],
                     );
@@ -156,12 +158,12 @@ class _testPriorState extends State<testPrior> {
                         Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.greenAccent,
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
+                            child: const Padding(
+                              padding: EdgeInsets.all(10.0),
                               child: Icon(
                                 Icons.restaurant_menu_rounded,
                                 size: 30,
@@ -177,14 +179,14 @@ class _testPriorState extends State<testPrior> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Reservation information',
+                                'reservation information'.tr,
                                 style: GoogleFonts.cabin(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black),
                               ),
                               Text(
-                                'Status: ${currentReservation?.status}',
+                                '${'status'.tr}: ${currentReservation?.status.tr}',
                                 style: GoogleFonts.roboto(
                                     fontSize: 15,
                                     fontWeight: FontWeight.normal,
@@ -208,11 +210,11 @@ class _testPriorState extends State<testPrior> {
             child: ExpansionTile(
               controlAffinity: ListTileControlAffinity.leading,
               title: Text(
-                'Reservation Detail',
+                'Reservation detail'.tr,
                 style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
               ),
               subtitle: Text(
-                'Date: ${currentReservation?.startTime.toString().substring(0, 10)}',
+                '${'date'.tr}: ${currentReservation?.startTime.toString().substring(0, 10)}',
                 style: GoogleFonts.roboto(
                     fontSize: 15,
                     fontWeight: FontWeight.normal,
@@ -227,12 +229,12 @@ class _testPriorState extends State<testPrior> {
                         Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: Container(
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.greenAccent,
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
+                            child: const Padding(
+                              padding: EdgeInsets.all(10.0),
                               child: Icon(
                                 Icons.restaurant_menu_rounded,
                                 size: 30,
@@ -255,21 +257,21 @@ class _testPriorState extends State<testPrior> {
                                     color: Colors.black),
                               ),
                               Text(
-                                'Seats: ${currentReservation?.numOfSeats} x ${currentReservation?.quantity}',
+                                '${'Number of seats'.tr}: ${currentReservation?.numOfSeats} x ${currentReservation?.quantity}',
                                 style: GoogleFonts.roboto(
                                     fontSize: 15,
                                     fontWeight: FontWeight.normal,
                                     color: Colors.black),
                               ),
                               Text(
-                                'Guests: ${currentReservation?.numOfPeople}',
+                                '${'Number of people'.tr}: ${currentReservation?.numOfPeople}',
                                 style: GoogleFonts.roboto(
                                     fontSize: 15,
                                     fontWeight: FontWeight.normal,
                                     color: Colors.black),
                               ),
                               Text(
-                                'Time: ${currentReservation?.startTime.toString().substring(11, 16)} - ${currentReservation?.endTime.toString().substring(11, 16)}',
+                                '${'time'.tr}: ${currentReservation?.startTime.toString().substring(11, 16)} - ${currentReservation?.endTime.toString().substring(11, 16)}',
                                 style: GoogleFonts.roboto(
                                     fontSize: 15,
                                     fontWeight: FontWeight.normal,
@@ -312,11 +314,11 @@ class _testPriorState extends State<testPrior> {
             child: ExpansionTile(
               controlAffinity: ListTileControlAffinity.leading,
               title: Text(
-                'Order Detail',
+                'Order Detail'.tr,
                 style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
               ),
               subtitle: Text(
-                'Food list',
+                'Food list'.tr,
                 style: GoogleFonts.cabin(fontSize: 15, color: Colors.black),
               ),
               children: [
@@ -334,12 +336,12 @@ class _testPriorState extends State<testPrior> {
                                 Padding(
                                   padding: const EdgeInsets.all(5.0),
                                   child: Container(
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: Colors.greenAccent,
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(10.0),
                                       child: Icon(
                                         Icons.restaurant_menu_rounded,
                                         size: 30,
@@ -366,14 +368,14 @@ class _testPriorState extends State<testPrior> {
                                             color: Colors.black),
                                       ),
                                       Text(
-                                        'Amount: ${widget.foodList?.elementAt(index).quantity}',
+                                        '${'Amount'.tr}: ${widget.foodList?.elementAt(index).quantity}',
                                         style: GoogleFonts.roboto(
                                             fontSize: 15,
                                             fontWeight: FontWeight.normal,
                                             color: Colors.black),
                                       ),
                                       Text(
-                                        'Note: ${widget.foodList?.elementAt(index).note}',
+                                        '${'note'.tr}: ${widget.foodList?.elementAt(index).note}',
                                         style: GoogleFonts.roboto(
                                             fontSize: 15,
                                             fontWeight: FontWeight.normal,
@@ -430,7 +432,7 @@ class _testPriorState extends State<testPrior> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Order money',
+                              'Bill money'.tr,
                               style: GoogleFonts.cabin(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -474,7 +476,7 @@ class _testPriorState extends State<testPrior> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Deposit Money',
+                              'Deposit Money'.tr,
                               style: GoogleFonts.cabin(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -518,7 +520,7 @@ class _testPriorState extends State<testPrior> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Total',
+                              'Total Pay'.tr,
                               style: GoogleFonts.cabin(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -645,14 +647,14 @@ class _testPriorState extends State<testPrior> {
   conditionalText(bool check) {
     if (check) {
       return Text(
-        'Back to menu',
+        'Back to menu'.tr,
         textAlign: TextAlign.center,
         style: GoogleFonts.cabin(
             fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
       );
     } else {
       return Text(
-        'Confirm & Pay',
+        'Confirm & Pay'.tr,
         textAlign: TextAlign.center,
         style: GoogleFonts.cabin(
             fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),

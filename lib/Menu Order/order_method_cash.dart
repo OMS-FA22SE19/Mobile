@@ -7,6 +7,7 @@ import 'package:oms_mobile/Menu%20Order/order_success.dart';
 import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:get/get.dart';
 
 class orderMethod extends StatefulWidget {
   final String? orderId;
@@ -64,7 +65,7 @@ class _orderMethodState extends State<orderMethod> {
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
-        title: Text("Order",
+        title: Text("Order".tr,
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
@@ -149,7 +150,7 @@ class _orderMethodState extends State<orderMethod> {
                                   height: 2,
                                 ),
                                 Text(
-                                  'Price: ${details![index].price.toString()}',
+                                  '${'Price'.tr}: ${changeFormat(details![index].price)} đ',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.cabin(
@@ -174,7 +175,7 @@ class _orderMethodState extends State<orderMethod> {
                                       color: Colors.brown[600],
                                       borderRadius: BorderRadius.circular(10)),
                                   child: Text(
-                                    'Quantity: ${details![index].quantity.toString()}',
+                                    '${'Amount'.tr}: ${details![index].quantity.toString()}',
                                     style: GoogleFonts.cabin(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
@@ -205,7 +206,7 @@ class _orderMethodState extends State<orderMethod> {
             child: Column(
               children: [
                 Text(
-                  'Payment Method: ${widget.method}',
+                  '${'Payment Method'.tr}: ${widget.method}',
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.cabin(
                     fontSize: 20,
@@ -228,7 +229,7 @@ class _orderMethodState extends State<orderMethod> {
                           children: <TableRow>[
                             TableRow(children: [
                               Text(
-                                'Total bill: ',
+                                '${'Total Pay'.tr}: ',
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.cabin(
                                   fontSize: 20,
@@ -248,7 +249,7 @@ class _orderMethodState extends State<orderMethod> {
                             ]),
                             TableRow(children: [
                               Text(
-                                'Deposit: ',
+                                '${'deposit'.tr}: ',
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.cabin(
                                   fontSize: 20,
@@ -268,7 +269,7 @@ class _orderMethodState extends State<orderMethod> {
                             ]),
                             TableRow(children: [
                               Text(
-                                'Total pay: ',
+                                '${'Must pay'.tr}: ',
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.cabin(
                                   fontSize: 20,
@@ -307,14 +308,15 @@ class _orderMethodState extends State<orderMethod> {
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: Text(
-                                    'Remind',
+                                    'Remind'.tr,
                                     style: GoogleFonts.lato(
                                       color: Colors.black,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   content: Text(
-                                    "A staff will come and checked-out the order for you! Please wait and don't push any button!",
+                                    'A staff will come and checked-out the order for you! Please wait and don\'t push any button!'
+                                        .tr,
                                     style: GoogleFonts.lato(
                                       color: Colors.black,
                                     ),
@@ -323,7 +325,7 @@ class _orderMethodState extends State<orderMethod> {
                                     TextButton(
                                       onPressed: () =>
                                           Navigator.pop(context, 'Cancel'),
-                                      child: const Text('I understand'),
+                                      child: Text('I understand'.tr),
                                     ),
                                   ],
                                 );
@@ -354,7 +356,7 @@ class _orderMethodState extends State<orderMethod> {
   conditionalButton() {
     if (flag) {
       return Text(
-        'Continue',
+        'Continue'.tr,
         overflow: TextOverflow.ellipsis,
         style: GoogleFonts.cabin(
           fontSize: 20,
@@ -364,7 +366,7 @@ class _orderMethodState extends State<orderMethod> {
       );
     } else {
       return Text(
-        'Process',
+        'Process'.tr,
         overflow: TextOverflow.ellipsis,
         style: GoogleFonts.cabin(
           fontSize: 20,

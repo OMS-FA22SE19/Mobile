@@ -7,6 +7,7 @@ import 'package:oms_mobile/Menu%20Order/order_confirm.dart';
 import 'package:oms_mobile/Models/orderDetail.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:get/get.dart';
 
 class menuStatus extends StatefulWidget {
   final int reservationId;
@@ -24,7 +25,14 @@ class menuStatus extends StatefulWidget {
 
 class _menuStatusState extends State<menuStatus> {
   List<orderDetail>? orderDetails;
+  List<orderDetail>? receivedList;
+  List<orderDetail>? processingList;
+  List<orderDetail>? servedList;
+  String? abc;
   var isLoaded = false;
+  var isLoaded_1 = false;
+  var isLoaded_2 = false;
+  var isLoaded_3 = false;
   var flag = true;
   var isCancel = false;
 
@@ -32,7 +40,10 @@ class _menuStatusState extends State<menuStatus> {
   void initState() {
     super.initState();
     checkStatusOrder();
-    getData();
+    // getData();
+    getDataReceived();
+    getDataProcess();
+    getDataServed();
   }
 
   checkStatusOrder() {
@@ -53,14 +64,45 @@ class _menuStatusState extends State<menuStatus> {
     });
   }
 
-  getData() async {
-    orderDetails = await RemoteService().getOrdersDetails(widget.orderId);
-    if (orderDetails != null) {
+  getDataReceived() async {
+    receivedList =
+        await RemoteService().getOrdersDetails(widget.orderId, "Received");
+    if (receivedList?.length != 0) {
       setState(() {
-        isLoaded = true;
+        isLoaded_1 = true;
       });
     }
   }
+
+  getDataProcess() async {
+    processingList =
+        await RemoteService().getOrdersDetails(widget.orderId, "Processing");
+    if (processingList?.length != 0) {
+      setState(() {
+        isLoaded_2 = true;
+      });
+    }
+  }
+
+  getDataServed() async {
+    servedList =
+        await RemoteService().getOrdersDetails(widget.orderId, "Served");
+    if (servedList?.length != 0) {
+      setState(() {
+        isLoaded_3 = true;
+      });
+    }
+  }
+
+  // getData() async {
+  //   orderDetails =
+  //       await RemoteService().getOrdersDetails(widget.orderId, "Received");
+  //   if (orderDetails != null) {
+  //     setState(() {
+  //       isLoaded = true;
+  //     });
+  //   }
+  // }
 
   String changeFormat(int number) {
     String formated =
@@ -70,11 +112,14 @@ class _menuStatusState extends State<menuStatus> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+        home: DefaultTabController(
+      length: 3,
+      child: Scaffold(
         appBar: AppBar(
           backgroundColor: Color.fromRGBO(232, 192, 125, 100),
           centerTitle: true,
-          title: Text("Order",
+          title: Text('Order'.tr,
               style: GoogleFonts.bebasNeue(
                 fontSize: 25,
               )),
@@ -108,132 +153,425 @@ class _menuStatusState extends State<menuStatus> {
                   size: 30,
                 )),
           ],
+          bottom: TabBar(
+            indicatorColor: Color.fromRGBO(232, 192, 125, 100),
+            indicatorWeight: 2.5,
+            indicatorSize: TabBarIndicatorSize.label,
+            tabs: [
+              Tab(
+                text: 'Received'.tr,
+                icon: const Icon(Icons.restaurant_rounded),
+              ),
+              Tab(
+                text: 'Processing'.tr,
+                icon: const Icon(Icons.restaurant_rounded),
+              ),
+              Tab(
+                  text: 'Served'.tr,
+                  icon: const Icon(Icons.restaurant_rounded)),
+            ],
+          ),
         ),
         backgroundColor: Colors.grey[200],
-        body: Visibility(
-          visible: isLoaded,
-          // child: Center(
-          //   child: Container(
-          //     width: 300,
-          child: ListView.builder(
-            // shrinkWrap: true,
-            itemCount: orderDetails?.length,
-            // padding: EdgeInsets.all(10),
-            // scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              return InkWell(
-                onTap: () {
-                  showDialog(
-                    barrierDismissible: true,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(
-                          "Note",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.lato(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
+        body: TabBarView(
+          children: [
+            //TAB1
+            Visibility(
+              visible: isLoaded_1,
+              replacement: Center(),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  setState(() {
+                    getDataServed();
+                    getDataProcess();
+                    getDataReceived();
+                  });
+                  return Future<void>.delayed(const Duration(seconds: 1));
+                },
+                child: ListView.builder(
+                  itemCount: receivedList?.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        showDialog(
+                          barrierDismissible: true,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                'note'.tr,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              content: Text(
+                                receivedList![index].note,
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Container(
+                          height: 180,
+                          width: 300,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color.fromRGBO(232, 192, 125, 100),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Container(
+                                      alignment: Alignment.center,
+                                      height: 150,
+                                      width: 150,
+                                      child: Icon(
+                                        Icons.lunch_dining_rounded,
+                                        size: 120,
+                                        color: Colors.white,
+                                      )),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Flexible(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          receivedList![index].foodName,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.cabin(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                        SizedBox(
+                                          height: 2,
+                                        ),
+                                        Text(
+                                          '${'Price'.tr}: ${changeFormat(receivedList![index].price)}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.cabin(
+                                              fontSize: 18,
+                                              color: Colors.white),
+                                        ),
+                                        // Text(
+                                        //   '${'Amount'.tr}: ${receivedList![index].status}',
+                                        //   maxLines: 1,
+                                        //   overflow: TextOverflow.ellipsis,
+                                        //   style: GoogleFonts.cabin(
+                                        //       fontSize: 18,
+                                        //       color: Colors.white),
+                                        // ),
+                                        Text(
+                                          'Id: ${receivedList![index].id}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.cabin(
+                                              fontSize: 18,
+                                              color: Colors.white),
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                        Row(
+                                          children: [
+                                            statusBar(
+                                                receivedList![index].status),
+                                            cancelFood(
+                                                receivedList![index].status,
+                                                receivedList![index].id),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                ]),
                           ),
                         ),
-                        content: Text(
-                          orderDetails![index].note,
-                          textAlign: TextAlign.center,
-                        ),
-                      );
-                    },
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Container(
-                    height: 150,
-                    width: 300,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color.fromRGBO(232, 192, 125, 100),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Container(
-                                alignment: Alignment.center,
-                                height: 150,
-                                width: 150,
-                                child: Icon(
-                                  Icons.lunch_dining_rounded,
-                                  size: 120,
-                                  color: Colors.white,
-                                )),
-                            SizedBox(
-                              width: 20,
-                            ),
-                            Flexible(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    orderDetails![index].foodName,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.cabin(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
-                                  ),
-                                  SizedBox(
-                                    height: 2,
-                                  ),
-                                  Text(
-                                    'Price: ' +
-                                        changeFormat(
-                                            orderDetails![index].price),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.cabin(
-                                        fontSize: 18, color: Colors.white),
-                                  ),
-                                  Text(
-                                    'Id: ' + orderDetails![index].id.toString(),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.cabin(
-                                        fontSize: 18, color: Colors.white),
-                                  ),
-                                  SizedBox(
-                                    height: 15,
-                                  ),
-                                  Row(
-                                    children: [
-                                      statusBar(orderDetails![index].status),
-                                      cancelFood(orderDetails![index].status,
-                                          orderDetails![index].id),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              width: 20,
-                            ),
-                          ]),
-                    ),
-                  ),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
-          //   ),
-          // ),
+              ),
+            ),
+            ///////////////////////////////////////////////////////////////////////////////////
+            //TAB2
+            Visibility(
+              visible: isLoaded_2,
+              replacement: Center(),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  setState(() {
+                    getDataServed();
+                    getDataProcess();
+                    getDataReceived();
+                  });
+                  return Future<void>.delayed(const Duration(seconds: 1));
+                },
+                child: ListView.builder(
+                  itemCount: processingList?.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        showDialog(
+                          barrierDismissible: true,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                'note'.tr,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              content: Text(
+                                processingList![index].note,
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Container(
+                          height: 180,
+                          width: 300,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color.fromRGBO(232, 192, 125, 100),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Container(
+                                      alignment: Alignment.center,
+                                      height: 150,
+                                      width: 150,
+                                      child: Icon(
+                                        Icons.lunch_dining_rounded,
+                                        size: 120,
+                                        color: Colors.white,
+                                      )),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Flexible(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          processingList![index].foodName,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.cabin(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                        SizedBox(
+                                          height: 2,
+                                        ),
+                                        Text(
+                                          '${'Price'.tr}: ${changeFormat(processingList![index].price)}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.cabin(
+                                              fontSize: 18,
+                                              color: Colors.white),
+                                        ),
+                                        Text(
+                                          'Id: ${processingList![index].id}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.cabin(
+                                              fontSize: 18,
+                                              color: Colors.white),
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                        Row(
+                                          children: [
+                                            statusBar(
+                                                processingList![index].status),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                ]),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+            //TAB3
+            Visibility(
+              visible: isLoaded_3,
+              replacement: Center(),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  setState(() {
+                    getDataServed();
+                    getDataProcess();
+                    getDataReceived();
+                  });
+                  return Future<void>.delayed(const Duration(seconds: 1));
+                },
+                child: ListView.builder(
+                  itemCount: servedList?.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        showDialog(
+                          barrierDismissible: true,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                'note'.tr,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              content: Text(
+                                servedList![index].note,
+                                textAlign: TextAlign.center,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Container(
+                          height: 180,
+                          width: 300,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color.fromRGBO(232, 192, 125, 100),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Container(
+                                      alignment: Alignment.center,
+                                      height: 150,
+                                      width: 150,
+                                      child: Icon(
+                                        Icons.lunch_dining_rounded,
+                                        size: 120,
+                                        color: Colors.white,
+                                      )),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  Flexible(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          servedList![index].foodName,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.cabin(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        ),
+                                        SizedBox(
+                                          height: 2,
+                                        ),
+                                        Text(
+                                          '${'Price'.tr}: ${changeFormat(servedList![index].price)}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.cabin(
+                                              fontSize: 18,
+                                              color: Colors.white),
+                                        ),
+                                        Text(
+                                          'Id: ${servedList![index].id}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.cabin(
+                                              fontSize: 18,
+                                              color: Colors.white),
+                                        ),
+                                        SizedBox(
+                                          height: 15,
+                                        ),
+                                        Row(
+                                          children: [
+                                            statusBar(
+                                                servedList![index].status),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ]),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
-        floatingActionButton: conditionalFloatingActionButton(
-            orderDetails?.elementAt(1).orderId));
+        // floatingActionButton: conditionalFloatingActionButton(
+        //     orderDetails?.elementAt(0).orderId)
+      ),
+    ));
   }
 
   conditionalFloatingActionButton(String? id) {
@@ -241,7 +579,7 @@ class _menuStatusState extends State<menuStatus> {
       return FloatingActionButton.extended(
         backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         label: Text(
-          "Reload",
+          'Reload'.tr,
           style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
         ),
         icon: Icon(
@@ -251,7 +589,9 @@ class _menuStatusState extends State<menuStatus> {
         onPressed: () {
           setState(() {
             checkStatusOrder();
-            getData();
+            getDataProcess();
+            getDataReceived();
+            getDataServed();
           });
         },
       );
@@ -259,7 +599,7 @@ class _menuStatusState extends State<menuStatus> {
       return FloatingActionButton.extended(
         backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         label: Text(
-          "Confirm",
+          'CONFIRM'.tr,
           style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
         ),
         icon: Icon(
@@ -291,7 +631,7 @@ class _menuStatusState extends State<menuStatus> {
           decoration: BoxDecoration(
               color: Colors.red[600], borderRadius: BorderRadius.circular(10)),
           child: Text(
-            status,
+            status.tr,
             style: GoogleFonts.cabin(
                 fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
           ),
@@ -307,7 +647,7 @@ class _menuStatusState extends State<menuStatus> {
           decoration: BoxDecoration(
               color: Colors.blue[600], borderRadius: BorderRadius.circular(10)),
           child: Text(
-            status,
+            status.tr,
             style: GoogleFonts.cabin(
                 fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
           ),
@@ -324,7 +664,7 @@ class _menuStatusState extends State<menuStatus> {
               color: Colors.yellow[600],
               borderRadius: BorderRadius.circular(10)),
           child: Text(
-            status,
+            status.tr,
             style: GoogleFonts.cabin(
                 fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
           ),
@@ -341,7 +681,7 @@ class _menuStatusState extends State<menuStatus> {
               color: Colors.green[600],
               borderRadius: BorderRadius.circular(10)),
           child: Text(
-            status,
+            status.tr,
             style: GoogleFonts.cabin(
                 fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
           ),
@@ -357,7 +697,9 @@ class _menuStatusState extends State<menuStatus> {
           setState(() {
             RemoteService().foodCancelled(id.toString());
             checkStatusOrder();
-            getData();
+            getDataProcess();
+            getDataReceived();
+            getDataServed();
           });
         },
         child: Icon(

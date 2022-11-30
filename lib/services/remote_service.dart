@@ -204,6 +204,42 @@ class RemoteService {
     }
   }
 
+  Future<Order>? getOrderByReservation(int? reservationId) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final response = await dio.get(
+          'https://10.0.2.2:7246/api/v1/Orders/Reservation/$reservationId'); //header, author
+      var result = responseData15.fromJson(response.data);
+      Order gotOrder = result.data;
+      return gotOrder;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return Order(
+            id: "0",
+            userId: "0",
+            date: "0",
+            fullName: "0",
+            phoneNumber: "0",
+            prePaid: 0,
+            status: "0",
+            total: 0,
+            orderDetails: []);
+      } else {
+        return Order(
+            id: "0",
+            userId: "0",
+            date: "0",
+            fullName: "0",
+            phoneNumber: "0",
+            prePaid: 0,
+            status: "0",
+            total: 0,
+            orderDetails: []);
+      }
+    }
+  }
+
   Future<Order>? getOrder(String? orderId) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
@@ -241,14 +277,22 @@ class RemoteService {
     }
   }
 
-  Future<List<orderDetail>?> getOrdersDetails(String? orderId) async {
+  Future<List<orderDetail>?> getOrdersDetails(
+      String? orderId, String status) async {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.get(
-          'https://10.0.2.2:7246/api/v1/OrderDetails?SearchValue=$orderId'); //header, author
+          'https://10.0.2.2:7246/api/v1/OrderDetails?Status=$status&SearchValue=$orderId'); //header, author
       var result = responseData10.fromJson(response.data);
       List<orderDetail> foods = result.data;
+
+      // final response_received = await dio.get(
+      //     'https://10.0.2.2:7246/api/v1/OrderDetails?Status=$status&SearchValue=$orderId');
+      // final response_processing = await dio.get(
+      //     'https://10.0.2.2:7246/api/v1/OrderDetails?Status=$status&SearchValue=$orderId');
+      // final response_served = await dio.get(
+      //     'https://10.0.2.2:7246/api/v1/OrderDetails?Status=Served&SearchValue=$orderId');
       return foods;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
@@ -641,12 +685,12 @@ class RemoteService {
         "tableTypeId": tableTypeId,
         "quantity": quantity
       });
-      // var result = responseOneReservation.fromJson(response.data);
-      // ReservationNoTable reservation = result.data;
-      // return reservation.id;
-      var result = response.data.toString();
-      String returnId = result.toString().substring(12, 14).trim();
-      return int.parse(returnId);
+      var result = responseReservationPreorder.fromJson(response.data);
+      ReservationNoTable reservation = result.data;
+      return reservation.id;
+      // var result = response.data.toString();
+      // String returnId = result.toString().substring(12, 14).trim();
+      // return int.parse(returnId);
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         return 0;

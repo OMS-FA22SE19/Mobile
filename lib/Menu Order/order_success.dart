@@ -6,6 +6,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/services/remote_service.dart';
+import 'package:get/get.dart';
 
 class orderSuccess extends StatefulWidget {
   const orderSuccess({super.key, required this.orderId});
@@ -53,7 +54,7 @@ class _orderSuccessState extends State<orderSuccess> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
-        title: Text("Order",
+        title: Text("Order".tr,
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
@@ -85,7 +86,7 @@ class _orderSuccessState extends State<orderSuccess> {
                         height: 10,
                       ),
                       Text(
-                        'Order Information',
+                        'Order Information'.tr,
                         style: GoogleFonts.roboto(
                             fontSize: 20,
                             color: Colors.white,
@@ -111,7 +112,7 @@ class _orderSuccessState extends State<orderSuccess> {
                               ),
                             ),
                             Text(
-                              'Date:',
+                              '${'date'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -134,14 +135,14 @@ class _orderSuccessState extends State<orderSuccess> {
                               ),
                             ),
                             Text(
-                              'Status:',
+                              '${'status'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              currentOrder?.status ?? "",
+                              currentOrder?.status.tr ?? "",
                               textAlign: TextAlign.right,
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
@@ -157,7 +158,7 @@ class _orderSuccessState extends State<orderSuccess> {
                               ),
                             ),
                             Text(
-                              'Total bill:',
+                              '${'Bill money'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -180,7 +181,7 @@ class _orderSuccessState extends State<orderSuccess> {
                               ),
                             ),
                             Text(
-                              'Pre paid:',
+                              '${'deposit'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -203,7 +204,7 @@ class _orderSuccessState extends State<orderSuccess> {
                               ),
                             ),
                             Text(
-                              'Total paid:',
+                              '${'Total Pay'.tr}:',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -237,7 +238,7 @@ class _orderSuccessState extends State<orderSuccess> {
                               ),
                             ),
                             Text(
-                              'User: ',
+                              '${'full name'.tr}: ',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -260,7 +261,7 @@ class _orderSuccessState extends State<orderSuccess> {
                               ),
                             ),
                             Text(
-                              'Phone: ',
+                              '${'phone number'.tr}: ',
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -296,7 +297,8 @@ class _orderSuccessState extends State<orderSuccess> {
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.white),
                           child: Text(
-                            'Back to home',
+                            'Back to menu'.tr,
+                            textAlign: TextAlign.center,
                             style: GoogleFonts.roboto(
                                 fontSize: 20,
                                 color: Colors.black,

@@ -11,6 +11,7 @@ import 'package:oms_mobile/Models/food.dart';
 import 'package:oms_mobile/Models/menu.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:get/get.dart';
 
 class menuFood extends StatefulWidget {
   menuFood(
@@ -82,7 +83,7 @@ class _menuFoodState extends State<menuFood> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
-        title: Text('Menu',
+        title: Text('Menu'.tr,
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
@@ -190,7 +191,7 @@ class _menuFoodState extends State<menuFood> {
                                   height: 2,
                                 ),
                                 Text(
-                                  'Price: ' + changeFormat(foods![index].price),
+                                  '${'Price'.tr}: ${changeFormat(foods![index].price)} đ',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: GoogleFonts.cabin(
@@ -217,7 +218,7 @@ class _menuFoodState extends State<menuFood> {
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     child: Text(
-                                      'Add to cart',
+                                      'Add to cart'.tr,
                                       style: GoogleFonts.cabin(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,

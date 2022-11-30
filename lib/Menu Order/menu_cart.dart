@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, camel_case_types
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:oms_mobile/Home/home_screen.dart';
+import 'package:get/get.dart';
 import 'package:oms_mobile/Menu%20Order/menu_food.dart';
 import 'package:oms_mobile/Menu%20Order/menu_status.dart';
 import 'package:oms_mobile/Models/food.dart';
@@ -78,7 +78,7 @@ class _menuCartState extends State<menuCart> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(232, 192, 125, 100),
         centerTitle: true,
-        title: Text('Cart',
+        title: Text('Cart'.tr,
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
@@ -110,7 +110,7 @@ class _menuCartState extends State<menuCart> {
           Container(
             alignment: Alignment.center,
             child: Text(
-              "Your cart is empty. Please add some foods!",
+              'Your cart is empty. Please add some foods!'.tr,
               style: GoogleFonts.roboto(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -154,9 +154,7 @@ class _menuCartState extends State<menuCart> {
                                           color: Colors.black),
                                     ),
                                     Text(
-                                      'Price: ' +
-                                          changeFormat(
-                                              widget.foods![index].price),
+                                      '${'Price'.tr}: ${changeFormat(widget.foods![index].price)} đ',
                                       style: GoogleFonts.roboto(
                                           fontSize: 15,
                                           fontWeight: FontWeight.normal,
@@ -247,7 +245,7 @@ class _menuCartState extends State<menuCart> {
                                           builder: (BuildContext context) {
                                             return AlertDialog(
                                               title: Text(
-                                                "Note",
+                                                'note'.tr,
                                                 style: GoogleFonts.lato(
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.bold,
@@ -269,7 +267,7 @@ class _menuCartState extends State<menuCart> {
                                                     border:
                                                         OutlineInputBorder(),
                                                     helperText:
-                                                        "Input your note for the food"),
+                                                        'Input your note for the food'),
                                               ),
                                               actions: <Widget>[
                                                 TextButton(
@@ -277,7 +275,7 @@ class _menuCartState extends State<menuCart> {
                                                     Navigator.pop(
                                                         context, 'Cancel');
                                                   },
-                                                  child: const Text('Done'),
+                                                  child: Text('Done'.tr),
                                                 ),
                                               ],
                                             );
@@ -300,14 +298,15 @@ class _menuCartState extends State<menuCart> {
                                         builder: (BuildContext context) {
                                           return AlertDialog(
                                             title: Text(
-                                              'Remove',
+                                              'Remind'.tr,
                                               style: GoogleFonts.lato(
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                             content: Text(
-                                              "Are you really want to remove this item?",
+                                              'Are you really want to remove this item?'
+                                                  .tr,
                                               style: GoogleFonts.lato(
                                                 color: Colors.black,
                                               ),
@@ -316,7 +315,7 @@ class _menuCartState extends State<menuCart> {
                                               TextButton(
                                                 onPressed: () => Navigator.pop(
                                                     context, 'Cancel'),
-                                                child: const Text('No'),
+                                                child: Text('no'.tr),
                                               ),
                                               TextButton(
                                                 onPressed: () {
@@ -336,7 +335,7 @@ class _menuCartState extends State<menuCart> {
                                                   Navigator.pop(
                                                       context, 'Cancel');
                                                 },
-                                                child: const Text('Yes'),
+                                                child: Text('yes'.tr),
                                               ),
                                             ],
                                           );
@@ -389,7 +388,7 @@ class _menuCartState extends State<menuCart> {
                     child: Column(
                       children: [
                         Text(
-                          'Total: ',
+                          'Total Pay'.tr,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.cabin(
                             fontSize: 20,
@@ -431,14 +430,15 @@ class _menuCartState extends State<menuCart> {
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: Text(
-                    'Remind',
+                    'Remind'.tr,
                     style: GoogleFonts.lato(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   content: Text(
-                    "Your reservation has been update, we will process you to the home screen",
+                    'Your reservation is changed. Process to the menu to check your reservation!'
+                        .tr,
                     style: GoogleFonts.lato(
                       color: Colors.black,
                     ),
@@ -446,7 +446,7 @@ class _menuCartState extends State<menuCart> {
                   actions: <Widget>[
                     TextButton(
                       onPressed: () => Navigator.pop(context, 'Cancel'),
-                      child: const Text('I understand'),
+                      child: Text('I understand'.tr),
                     ),
                   ],
                 );
@@ -464,7 +464,7 @@ class _menuCartState extends State<menuCart> {
             ),
           ),
           child: Text(
-            'UPDATE',
+            'UPDATE'.tr,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.cabin(
               fontSize: 20,
@@ -492,7 +492,7 @@ class _menuCartState extends State<menuCart> {
             ),
           ),
           child: Text(
-            'CHECK',
+            'CHECK'.tr,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.cabin(
               fontSize: 20,
@@ -532,7 +532,7 @@ class _menuCartState extends State<menuCart> {
           ),
         ),
         child: Text(
-          'CONFIRM',
+          'CONFIRM'.tr,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.cabin(
             fontSize: 20,
