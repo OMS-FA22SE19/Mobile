@@ -3,28 +3,28 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
-import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:get/get.dart';
 import 'package:oms_mobile/User%20History/history_page.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
 
-class historyDetailOrder extends StatefulWidget {
+class historyDetailReservation extends StatefulWidget {
   final String jwtToken;
-  final String orderId;
-  const historyDetailOrder(
-      {super.key, required this.orderId, required this.jwtToken});
+  final int reservationId;
+  const historyDetailReservation(
+      {super.key, required this.reservationId, required this.jwtToken});
 
   @override
-  State<historyDetailOrder> createState() => _historyDetailOrderState();
+  State<historyDetailReservation> createState() =>
+      _historyDetailReservationState();
 }
 
-class _historyDetailOrderState extends State<historyDetailOrder> {
-  Order? currentOrder;
+class _historyDetailReservationState extends State<historyDetailReservation> {
+  // Order? currentOrder;
   ReservationNoTable? currentReservation;
   var isloaded = false;
-  int total = 0;
+  // int total = 0;
 
   @override
   void initState() {
@@ -33,16 +33,12 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
   }
 
   getData() async {
-    currentOrder =
-        await RemoteService().getOrder(widget.orderId, widget.jwtToken);
-    // currentReservation = await RemoteService().getReservationBeforeCheckin(
-    //     int.parse(widget.orderId.split("-").elementAt(0)), widget.jwtToken);
-    currentReservation = await RemoteService().getReservationBeforeCheckin(
-        currentOrder?.reservation.id ?? 0, widget.jwtToken);
-    if (currentOrder != null) {
+    currentReservation = await RemoteService()
+        .getReservationCancelled(widget.reservationId, widget.jwtToken);
+    if (currentReservation != null) {
       setState(() {
         isloaded = true;
-        total = currentOrder!.prePaid + currentOrder!.total;
+        // total = currentOrder!.prePaid + currentOrder!.total;
       });
     }
   }
@@ -53,18 +49,22 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
     return formated;
   }
 
+  int charge(int? prepaid, int? seats) {
+    return ((prepaid ?? 0) / (seats ?? 0)).toInt();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: (currentOrder?.status.contains("Paid") ?? false)
+        backgroundColor: (currentReservation?.status.contains("Done") ?? false)
             ? Colors.greenAccent
-            : (currentOrder?.status.contains("Processing") ?? false)
+            : (currentReservation?.status.contains("Processing") ?? false)
                 ? Colors.yellow[600]
-                : Colors.yellow[600],
+                : Colors.redAccent,
         centerTitle: true,
         title: Text(
-            '${currentOrder?.date.substring(0, 10)} | ${currentOrder?.date.substring(11, 16)}',
+            '${currentReservation?.startTime.toString().substring(0, 10)} | ${currentReservation?.startTime.toString().substring(11, 16)}',
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
@@ -117,14 +117,15 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                           child: Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: (currentOrder?.status.contains("Paid") ??
+                              color: (currentReservation?.status
+                                          .contains("Paid") ??
                                       false)
                                   ? Colors.greenAccent
-                                  : (currentOrder?.status
+                                  : (currentReservation?.status
                                               .contains("Processing") ??
                                           false)
                                       ? Colors.yellow[600]
-                                      : Colors.yellow[600],
+                                      : Colors.redAccent,
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),
@@ -150,7 +151,7 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                                     color: Colors.black),
                               ),
                               Text(
-                                currentOrder?.status.tr ?? "",
+                                currentReservation?.status.tr ?? "",
                                 style: GoogleFonts.roboto(
                                     fontSize: 15,
                                     fontWeight: FontWeight.normal,
@@ -162,6 +163,58 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                       ],
                     ),
                   ]),
+            ),
+          ),
+          Container(
+            alignment: Alignment.centerLeft,
+            color: Colors.grey[300],
+            width: MediaQuery.of(context).size.width,
+            height: 20,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
+            child: Container(
+              height: 100,
+              child: Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${'Cancel Reason'.tr}:',
+                        style: GoogleFonts.cabin(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Flexible(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                '${currentReservation?.reasonForCancel}',
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                                style: GoogleFonts.roboto(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
           Container(
@@ -185,7 +238,8 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                 SafeArea(
                   child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: currentReservation?.reservationTables.length,
+                    // itemCount: currentReservation?.reservationTables.length,
+                    itemCount: 1,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.all(10),
@@ -197,15 +251,15 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: (currentOrder?.status
+                                    color: (currentReservation?.status
                                                 .contains("Paid") ??
                                             false)
                                         ? Colors.greenAccent
-                                        : (currentOrder?.status
+                                        : (currentReservation?.status
                                                     .contains("Processing") ??
                                                 false)
                                             ? Colors.yellow[600]
-                                            : Colors.yellow[600],
+                                            : Colors.redAccent,
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
@@ -223,15 +277,15 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    // Text(
+                                    //   'ID: ${currentReservation?.reservationTables.elementAt(index).table.id}',
+                                    //   style: GoogleFonts.cabin(
+                                    //       fontSize: 18,
+                                    //       fontWeight: FontWeight.bold,
+                                    //       color: Colors.black),
+                                    // ),
                                     Text(
-                                      'ID: ${currentReservation?.reservationTables.elementAt(index).table.id}',
-                                      style: GoogleFonts.cabin(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    ),
-                                    Text(
-                                      '${'Type'.tr}: ${currentReservation?.reservationTables.elementAt(index).table.tableType.name}',
+                                      '${'Type'.tr}: ${currentReservation?.tableType}',
                                       style: GoogleFonts.cabin(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -245,14 +299,14 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                                           color: Colors.black),
                                     ),
                                     Text(
-                                      '${'Number of seats'.tr}: ${currentReservation?.reservationTables.elementAt(index).table.numOfSeats}',
+                                      '${'Number of seats'.tr}: ${currentReservation?.numOfSeats}',
                                       style: GoogleFonts.roboto(
                                           fontSize: 15,
                                           fontWeight: FontWeight.normal,
                                           color: Colors.black),
                                     ),
                                     Text(
-                                      '${'Charge per seats'.tr}: ${changeFormat(currentReservation?.reservationTables.elementAt(index).table.tableType.chargePerSeat ?? 0)} đ',
+                                      '${'Charge per seats'.tr}: ${changeFormat(charge(currentReservation?.prePaid, currentReservation?.numOfSeats))} đ',
                                       style: GoogleFonts.roboto(
                                           fontSize: 15,
                                           fontWeight: FontWeight.normal,
@@ -263,23 +317,23 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                               ),
                             ],
                           ),
-                          Flexible(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  '${changeFormat((currentReservation?.reservationTables.elementAt(index).table.tableType.chargePerSeat ?? 0) * (currentReservation?.numOfSeats ?? 0))} đ',
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 2,
-                                  style: GoogleFonts.cabin(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                ),
-                              ],
-                            ),
-                          ),
+                          // Flexible(
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.end,
+                          //     crossAxisAlignment: CrossAxisAlignment.end,
+                          //     children: [
+                          //       // Text(
+                          //       //   '${changeFormat((currentReservation?.reservationTables.elementAt(index).table.tableType.chargePerSeat ?? 0) * (currentReservation?.numOfSeats ?? 0))} đ',
+                          //       //   overflow: TextOverflow.ellipsis,
+                          //       //   maxLines: 2,
+                          //       //   style: GoogleFonts.cabin(
+                          //       //       fontSize: 18,
+                          //       //       fontWeight: FontWeight.bold,
+                          //       //       color: Colors.black),
+                          //       // ),
+                          //     ],
+                          //   ),
+                          // ),
                         ]),
                       );
                     },
@@ -288,141 +342,12 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
               ],
             ),
           ),
+
           Container(
             alignment: Alignment.centerLeft,
             color: Colors.grey[300],
             width: MediaQuery.of(context).size.width,
             height: 20,
-          ),
-          SingleChildScrollView(
-            child: ExpansionTile(
-              controlAffinity: ListTileControlAffinity.leading,
-              title: Text(
-                'Order Detail'.tr,
-                style: GoogleFonts.cabin(fontSize: 20, color: Colors.black),
-              ),
-              subtitle: Text(
-                'Food list'.tr,
-                style: GoogleFonts.cabin(fontSize: 15, color: Colors.black),
-              ),
-              children: [
-                SafeArea(
-                  child: SingleChildScrollView(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: currentOrder?.orderDetails.length,
-                      itemBuilder: (context, index) {
-                        return
-                            // ListTile(
-                            //   title: Text(
-                            //     // reservation?.reservationTables
-                            //     //         .elementAt(index)
-                            //     //         .tableId
-                            //     //         .toString() ??
-                            //     currentOrder?.date ?? "",
-                            //     style:
-                            //         GoogleFonts.cabin(fontSize: 15, color: Colors.black),
-                            //   ),
-                            // );
-
-                            Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(children: [
-                            Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: (currentOrder?.status
-                                                  .contains("Paid") ??
-                                              false)
-                                          ? Colors.greenAccent
-                                          : (currentOrder?.status
-                                                      .contains("Processing") ??
-                                                  false)
-                                              ? Colors.yellow[600]
-                                              : Colors.yellow[600],
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Icon(
-                                        Icons.restaurant_menu_rounded,
-                                        size: 30,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        currentOrder?.orderDetails
-                                                .elementAt(index)
-                                                .foodName ??
-                                            "",
-                                        style: GoogleFonts.cabin(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                      Text(
-                                        '${'Price'.tr}: ${changeFormat(currentOrder?.orderDetails.elementAt(index).price ?? 0)} đ',
-                                        style: GoogleFonts.roboto(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.normal,
-                                            color: Colors.black),
-                                      ),
-                                      Text(
-                                        '${'Amount'.tr}: ${currentOrder?.orderDetails.elementAt(index).quantity}',
-                                        style: GoogleFonts.roboto(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.normal,
-                                            color: Colors.black),
-                                      ),
-                                      Text(
-                                        '${'status'.tr}: ${currentOrder?.orderDetails.elementAt(index).status.tr}',
-                                        style: GoogleFonts.roboto(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.normal,
-                                            color: Colors.black),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Flexible(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '${changeFormat(currentOrder?.orderDetails.elementAt(index).amount ?? 0)} đ',
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    style: GoogleFonts.cabin(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ]),
-                        );
-                      },
-                    ),
-                  ),
-                )
-              ],
-            ),
           ),
           // Visibility(
           //   visible: isloaded,
@@ -502,56 +427,6 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
           //     ),
           //   ),
           // ),
-          Container(
-            alignment: Alignment.centerLeft,
-            color: Colors.grey[300],
-            width: MediaQuery.of(context).size.width,
-            height: 20,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Bill money'.tr,
-                              style: GoogleFonts.cabin(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Flexible(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          '${changeFormat(total)} đ',
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: GoogleFonts.cabin(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
-                        ),
-                      ],
-                    ),
-                  ),
-                ]),
-          ),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: Row(
@@ -583,7 +458,7 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '- ${changeFormat(currentOrder?.prePaid ?? 0)} đ',
+                          '${changeFormat(currentReservation?.prePaid ?? 0)} đ',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: GoogleFonts.cabin(
@@ -610,7 +485,7 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Total Pay'.tr,
+                              'Total Paid'.tr,
                               style: GoogleFonts.cabin(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -627,7 +502,7 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '${changeFormat(currentOrder?.total ?? 0)} đ',
+                          '${changeFormat(currentReservation?.paid ?? 0)} đ',
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: GoogleFonts.cabin(

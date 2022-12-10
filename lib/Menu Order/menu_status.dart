@@ -1,6 +1,5 @@
 // ignore_for_file: camel_case_types, prefer_const_constructors
 import 'package:flutter/material.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
@@ -11,6 +10,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:get/get.dart';
 
 class menuStatus extends StatefulWidget {
+  final String jwtToken;
   final int reservationId;
   final String? orderId;
   bool? isCourse;
@@ -18,7 +18,8 @@ class menuStatus extends StatefulWidget {
       {super.key,
       required this.orderId,
       this.isCourse,
-      required this.reservationId});
+      required this.reservationId,
+      required this.jwtToken});
 
   @override
   State<menuStatus> createState() => _menuStatusState();
@@ -40,11 +41,12 @@ class _menuStatusState extends State<menuStatus> {
   @override
   void initState() {
     super.initState();
-    checkStatusOrder();
+
     // getData();
     getDataReceived();
     getDataProcess();
     getDataServed();
+    checkStatusOrder();
   }
 
   checkStatusOrder() {
@@ -74,8 +76,8 @@ class _menuStatusState extends State<menuStatus> {
   }
 
   getDataReceived() async {
-    receivedList =
-        await RemoteService().getOrdersDetails(widget.orderId, "Received");
+    receivedList = await RemoteService()
+        .getOrdersDetails(widget.orderId, "Received", widget.jwtToken);
     if (receivedList?.length != 0) {
       setState(() {
         isLoaded_1 = true;
@@ -84,8 +86,8 @@ class _menuStatusState extends State<menuStatus> {
   }
 
   getDataProcess() async {
-    processingList =
-        await RemoteService().getOrdersDetails(widget.orderId, "Processing");
+    processingList = await RemoteService()
+        .getOrdersDetails(widget.orderId, "Processing", widget.jwtToken);
     if (processingList?.length != 0) {
       setState(() {
         isLoaded_2 = true;
@@ -94,8 +96,8 @@ class _menuStatusState extends State<menuStatus> {
   }
 
   getDataServed() async {
-    servedList =
-        await RemoteService().getOrdersDetails(widget.orderId, "Served");
+    servedList = await RemoteService()
+        .getOrdersDetails(widget.orderId, "Served", widget.jwtToken);
     if (servedList?.length != 0) {
       setState(() {
         isLoaded_3 = true;
@@ -136,7 +138,9 @@ class _menuStatusState extends State<menuStatus> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => homeScreen()),
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            homeScreen(jwtToken: widget.jwtToken)),
                   );
                 },
                 icon: Icon(
@@ -151,6 +155,7 @@ class _menuStatusState extends State<menuStatus> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => menuCategory(
+                                jwtToken: widget.jwtToken,
                                 reservationId: widget.reservationId,
                                 isCourse: widget.isCourse,
                                 orderId: widget.orderId,
@@ -619,6 +624,7 @@ class _menuStatusState extends State<menuStatus> {
             context,
             MaterialPageRoute(
                 builder: (context) => orderConfirm(
+                      jwtToken: widget.jwtToken,
                       orderId: id,
                       reservationId: widget.reservationId,
                     )),
@@ -703,7 +709,7 @@ class _menuStatusState extends State<menuStatus> {
       return InkWell(
         onTap: () {
           setState(() {
-            RemoteService().foodCancelled(id.toString());
+            RemoteService().foodCancelled(id.toString(), widget.jwtToken);
             checkStatusOrder();
             getDataProcess();
             getDataReceived();

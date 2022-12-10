@@ -9,10 +9,14 @@ import 'package:oms_mobile/Menu%20Order/order_method_online.dart';
 import 'package:get/get.dart';
 
 class orderConfirm extends StatefulWidget {
+  final String jwtToken;
   final int reservationId;
   final String? orderId;
   const orderConfirm(
-      {super.key, required this.orderId, required this.reservationId});
+      {super.key,
+      required this.orderId,
+      required this.reservationId,
+      required this.jwtToken});
 
   @override
   State<orderConfirm> createState() => _orderConfirmState();
@@ -33,7 +37,9 @@ class _orderConfirmState extends State<orderConfirm> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => homeScreen()),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        homeScreen(jwtToken: widget.jwtToken)),
               );
             },
             icon: const Icon(
@@ -48,6 +54,7 @@ class _orderConfirmState extends State<orderConfirm> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => menuCategory(
+                            jwtToken: widget.jwtToken,
                             reservationId: widget.reservationId,
                           )),
                 );
@@ -95,6 +102,7 @@ class _orderConfirmState extends State<orderConfirm> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => orderMethod(
+                              jwtToken: widget.jwtToken,
                               reservationId: widget.reservationId,
                               orderId: widget.orderId,
                               method: "Cash",
@@ -142,6 +150,7 @@ class _orderConfirmState extends State<orderConfirm> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => orderMethodOnline(
+                              jwtToken: widget.jwtToken,
                               tableId: widget.reservationId,
                               orderId: widget.orderId,
                               method: "Online Method",

@@ -2,17 +2,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
+import 'package:oms_mobile/Login/login_page.dart';
 import 'package:oms_mobile/Models/available_date.dart';
 import 'package:oms_mobile/Table%20reservation/table_information.dart';
 import 'package:oms_mobile/Table%20reservation/table_picker.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
-class datePicker extends StatefulWidget {
+class datePickers extends StatefulWidget {
   final int tableTypeId;
   final int numberOfSeats;
   final int numberOfPeople;
   final int amount;
-  const datePicker(
+  const datePickers(
       {super.key,
       required this.numberOfSeats,
       required this.tableTypeId,
@@ -20,10 +21,10 @@ class datePicker extends StatefulWidget {
       required this.amount});
 
   @override
-  State<datePicker> createState() => _datePickerState();
+  State<datePickers> createState() => _datePickersState();
 }
 
-class _datePickerState extends State<datePicker> {
+class _datePickersState extends State<datePickers> {
   List<availableDate>? dates;
   bool isLoaded = false;
   bool flag = false;
@@ -61,8 +62,8 @@ class _datePickerState extends State<datePicker> {
   }
 
   getData(String date) async {
-    dates = await RemoteService().getTimeAvailable(
-        widget.numberOfSeats, widget.tableTypeId, date.substring(0, 10), 10);
+    // dates = await RemoteService().getTimeAvailable(
+    //     // widget.numberOfSeats, widget.tableTypeId, date.substring(0, 10), 10);
     if (dates != null) {
       setState(() {
         isLoaded = true;
@@ -101,7 +102,7 @@ class _datePickerState extends State<datePicker> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => homeScreen()),
+                  MaterialPageRoute(builder: (context) => loginScreen()),
                 );
               },
               icon: Icon(
@@ -362,18 +363,18 @@ class _datePickerState extends State<datePicker> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => tableInformation(
-                                        tableTypeName: "",
-                                        deposit: 100,
-                                        amount: widget.amount,
-                                        numberOfPeople: widget.numberOfPeople,
-                                        name: "Default User",
-                                        phone: "0941767748",
-                                        date: _selectedDate,
-                                        startTime: _selectedTime,
-                                        endTime: _selectedTime,
-                                        tableTypeId: widget.tableTypeId,
-                                        numberOfSeats: widget.numberOfSeats,
+                                  builder: (context) => loginScreen(
+                                      // tableTypeName: "",
+                                      // deposit: 100,
+                                      // amount: widget.amount,
+                                      // numberOfPeople: widget.numberOfPeople,
+                                      // name: "Default User",
+                                      // phone: "0941767748",
+                                      // date: _selectedDate,
+                                      // startTime: _selectedTime,
+                                      // endTime: _selectedTime,
+                                      // tableTypeId: widget.tableTypeId,
+                                      // numberOfSeats: widget.numberOfSeats,
                                       )),
                             );
                           },

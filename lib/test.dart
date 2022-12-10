@@ -34,7 +34,7 @@ class _TestState extends State<Test> {
   }
 
   getURL() async {
-    payment = await RemoteService().getPaymentURLReservation(61, 100000);
+    // payment = await RemoteService().getPaymentURLReservation(61, 100000);
   }
 
   @override

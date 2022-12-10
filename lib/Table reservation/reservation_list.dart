@@ -3,14 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/person_page.dart';
-import 'package:oms_mobile/Login/login_page.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_detail.dart';
+import 'package:oms_mobile/Table%20reservation/reservation_search.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:get/get.dart';
 
 class reservationList extends StatefulWidget {
-  const reservationList({super.key});
+  final String jwtToken;
+  const reservationList({super.key, required this.jwtToken});
 
   @override
   State<reservationList> createState() => _reservationListState();
@@ -20,6 +21,7 @@ class _reservationListState extends State<reservationList> {
   List<ReservationNoTable>? reservationsReserved;
   List<ReservationNoTable>? reservationsCheckIn;
   List<ReservationNoTable>? reservationsAvailable;
+  final textController = TextEditingController();
   bool isLoaded_1 = false;
   bool isLoaded_2 = false;
   bool isLoaded_3 = false;
@@ -34,8 +36,8 @@ class _reservationListState extends State<reservationList> {
   }
 
   getCheckin() async {
-    reservationsCheckIn =
-        await RemoteService().getReservationsBeforeCheckin("CheckIn");
+    reservationsCheckIn = await RemoteService()
+        .getReservationsBeforeCheckin("CheckIn", widget.jwtToken);
     if (reservationsCheckIn != null) {
       if (mounted) {
         setState(() {
@@ -46,8 +48,8 @@ class _reservationListState extends State<reservationList> {
   }
 
   getReserved() async {
-    reservationsReserved =
-        await RemoteService().getReservationsBeforeCheckin("Reserved");
+    reservationsReserved = await RemoteService()
+        .getReservationsBeforeCheckin("Reserved", widget.jwtToken);
     if (reservationsReserved != null) {
       if (mounted) {
         setState(() {
@@ -58,8 +60,8 @@ class _reservationListState extends State<reservationList> {
   }
 
   getAvailable() async {
-    reservationsAvailable =
-        await RemoteService().getReservationsBeforeCheckin("Available");
+    reservationsAvailable = await RemoteService()
+        .getReservationsBeforeCheckin("Available", widget.jwtToken);
     if (reservationsAvailable != null) {
       if (mounted) {
         setState(() {
@@ -71,168 +73,180 @@ class _reservationListState extends State<reservationList> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Color.fromRGBO(232, 192, 125, 100),
-            centerTitle: true,
-            title: Text('Restaurant A',
-                style: GoogleFonts.bebasNeue(
-                  fontSize: 25,
-                )),
-            leading: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => loginScreen()),
-                  );
-                },
-                icon: Icon(
-                  Icons.home_rounded,
-                  size: 30,
-                )),
-            actions: [
-              IconButton(
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: MaterialApp(
+        home: DefaultTabController(
+          length: 3,
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+              centerTitle: true,
+              title: Text('Restaurant A',
+                  style: GoogleFonts.bebasNeue(
+                    fontSize: 25,
+                  )),
+              leading: IconButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => PersonPage()),
+                      MaterialPageRoute(
+                          builder: (context) => searchReservation(
+                                jwtToken: widget.jwtToken,
+                              )),
                     );
                   },
-                  icon: Icon(
-                    Icons.person,
+                  icon: const Icon(
+                    Icons.search_rounded,
                     size: 30,
                   )),
-            ],
-            bottom: TabBar(
-              indicatorColor: Color.fromRGBO(232, 192, 125, 100),
-              indicatorWeight: 2.5,
-              indicatorSize: TabBarIndicatorSize.label,
-              tabs: [
-                Tab(
-                  text: 'Available'.tr,
-                  icon: const Icon(Icons.restaurant_rounded),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PersonPage(
+                                  jwtToken: widget.jwtToken,
+                                )),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.person,
+                      size: 30,
+                    )),
+              ],
+              bottom: TabBar(
+                indicatorColor: Color.fromRGBO(232, 192, 125, 100),
+                indicatorWeight: 2.5,
+                indicatorSize: TabBarIndicatorSize.label,
+                tabs: [
+                  Tab(
+                    text: 'Available'.tr,
+                    icon: const Icon(Icons.restaurant_rounded),
+                  ),
+                  Tab(
+                    text: 'Reserved'.tr,
+                    icon: const Icon(Icons.restaurant_rounded),
+                  ),
+                  Tab(
+                      text: 'Check In'.tr,
+                      icon: const Icon(Icons.restaurant_rounded)),
+                ],
+              ),
+            ),
+            body: TabBarView(
+              children: [
+                Visibility(
+                  visible: isLoaded_3,
+                  replacement: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      setState(() {
+                        getAvailable();
+                      });
+                      return Future<void>.delayed(const Duration(seconds: 1));
+                    },
+                    child: ListView.builder(
+                      itemCount: reservationsAvailable?.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.all(10),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => reservationDetail(
+                                          id: reservationsAvailable![index].id,
+                                          jwtToken: widget.jwtToken,
+                                        )),
+                              );
+                            },
+                            child: ReservationAvailable(
+                                reservationsAvailable![index].status, index),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
-                Tab(
-                  text: 'Reserved'.tr,
-                  icon: const Icon(Icons.restaurant_rounded),
+                Visibility(
+                  visible: isLoaded_2,
+                  replacement: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      setState(() {
+                        getReserved();
+                      });
+                      return Future<void>.delayed(const Duration(seconds: 1));
+                    },
+                    child: ListView.builder(
+                      itemCount: reservationsReserved?.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.all(10),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => reservationDetail(
+                                          id: reservationsReserved![index].id,
+                                          jwtToken: widget.jwtToken,
+                                        )),
+                              );
+                            },
+                            child: ReservationReserved(
+                                reservationsReserved![index].status, index),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ),
-                Tab(
-                    text: 'Check In'.tr,
-                    icon: const Icon(Icons.restaurant_rounded)),
+                Visibility(
+                  visible: isLoaded_1,
+                  replacement: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      setState(() {
+                        getCheckin();
+                      });
+                      return Future<void>.delayed(const Duration(seconds: 1));
+                    },
+                    child: ListView.builder(
+                      itemCount: reservationsCheckIn?.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => reservationDetail(
+                                          id: reservationsCheckIn![index].id,
+                                          jwtToken: widget.jwtToken,
+                                        )),
+                              );
+                            },
+                            child: ReservationCheckIn(
+                                reservationsCheckIn![index].status, index),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
               ],
             ),
-          ),
-          body: TabBarView(
-            children: [
-              Visibility(
-                visible: isLoaded_3,
-                replacement: const Center(
-                  child: CircularProgressIndicator(),
-                ),
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    setState(() {
-                      getAvailable();
-                    });
-                    return Future<void>.delayed(const Duration(seconds: 1));
-                  },
-                  child: ListView.builder(
-                    itemCount: reservationsAvailable?.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.all(10),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => reservationDetail(
-                                        id: reservationsAvailable![index].id,
-                                      )),
-                            );
-                          },
-                          child: ReservationAvailable(
-                              reservationsAvailable![index].status, index),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: isLoaded_2,
-                replacement: const Center(
-                  child: CircularProgressIndicator(),
-                ),
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    setState(() {
-                      getReserved();
-                    });
-                    return Future<void>.delayed(const Duration(seconds: 1));
-                  },
-                  child: ListView.builder(
-                    itemCount: reservationsReserved?.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.all(10),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => reservationDetail(
-                                        id: reservationsReserved![index].id,
-                                      )),
-                            );
-                          },
-                          child: ReservationReserved(
-                              reservationsReserved![index].status, index),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: isLoaded_1,
-                replacement: const Center(
-                  child: CircularProgressIndicator(),
-                ),
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    setState(() {
-                      getCheckin();
-                    });
-                    return Future<void>.delayed(const Duration(seconds: 1));
-                  },
-                  child: ListView.builder(
-                    itemCount: reservationsCheckIn?.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(10),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => reservationDetail(
-                                        id: reservationsCheckIn![index].id,
-                                      )),
-                            );
-                          },
-                          child: ReservationCheckIn(
-                              reservationsCheckIn![index].status, index),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
           ),
         ),
       ),

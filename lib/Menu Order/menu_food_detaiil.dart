@@ -9,6 +9,7 @@ import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
 
 class menuFoodDetail extends StatefulWidget {
+  final String jwtToken;
   final int price;
   final String foodId;
   final String categoryId;
@@ -20,7 +21,8 @@ class menuFoodDetail extends StatefulWidget {
       required this.foodId,
       required this.categoryId,
       required this.isCourse,
-      required this.reservationId});
+      required this.reservationId,
+      required this.jwtToken});
 
   @override
   State<menuFoodDetail> createState() => _menuFoodDetailState();
@@ -43,7 +45,8 @@ class _menuFoodDetailState extends State<menuFoodDetail> {
   }
 
   getData() async {
-    requiredFood = await RemoteService().getFood(widget.foodId);
+    requiredFood =
+        await RemoteService().getFood(widget.foodId, widget.jwtToken);
     if (requiredFood != null) {
       setState(() {
         isLoaded = true;
@@ -69,6 +72,7 @@ class _menuFoodDetailState extends State<menuFoodDetail> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => menuFood(
+                            jwtToken: widget.jwtToken,
                             reservationId: widget.reservationId,
                             categoryId: int.parse(widget.categoryId),
                             isCourse: widget.isCourse,
@@ -250,8 +254,9 @@ class _menuFoodDetailState extends State<menuFoodDetail> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            homeScreen()), //truyen ve menufood ? khong nen cho ra cart?
+                                        builder: (context) => homeScreen(
+                                              jwtToken: widget.jwtToken,
+                                            )), //truyen ve menufood ? khong nen cho ra cart?
                                   );
                                 },
                                 child: Container(

@@ -10,6 +10,7 @@ import 'package:oms_mobile/services/remote_service.dart';
 import 'package:get/get.dart';
 
 class tableInformationEdit extends StatefulWidget {
+  final String jwtToken;
   final int numberOfPeople;
   final String name;
   final String phone;
@@ -37,7 +38,8 @@ class tableInformationEdit extends StatefulWidget {
       required this.deposit,
       required this.tableTypeName,
       required this.currentReservation,
-      required this.overcharged});
+      required this.overcharged,
+      required this.jwtToken});
 
   @override
   State<tableInformationEdit> createState() => _tableInformationEditState();
@@ -75,6 +77,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => tableReservationEdit(
+                          jwtToken: widget.jwtToken,
                           reservationId: widget.currentReservation?.id,
                         )),
               );
@@ -887,14 +890,14 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                           int? returnReservId;
 
                           RemoteService().updateReservations(
-                            start,
-                            end,
-                            widget.numberOfSeats,
-                            widget.numberOfPeople,
-                            widget.tableTypeId,
-                            widget.amount,
-                            widget.currentReservation?.id,
-                          );
+                              start,
+                              end,
+                              widget.numberOfSeats,
+                              widget.numberOfPeople,
+                              widget.tableTypeId,
+                              widget.amount,
+                              widget.currentReservation?.id,
+                              widget.jwtToken);
                           // showDialog(
                           //   barrierDismissible: true,
                           //   context: context,
@@ -995,7 +998,8 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => homeScreen()),
+                                            builder: (context) => homeScreen(
+                                                jwtToken: widget.jwtToken)),
                                       );
                                     },
                                     child: Text('I understand'.tr),

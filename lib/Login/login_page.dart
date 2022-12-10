@@ -3,8 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Login/register_page.dart';
+import 'package:oms_mobile/services/remote_service.dart';
 import '../Home/home_screen.dart';
 import 'package:get/get.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class loginScreen extends StatefulWidget {
   const loginScreen({super.key});
@@ -14,15 +16,36 @@ class loginScreen extends StatefulWidget {
 }
 
 class _loginScreenState extends State<loginScreen> {
+  final passwordController = TextEditingController();
+  final phoneController = TextEditingController();
+  String? phone;
+  String? password;
+  bool flagPhone = false;
+  bool flagPassword = false;
+  bool loginFailed = false;
+  String? jwttoken;
+
   @override
   void initState() {
     super.initState();
-    getData();
+    // getData();
   }
 
   getData() async {
-    // final fcmToken = await FirebaseMessaging.instance.getToken();
-    // print(fcmToken);
+    getAuth();
+  }
+
+  getAuth() async {
+    jwttoken = await RemoteService().getAuthToken(phone, password);
+    if (jwttoken == null) {
+      setState(() {
+        loginFailed = true;
+      });
+    } else {
+      setState(() {
+        loginFailed = false;
+      });
+    }
   }
 
   @override
@@ -37,12 +60,7 @@ class _loginScreenState extends State<loginScreen> {
               // ignore: prefer_const_literals_to_create_immutables
               children: [
                 InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => homeScreen()),
-                    );
-                  },
+                  onTap: () {},
                   child: Icon(
                     Icons.restaurant_menu_rounded,
                     size: 100,
@@ -79,10 +97,22 @@ class _loginScreenState extends State<loginScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
+                        onChanged: (value) {
+                          if (value.isNotEmpty) {
+                            setState(() {
+                              flagPhone = false;
+                              phone = phoneController.text;
+                            });
+                          }
+                          getAuth();
+                        },
+                        controller: phoneController,
+                        scrollPhysics: const BouncingScrollPhysics(),
                         decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Input your phone number'.tr,
-                        ),
+                            border: InputBorder.none,
+                            hintText: 'Input your phone number'.tr,
+                            errorText:
+                                flagPhone ? "This field is empty".tr : null),
                       ),
                     ),
                   ),
@@ -103,11 +133,23 @@ class _loginScreenState extends State<loginScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
+                        onChanged: (value) {
+                          if (value.isNotEmpty) {
+                            setState(() {
+                              flagPassword = false;
+                              password = passwordController.text;
+                            });
+                          }
+                          getAuth();
+                        },
+                        controller: passwordController,
+                        scrollPhysics: const BouncingScrollPhysics(),
                         obscureText: true,
                         decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'Input your password'.tr,
-                        ),
+                            border: InputBorder.none,
+                            hintText: 'Input your password'.tr,
+                            errorText:
+                                flagPassword ? "This field is empty".tr : null),
                       ),
                     ),
                   ),
@@ -129,10 +171,59 @@ class _loginScreenState extends State<loginScreen> {
                       ),
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => homeScreen()),
-                      );
+                      if (phoneController.text.isEmpty) {
+                        setState(() {
+                          getAuth();
+                          flagPhone = true;
+                        });
+                      } else if (passwordController.text.isEmpty) {
+                        setState(() {
+                          getAuth();
+                          flagPassword = true;
+                        });
+                      } else if (passwordController.text.isNotEmpty &&
+                          phoneController.text.isNotEmpty) {
+                        getAuth();
+                      }
+                      if (jwttoken == null) {
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                'Invalid'.tr,
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              content: Text(
+                                "Your password or email doesn't right. Please try again!"
+                                    .tr,
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, 'Cancel'),
+                                  child: Text('I understand'.tr),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => homeScreen(
+                                    jwtToken: '$jwttoken',
+                                  )),
+                        );
+                      }
                     },
                     child: Text(
                       'login'.tr.toUpperCase(),

@@ -5,10 +5,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
+import 'package:oms_mobile/Models/reservation.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
+import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:get/get.dart';
 
 class tableInformation extends StatefulWidget {
+  final String jwtToken;
   final int numberOfPeople;
   final String name;
   final String phone;
@@ -20,6 +24,8 @@ class tableInformation extends StatefulWidget {
   final int amount;
   final int deposit;
   final String tableTypeName;
+  final String fullName;
+  final String phoneNumber;
   const tableInformation(
       {super.key,
       required this.name,
@@ -32,7 +38,10 @@ class tableInformation extends StatefulWidget {
       required this.numberOfPeople,
       required this.amount,
       required this.deposit,
-      required this.tableTypeName});
+      required this.tableTypeName,
+      required this.jwtToken,
+      required this.fullName,
+      required this.phoneNumber});
 
   @override
   State<tableInformation> createState() => _tableInformationState();
@@ -42,10 +51,13 @@ class _tableInformationState extends State<tableInformation> {
   String start = "";
   String end = "";
   bool orderFood = false;
+  UserProfile? currentUser;
+  ReservationNoTable? currentReservation;
 
   @override
   void initState() {
     super.initState();
+    getUser();
   }
 
   // postData(String start, String end, int numberOfSeats, int numberOfPeople,
@@ -54,6 +66,30 @@ class _tableInformationState extends State<tableInformation> {
   //   returnReserv = await RemoteService().createReservations(start, end,
   //       numberOfSeats, numberOfPeople, tableTypeId, isPriorFoodOrder, quantity);
   //   return returnId;
+  // }
+
+  double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
+
+  checkInDefault(int? id) {
+    RemoteService().checkInReservationDefault(id, widget.jwtToken);
+  }
+
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
+
+  // getReservation(int? reservationId) async {
+  //   currentReservation = await RemoteService()
+  //       .getReservationBeforeCheckin(reservationId ?? 0, widget.jwtToken);
+  // }
+
+  // addBilling(int? reservationId, int? money) async {
+  //   RemoteService()
+  //       .addBillingReservation(reservationId, money, widget.jwtToken);
+  // }
+
+  // CheckInReservation(int reservationId) {
+  //   RemoteService().checkinReservation(reservationId, widget.jwtToken);
   // }
 
   String changeFormat(int number) {
@@ -76,11 +112,14 @@ class _tableInformationState extends State<tableInformation> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => homeScreen()),
+                MaterialPageRoute(
+                    builder: (context) => reservationList(
+                          jwtToken: widget.jwtToken,
+                        )),
               );
             },
             icon: Icon(
-              Icons.home_rounded,
+              Icons.arrow_back_ios_new_rounded,
               size: 30,
             )),
         automaticallyImplyLeading: false,
@@ -428,7 +467,7 @@ class _tableInformationState extends State<tableInformation> {
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 20,
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -488,13 +527,33 @@ class _tableInformationState extends State<tableInformation> {
                             '$endHour:$endMinute:00.000Z';
                       });
                       int? returnReservId;
-                      returnReservId = await RemoteService().createReservations(
+                      returnReservId = await RemoteService().createReservation(
                           start,
                           end,
                           widget.numberOfSeats,
                           widget.numberOfPeople,
                           widget.tableTypeId,
-                          widget.amount);
+                          widget.amount,
+                          widget.fullName,
+                          widget.phoneNumber,
+                          widget.jwtToken);
+                      TimeOfDay nowTime = TimeOfDay.now();
+                      double nowTimeDouble = toDouble(nowTime);
+                      double startTimeDouble = toDouble(widget.startTime);
+                      print(nowTimeDouble);
+                      print(startTimeDouble);
+                      if (currentUser?.fullName.contains("Default Customer") ??
+                          false) {
+                        if ((nowTimeDouble >= (startTimeDouble - 0.25)) &&
+                            (nowTimeDouble <= startTimeDouble)) {
+                          // getReservation(returnReservId);
+                          // addBilling(
+                          //     returnReservId, currentReservation?.prePaid);
+                          // CheckInReservation(returnReservId ?? 0);
+                          print("abc");
+                          checkInDefault(returnReservId);
+                        }
+                      }
                       showDialog(
                         barrierDismissible: true,
                         context: context,
@@ -525,6 +584,7 @@ class _tableInformationState extends State<tableInformation> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => menuCategory(
+                                              jwtToken: widget.jwtToken,
                                               orderFood: true,
                                               reservationId:
                                                   returnReservId ?? 0)),
@@ -540,7 +600,9 @@ class _tableInformationState extends State<tableInformation> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => homeScreen()),
+                                          builder: (context) => homeScreen(
+                                                jwtToken: widget.jwtToken,
+                                              )),
                                     );
                                   });
                                 },
@@ -567,7 +629,7 @@ class _tableInformationState extends State<tableInformation> {
                               child: Column(
                                 children: [
                                   Text(
-                                    'You need to pay for your reservation 30 minutes after making a reservation or your reservation will be cancel!'
+                                    'You need to pay for your reservation 15 minutes after making a reservation or your reservation will be cancel!'
                                         .tr
                                         .tr,
                                     textAlign: TextAlign.center,

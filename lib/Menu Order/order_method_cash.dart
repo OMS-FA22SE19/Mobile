@@ -10,6 +10,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:get/get.dart';
 
 class orderMethod extends StatefulWidget {
+  final String jwtToken;
   final String? orderId;
   final String method;
   final int reservationId;
@@ -18,7 +19,8 @@ class orderMethod extends StatefulWidget {
       {super.key,
       required this.orderId,
       required this.method,
-      required this.reservationId});
+      required this.reservationId,
+      required this.jwtToken});
 
   @override
   State<orderMethod> createState() => _orderMethodState();
@@ -44,7 +46,8 @@ class _orderMethodState extends State<orderMethod> {
   }
 
   getData() async {
-    currentOrder = await RemoteService().getOrders(widget.orderId);
+    currentOrder =
+        await RemoteService().getOrders(widget.orderId, widget.jwtToken);
     flag = currentOrder?.status.contains("Paid") ?? false;
     details = currentOrder?.orderDetails;
     if (currentOrder != null) {
@@ -56,7 +59,7 @@ class _orderMethodState extends State<orderMethod> {
   }
 
   checkingOrder() {
-    RemoteService().checkingOrder(widget.orderId ?? "");
+    RemoteService().checkingOrder(widget.orderId ?? "", widget.jwtToken);
   }
 
   @override
@@ -73,7 +76,9 @@ class _orderMethodState extends State<orderMethod> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const homeScreen()),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        homeScreen(jwtToken: widget.jwtToken)),
               );
             },
             icon: const Icon(
@@ -297,6 +302,7 @@ class _orderMethodState extends State<orderMethod> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => orderSuccess(
+                                        jwtToken: widget.jwtToken,
                                         orderId: widget.orderId ?? "",
                                       )),
                             );

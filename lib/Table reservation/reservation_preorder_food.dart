@@ -12,10 +12,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 
 class testPrior extends StatefulWidget {
+  final String jwtToken;
   final int reservationId;
   final List<food>? foodList;
   const testPrior(
-      {super.key, required this.reservationId, required this.foodList});
+      {super.key,
+      required this.reservationId,
+      required this.foodList,
+      required this.jwtToken});
 
   @override
   State<testPrior> createState() => _testPriorState();
@@ -34,8 +38,8 @@ class _testPriorState extends State<testPrior> {
   }
 
   getData() async {
-    currentReservation =
-        await RemoteService().getReservationBeforeCheckin(widget.reservationId);
+    currentReservation = await RemoteService()
+        .getReservationBeforeCheckin(widget.reservationId, widget.jwtToken);
     getVNPAYurl();
     getDirect();
     setState(() {
@@ -48,7 +52,9 @@ class _testPriorState extends State<testPrior> {
 
   getVNPAYurl() async {
     payment = await RemoteService().getPaymentURLReservation(
-        widget.reservationId, (currentReservation?.prePaid ?? 0) + total);
+        widget.reservationId,
+        (currentReservation?.prePaid ?? 0) + total,
+        widget.jwtToken);
   }
 
   getDirect() {
@@ -80,7 +86,8 @@ class _testPriorState extends State<testPrior> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const reservationList()),
+                    builder: (context) =>
+                        reservationList(jwtToken: widget.jwtToken)),
               );
             },
             icon: const Icon(
@@ -602,12 +609,14 @@ class _testPriorState extends State<testPrior> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const reservationList()),
+                        builder: (context) => reservationList(
+                              jwtToken: widget.jwtToken,
+                            )),
                   );
                 } else {
                   setState(() {
                     RemoteService().createPreorderFood(
-                        widget.reservationId, widget.foodList);
+                        widget.reservationId, widget.foodList, widget.jwtToken);
                   });
                   launchUrl(
                     Uri.parse(payment?.url ?? "NULL URL"),

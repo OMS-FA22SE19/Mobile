@@ -12,6 +12,7 @@ import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
 class menuCart extends StatefulWidget {
+  final String jwtToken;
   final int reservationId;
   final int categoryId;
   final List<food>? foods;
@@ -27,7 +28,8 @@ class menuCart extends StatefulWidget {
       this.orderId,
       this.orderFood,
       this.edit,
-      required this.reservationId});
+      required this.reservationId,
+      required this.jwtToken});
 
   @override
   State<menuCart> createState() => _menuCartState();
@@ -69,7 +71,8 @@ class _menuCartState extends State<menuCart> {
   }
 
   void updatePreOrderFood() async {
-    RemoteService().updatePreorderFood(widget.reservationId, widget.foods);
+    RemoteService().updatePreorderFood(
+        widget.reservationId, widget.foods, widget.jwtToken);
   }
 
   @override
@@ -88,6 +91,7 @@ class _menuCartState extends State<menuCart> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => menuFood(
+                          jwtToken: widget.jwtToken,
                           reservationId: widget.reservationId,
                           isCourse: widget.isCourse,
                           categoryId: widget.categoryId,
@@ -454,7 +458,9 @@ class _menuCartState extends State<menuCart> {
             );
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => reservationList()),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      reservationList(jwtToken: widget.jwtToken)),
             );
           },
           style: ElevatedButton.styleFrom(
@@ -480,6 +486,7 @@ class _menuCartState extends State<menuCart> {
               context,
               MaterialPageRoute(
                   builder: (context) => testPrior(
+                        jwtToken: widget.jwtToken,
                         reservationId: widget.reservationId,
                         foodList: widget.foods,
                       )),
@@ -508,16 +515,17 @@ class _menuCartState extends State<menuCart> {
             ? () async {
                 if (widget.orderId?.isEmpty == false) {
                   check = widget.orderId?.isEmpty ?? false;
-                  newOrder = await RemoteService()
-                      .putOrder(widget.orderId ?? "", widget.foods);
+                  newOrder = await RemoteService().putOrder(
+                      widget.orderId ?? "", widget.foods, widget.jwtToken);
                 } else {
-                  newOrder = await RemoteService()
-                      .createOrder(widget.reservationId, widget.foods);
+                  newOrder = await RemoteService().createOrder(
+                      widget.reservationId, widget.foods, widget.jwtToken);
                 }
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => menuStatus(
+                            jwtToken: widget.jwtToken,
                             reservationId: widget.reservationId,
                             isCourse: widget.isCourse,
                             orderId: newOrder?.id,

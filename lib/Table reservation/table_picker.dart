@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:oms_mobile/Home/home_screen.dart';
+import 'package:oms_mobile/Login/login_page.dart';
 import 'package:oms_mobile/Models/table.dart';
 import 'package:oms_mobile/Table%20reservation/date_picker.dart';
 import 'package:oms_mobile/services/remote_service.dart';
@@ -29,7 +29,7 @@ class _tablePickerState extends State<tablePicker> {
   }
 
   getData() async {
-    tables = await RemoteService().getTablesAvailable(widget.numberOfPeople);
+    // tables = await RemoteService().getTablesAvailable(widget.numberOfPeople, );
     if (tables != null) {
       setState(() {
         isLoaded = true;
@@ -52,7 +52,7 @@ class _tablePickerState extends State<tablePicker> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => homeScreen()),
+                  MaterialPageRoute(builder: (context) => loginScreen()),
                 );
               },
               icon: Icon(
@@ -65,7 +65,7 @@ class _tablePickerState extends State<tablePicker> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => homeScreen()),
+                    MaterialPageRoute(builder: (context) => loginScreen()),
                   );
                 },
                 icon: Icon(
@@ -91,7 +91,7 @@ class _tablePickerState extends State<tablePicker> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => datePicker(
+                      builder: (context) => datePickers(
                             amount: 1,
                             numberOfPeople: widget.numberOfPeople,
                             numberOfSeats: tables![index].numOfSeats,

@@ -1,10 +1,11 @@
 // ignore_for_file: camel_case_types
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Login/login_page.dart';
 import 'package:get/get.dart';
+import 'package:oms_mobile/services/remote_service.dart';
 
 class registerPage extends StatefulWidget {
   const registerPage({super.key});
@@ -18,11 +19,21 @@ class _registerPageState extends State<registerPage> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  bool flagTotal = true;
-  bool flagNameEmpty = false;
-  bool flagPhoneEmpty = false;
-  bool flagEmailEmpty = false;
-  bool flagPasswordEmpty = false;
+  final re_passwordController = TextEditingController();
+  bool flagHidden = true;
+  bool flagName = false;
+  bool flagPhone = false;
+  bool flagEmail = false;
+  bool flagRePassword = false;
+  bool flagPassword = false;
+  String errorName = "";
+  String errorPhone = "";
+  String errorEmail = "";
+  String errorPassword = "";
+  String errorRePassword = "";
+
+  String? check = "Fail";
+  bool checkBool = false;
 
   @override
   void dispose() {
@@ -30,12 +41,23 @@ class _registerPageState extends State<registerPage> {
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
+    re_passwordController.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+  }
+
+  registerAccount() async {
+    check = await RemoteService().registerAccount(nameController.text,
+        emailController.text, phoneController.text, passwordController.text);
+    if (check?.contains("Created") ?? true) {
+      setState(() {
+        checkBool = true;
+      });
+    }
   }
 
   @override
@@ -95,20 +117,41 @@ class _registerPageState extends State<registerPage> {
                         onChanged: (value) {
                           if (phoneController.text.isEmpty) {
                             setState(() {
-                              flagPhoneEmpty = true;
-                              flagTotal = true;
+                              flagPhone = true;
+                              flagHidden = true;
+                              errorPhone = 'Please input a number!'.tr;
+                            });
+                          } else if (phoneController.text.length > 10) {
+                            setState(() {
+                              flagPhone = true;
+                              flagHidden = true;
+                              errorPhone = 'Phone number is too long!'.tr;
+                            });
+                          } else if (phoneController.text.length < 10) {
+                            setState(() {
+                              flagPhone = true;
+                              flagHidden = true;
+                              errorPhone =
+                                  'Phone number is not long enough!'.tr;
+                            });
+                          } else {
+                            setState(() {
+                              flagPhone = false;
+                              errorPhone = '';
                             });
                           }
                         },
                         scrollPhysics: const BouncingScrollPhysics(),
                         controller: phoneController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
                         autofocus: false,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'phone number'.tr,
-                          errorText: flagPhoneEmpty
-                              ? 'This field is required!'.tr
-                              : null,
+                          errorText: flagPhone ? errorPhone.tr : null,
                         ),
                       ),
                     ),
@@ -138,8 +181,14 @@ class _registerPageState extends State<registerPage> {
                         onChanged: (value) {
                           if (nameController.text.isEmpty) {
                             setState(() {
-                              flagNameEmpty = true;
-                              flagTotal = true;
+                              flagName = true;
+                              flagHidden = true;
+                              errorName = 'Please input a name!'.tr;
+                            });
+                          } else {
+                            setState(() {
+                              flagName = false;
+                              errorName = '';
                             });
                           }
                         },
@@ -149,9 +198,7 @@ class _registerPageState extends State<registerPage> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'full name'.tr,
-                          errorText: flagNameEmpty
-                              ? 'This field is required!'.tr
-                              : null,
+                          errorText: flagName ? errorName : null,
                         ),
                       ),
                     ),
@@ -178,9 +225,25 @@ class _registerPageState extends State<registerPage> {
                         onChanged: (value) {
                           if (emailController.text.isEmpty) {
                             setState(() {
-                              flagEmailEmpty = true;
-                              flagTotal = true;
+                              flagEmail = true;
+                              flagHidden = true;
+                              errorEmail = 'Please input a email!'.tr;
                             });
+                          } else {
+                            if (RegExp(
+                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                .hasMatch(emailController.text)) {
+                              setState(() {
+                                flagEmail = false;
+                                errorEmail = '';
+                              });
+                            } else {
+                              setState(() {
+                                flagEmail = true;
+                                flagHidden = true;
+                                errorEmail = 'Email format wrong!'.tr;
+                              });
+                            }
                           }
                         },
                         scrollPhysics: const BouncingScrollPhysics(),
@@ -189,9 +252,7 @@ class _registerPageState extends State<registerPage> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Email',
-                          errorText: flagEmailEmpty
-                              ? 'This field is required!'.tr
-                              : null,
+                          errorText: flagEmail ? errorEmail : null,
                         ),
                       ),
                     ),
@@ -218,20 +279,97 @@ class _registerPageState extends State<registerPage> {
                         onChanged: (value) {
                           if (passwordController.text.isEmpty) {
                             setState(() {
-                              flagPasswordEmpty = true;
-                              flagTotal = true;
+                              flagPassword = true;
+                              flagHidden = true;
+                              errorPassword = 'Please input a password!'.tr;
+                            });
+                          } else if (passwordController.text.length < 8) {
+                            setState(() {
+                              flagPassword = true;
+                              flagHidden = true;
+                              errorPassword = 'Password too short!'.tr;
+                            });
+                          } else {
+                            setState(() {
+                              flagPassword = false;
                             });
                           }
                         },
+                        obscureText: true,
                         scrollPhysics: const BouncingScrollPhysics(),
                         controller: passwordController,
                         autofocus: false,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'password'.tr,
-                          errorText: flagPasswordEmpty
-                              ? 'This field is required!'.tr
-                              : null,
+                          errorText: flagPassword ? errorPassword : null,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.greenAccent.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(1, 2),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: TextField(
+                        onChanged: (value) {
+                          if (re_passwordController.text.isEmpty) {
+                            setState(() {
+                              flagRePassword = true;
+                              flagHidden = true;
+                              errorRePassword = 'Please input a password!'.tr;
+                            });
+                          } else {
+                            if (re_passwordController.text
+                                .contains(passwordController.text)) {
+                              setState(() {
+                                flagRePassword = false;
+                                errorRePassword = ''.tr;
+                              });
+                            } else {
+                              setState(() {
+                                flagRePassword = true;
+                                flagHidden = true;
+                                errorRePassword = 'Password doesn\'t match'.tr;
+                              });
+                            }
+                          }
+                          if (flagEmail |
+                              flagName |
+                              flagPassword |
+                              flagPhone |
+                              flagRePassword) {
+                            setState(() {
+                              flagHidden = true;
+                            });
+                          } else {
+                            setState(() {
+                              flagHidden = false;
+                            });
+                          }
+                        },
+                        obscureText: true,
+                        scrollPhysics: const BouncingScrollPhysics(),
+                        controller: re_passwordController,
+                        autofocus: false,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'confirm password'.tr,
+                          errorText: flagRePassword ? errorRePassword.tr : null,
                         ),
                       ),
                     ),
@@ -242,7 +380,7 @@ class _registerPageState extends State<registerPage> {
             const SizedBox(
               height: 10,
             ),
-            conditionalButton(flagTotal),
+            conditionalButton(flagHidden),
             const SizedBox(
               height: 10,
             ),
@@ -261,7 +399,7 @@ class _registerPageState extends State<registerPage> {
                   },
                   child: Text(
                     ' ${'Login here!'.tr}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.blue,
                       fontWeight: FontWeight.bold,
                     ),
@@ -281,10 +419,60 @@ class _registerPageState extends State<registerPage> {
     } else {
       return ElevatedButton(
         onPressed: () {
+          showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                alignment: Alignment.center,
+                icon: const Icon(Icons.info_outline_rounded),
+                title: Text(
+                  'Remind'.tr,
+                  style: GoogleFonts.lato(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                content: SizedBox(
+                  height: 150,
+                  child: Column(
+                    children: [
+                      Text(
+                        'Please remember, any overcharged money won\'t be refund!'
+                            .tr
+                            .toUpperCase(),
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.lato(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        'If you choose a different table type, table information might be changed'
+                            .tr,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.lato(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'Cancel'),
+                    child: Text('I understand'.tr),
+                  ),
+                ],
+              );
+            },
+          );
+          registerAccount();
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const homeScreen(),
+                builder: (context) => const loginScreen(),
               ));
         },
         style: ElevatedButton.styleFrom(

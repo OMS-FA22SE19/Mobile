@@ -22,10 +22,12 @@ class menuFood extends StatefulWidget {
       this.orderId,
       this.cartfoods,
       this.orderFood,
-      this.edit});
+      this.edit,
+      required this.jwtToken});
   final int reservationId;
   final int categoryId;
   final bool isCourse;
+  final String jwtToken;
   String? orderId;
   List<food>? cartfoods;
   bool? orderFood;
@@ -63,13 +65,13 @@ class _menuFoodState extends State<menuFood> {
   }
 
   getData() async {
-    menus = await RemoteService().getMenuAvailable();
+    menus = await RemoteService().getMenuAvailable(widget.jwtToken);
     menus?.forEach((menu) {
       if (menu.available == true) menuId = menu.id;
     });
 
     foods = await RemoteService()
-        .getFoods(menuId, widget.categoryId, widget.isCourse);
+        .getFoods(menuId, widget.categoryId, widget.isCourse, widget.jwtToken);
     if (foods != null) {
       setState(() {
         isLoaded = true;
@@ -93,6 +95,7 @@ class _menuFoodState extends State<menuFood> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => menuCategory(
+                          jwtToken: widget.jwtToken,
                           reservationId: widget.reservationId,
                           isCourse: widget.isCourse,
                         )),
@@ -110,6 +113,7 @@ class _menuFoodState extends State<menuFood> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => searchPage(
+                            jwtToken: widget.jwtToken,
                             reservationId: widget.reservationId,
                             isCourse: widget.isCourse,
                             categoryId: widget.categoryId,
@@ -141,6 +145,7 @@ class _menuFoodState extends State<menuFood> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => menuFoodDetail(
+                            jwtToken: widget.jwtToken,
                             reservationId: widget.reservationId,
                             isCourse: widget.isCourse,
                             categoryId: widget.categoryId.toString(),
@@ -249,6 +254,7 @@ class _menuFoodState extends State<menuFood> {
             context,
             MaterialPageRoute(
                 builder: (context) => menuCart(
+                      jwtToken: widget.jwtToken,
                       reservationId: widget.reservationId,
                       isCourse: widget.isCourse,
                       categoryId: widget.categoryId,

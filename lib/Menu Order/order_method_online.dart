@@ -11,11 +11,16 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 
 class orderMethodOnline extends StatefulWidget {
+  final String jwtToken;
   final String? orderId;
   final String method;
   final int tableId;
   const orderMethodOnline(
-      {super.key, this.orderId, required this.method, required this.tableId});
+      {super.key,
+      this.orderId,
+      required this.method,
+      required this.tableId,
+      required this.jwtToken});
 
   @override
   State<orderMethodOnline> createState() => _orderMethodOnlineState();
@@ -42,7 +47,8 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
   }
 
   getData() async {
-    currentOrder = await RemoteService().getOrders(widget.orderId);
+    currentOrder =
+        await RemoteService().getOrders(widget.orderId, widget.jwtToken);
     getURL();
     flag = currentOrder?.status.contains("Paid") ?? false;
     details = currentOrder?.orderDetails;
@@ -56,7 +62,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
 
   getURL() async {
     payment = await RemoteService()
-        .getPaymentURL(widget.orderId, currentOrder?.total);
+        .getPaymentURL(widget.orderId, currentOrder?.total, widget.jwtToken);
   }
 
   @override
@@ -73,7 +79,9 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => homeScreen()),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        homeScreen(jwtToken: widget.jwtToken)),
               );
             },
             icon: const Icon(
@@ -297,6 +305,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => orderSuccess(
+                                        jwtToken: widget.jwtToken,
                                         orderId: widget.orderId ?? "",
                                       )),
                             );

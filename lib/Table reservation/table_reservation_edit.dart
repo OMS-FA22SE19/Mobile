@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:oms_mobile/Models/admin_settings.dart';
 import 'package:oms_mobile/Models/available_date.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Models/table.dart';
@@ -13,8 +14,10 @@ import 'package:oms_mobile/services/remote_service.dart';
 import 'package:get/get.dart';
 
 class tableReservationEdit extends StatefulWidget {
+  final String jwtToken;
   final int? reservationId;
-  const tableReservationEdit({super.key, this.reservationId});
+  const tableReservationEdit(
+      {super.key, this.reservationId, required this.jwtToken});
 
   @override
   State<tableReservationEdit> createState() => _tableReservationEditState();
@@ -25,6 +28,7 @@ class _tableReservationEditState extends State<tableReservationEdit> {
   List<tableAvailable>? tables;
   List<availableDate>? dates;
   ReservationNoTable? currentReservation;
+  List<adminSettings>? admin_settings;
   bool checkflag = false;
   int checkId = -1;
 
@@ -50,15 +54,16 @@ class _tableReservationEditState extends State<tableReservationEdit> {
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedStartTime = TimeOfDay(hour: 11, minute: 0);
   TimeOfDay _selectedEndTime = TimeOfDay(hour: 12, minute: 0);
-  final TimeOfDay _openTime = TimeOfDay(hour: 09, minute: 0);
-  final TimeOfDay _closeTime = TimeOfDay(hour: 22, minute: 0);
+  TimeOfDay _openTime = TimeOfDay(hour: 11, minute: 0);
+  TimeOfDay _closeTime = TimeOfDay(hour: 22, minute: 0);
   bool ocupiedFlag = true;
   bool invalidFlag = true;
   double chooseTime = 0;
   double openTime = 0;
   double closeTime = 0;
   String errorText = "";
-  int settingHour = 3;
+  int minDuration = 30;
+  int maxDuration = 180;
 
   @override
   void dispose() {
@@ -70,12 +75,13 @@ class _tableReservationEditState extends State<tableReservationEdit> {
   void initState() {
     super.initState();
     getData(2);
+    getSettings();
   }
 
   getData(int people) async {
-    tables = await RemoteService().getTablesAvailable(people);
-    currentReservation = await RemoteService()
-        .getReservationBeforeCheckin(widget.reservationId ?? 0);
+    tables = await RemoteService().getTablesAvailable(people, widget.jwtToken);
+    currentReservation = await RemoteService().getReservationBeforeCheckin(
+        widget.reservationId ?? 0, widget.jwtToken);
     int? check = tables?.length;
     if (tables != null) {
       setState(() {
@@ -93,9 +99,29 @@ class _tableReservationEditState extends State<tableReservationEdit> {
     DateTime date2 = DateFormat("hh:mma").parse("6:45PM");
   }
 
+  getSettings() async {
+    admin_settings = await RemoteService().getSettings(widget.jwtToken);
+    setState(() {
+      maxDuration = int.parse('${admin_settings?.elementAt(2).value}');
+      minDuration = int.parse('${admin_settings?.elementAt(3).value}');
+
+      int endHour =
+          int.parse('${admin_settings?.elementAt(0).value.substring(0, 2)}');
+      int startHour =
+          int.parse('${admin_settings?.elementAt(4).value.substring(0, 2)}');
+
+      int endMinute =
+          int.parse('${admin_settings?.elementAt(0).value.substring(4, 5)}');
+      int startMinute =
+          int.parse('${admin_settings?.elementAt(4).value.substring(4, 5)}');
+      _openTime = TimeOfDay(hour: startHour, minute: startMinute);
+      _closeTime = TimeOfDay(hour: endHour, minute: endMinute);
+    });
+  }
+
   getTimeAvailable(String date) async {
-    dates = await RemoteService().getTimeAvailable(
-        numberOfSeats, tableTypeId, date.substring(0, 10), quantity);
+    dates = await RemoteService().getTimeAvailable(numberOfSeats, tableTypeId,
+        date.substring(0, 10), quantity, widget.jwtToken);
     int? check = dates?.length;
     if (dates != null) {
       setState(() {
@@ -110,10 +136,12 @@ class _tableReservationEditState extends State<tableReservationEdit> {
   }
 
   getTableType(int typeId) async {
-    int charge = await RemoteService().getTableChargePerSeat(tableTypeId);
+    int charge = await RemoteService()
+        .getTableChargePerSeat(tableTypeId, widget.jwtToken);
     deposit = charge * numberOfSeats * quantity;
     overcharged = (deposit - (currentReservation?.prePaid ?? 0));
-    tableTypeName = await RemoteService().getTableTypeName(tableTypeId);
+    tableTypeName =
+        await RemoteService().getTableTypeName(tableTypeId, widget.jwtToken);
   }
 
   String changeFormat(int number) {
@@ -590,12 +618,10 @@ class _tableReservationEditState extends State<tableReservationEdit> {
                         invalidFlag = true;
                         if (chooseTime == closeTime) {
                           errorText =
-                              'Our restaurant close at 10:00PM. Please choose again!'
-                                  .tr;
+                              '${'Our restaurant close at'.tr} ${_closeTime.toString().substring(10, 15)}. ${'Please choose again!'.tr}';
                         } else {
                           errorText =
-                              'Our bussiness hour is from 11:00AM - 10:00PM. Please choose again!'
-                                  .tr;
+                              '${'Our bussiness hour is from'.tr} ${_openTime.toString().substring(10, 15)} - ${_closeTime.toString().substring(10, 15)}. ${'Please choose again!'.tr}';
                         }
                       }
                       // else {
@@ -741,25 +767,25 @@ class _tableReservationEditState extends State<tableReservationEdit> {
                         invalidFlag = true;
                         if (chooseTime == openTime) {
                           errorText =
-                              'Our restaurant open at 11:00AM. Please choose again!'
-                                  .tr;
+                              '${'Our restaurant open at'.tr} ${_openTime.toString().substring(10, 15)}. ${'Please choose again!'.tr}';
                         } else {
                           errorText =
-                              'Our bussiness hour is from 11:00AM - 10:00PM. Please choose again!'
-                                  .tr;
+                              '${'Our bussiness hour is from'.tr} ${_openTime.toString().substring(10, 15)} - ${_closeTime.toString().substring(10, 15)}. ${'Please choose again!'.tr}';
                         }
                       } else {
                         if (chooseTime >= toDouble(_selectedStartTime) &&
-                            chooseTime < toDouble(_selectedStartTime) + 0.5) {
+                            chooseTime <
+                                toDouble(_selectedStartTime) +
+                                    minDuration / 60) {
                           invalidFlag = true;
                           errorText =
-                              'Reservation duration must be at least 30 minutes. Please choose again!'
+                              'Reservation duration must be at least $minDuration minutes. Please choose again!'
                                   .tr;
                         } else if (chooseTime >
-                            toDouble(_selectedStartTime) + settingHour) {
+                            toDouble(_selectedStartTime) + maxDuration / 60) {
                           invalidFlag = true;
                           errorText =
-                              'Reservation duration must not longer than $settingHour hours. Please choose again!'
+                              'Reservation duration must not longer than $maxDuration minutes. Please choose again!'
                                   .tr;
                         } else if (chooseTime < toDouble(_selectedStartTime)) {
                           invalidFlag = true;
@@ -850,6 +876,7 @@ class _tableReservationEditState extends State<tableReservationEdit> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => tableInformationEdit(
+                              jwtToken: widget.jwtToken,
                               currentReservation: currentReservation,
                               overcharged: overcharged,
                               tableTypeName: tableTypeName,

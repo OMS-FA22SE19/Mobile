@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:oms_mobile/Menu%20Order/menu_food.dart';
 
 class searchPage extends StatefulWidget {
+  final String jwtToken;
   final int reservationId;
   final int menuId;
   final int categoryId;
@@ -13,7 +14,8 @@ class searchPage extends StatefulWidget {
       required this.menuId,
       required this.categoryId,
       required this.isCourse,
-      required this.reservationId});
+      required this.reservationId,
+      required this.jwtToken});
 
   @override
   State<searchPage> createState() => _searchPageState();
@@ -31,6 +33,7 @@ class _searchPageState extends State<searchPage> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => menuFood(
+                            jwtToken: widget.jwtToken,
                             reservationId: widget.reservationId,
                             isCourse: widget.isCourse,
                             categoryId: widget.categoryId,

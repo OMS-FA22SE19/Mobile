@@ -137,6 +137,13 @@ class responseData15 {
         message: json["message"],
       );
 
+  factory responseData15.fromJson2(Map<String, dynamic> json) => responseData15(
+        data: Order.fromJson2(json["data"]),
+        succeeded: json["succeeded"],
+        statusCode: json["statusCode"],
+        message: json["message"],
+      );
+
   Map<String, dynamic> toJson() => {
         "data": data,
         "succeeded": succeeded,
@@ -156,7 +163,20 @@ class Order {
     required this.prePaid,
     required this.total,
     required this.orderDetails,
+    required this.reservation,
   });
+
+  Order.withoutReservation({
+    required this.id,
+    required this.userId,
+    required this.fullName,
+    required this.phoneNumber,
+    required this.date,
+    required this.status,
+    required this.prePaid,
+    required this.total,
+    required this.orderDetails,
+  }) : reservation = Reservation(id: 1);
 
   String id;
   String userId;
@@ -167,8 +187,24 @@ class Order {
   int prePaid;
   int total;
   List<OrderDetail> orderDetails;
+  Reservation reservation;
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
+        id: json["id"],
+        userId: json["userId"],
+        fullName: json["fullName"],
+        phoneNumber: json["phoneNumber"],
+        date: json["date"],
+        status: json["status"],
+        prePaid: json["prePaid"],
+        total: json["total"],
+        orderDetails: List<OrderDetail>.from(
+            json["orderDetails"].map((x) => OrderDetail.fromJson(x))),
+        reservation: Reservation.fromJson(json["reservation"]),
+      );
+
+  factory Order.fromJson2(Map<String, dynamic> json) =>
+      Order.withoutReservation(
         id: json["id"],
         userId: json["userId"],
         fullName: json["fullName"],
@@ -191,6 +227,7 @@ class Order {
         "prePaid": prePaid,
         "total": total,
         "orderDetails": List<dynamic>.from(orderDetails.map((x) => x.toJson())),
+        "reservation": reservation.toJson(),
       };
 }
 
@@ -239,5 +276,21 @@ class OrderDetail {
         "price": price,
         "quantity": quantity,
         "amount": amount,
+      };
+}
+
+class Reservation {
+  Reservation({
+    required this.id,
+  });
+
+  int id;
+
+  factory Reservation.fromJson(Map<String, dynamic> json) => Reservation(
+        id: json["id"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
       };
 }

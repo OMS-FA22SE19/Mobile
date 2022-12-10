@@ -1,11 +1,17 @@
 import 'package:get/get.dart';
-import 'package:oms_mobile/Models/menu.dart';
 
 class LocaleString extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
         'en_US': {
           "hello": "hello",
+          'Reason': 'Reason',
+          'Cancel Reason': 'Cancel Reason',
+          'Start time must be greater than time at the moment 30 minutes!':
+              'Start time must be greater than time at the moment 30 minutes!',
+          'QR CODE': 'QR CODE',
+          'Homescreen': 'Homescreen',
+          'Logout': 'Logout',
           "bye": "bye",
           'Profile': 'Profile',
           'hello customer': "hello customer",
@@ -19,8 +25,10 @@ class LocaleString extends Translations {
           'Login here!': 'Login here!',
           'register': 'register',
           'phone number': 'Phone number',
+          'phone number for': 'Phone number for',
           'full name': 'Full name',
-          'password': 'password',
+          'full name for': 'Full name for',
+          'password': 'Password',
           'login': 'login',
           'This field is required!': 'This field is required!',
           'reservation': 'Reservation',
@@ -78,15 +86,34 @@ class LocaleString extends Translations {
           'Start Time': 'Start Time',
           'End Time': 'End Time',
           'Remind': 'Remind',
+          "Your account has been created! Please check your email to confirm!":
+              "Your account has been created! Please check your email to confirm!",
           'Business Hours': 'Business Hours',
           'Guest Amount': 'Guest Amount',
           'Input number of guest': 'Input number of guest',
+          'Input phone number for': 'Input phone number for',
+          'Input fullname': 'Input Full name',
           'Please input a number!': 'Please input a number!',
+          'Please input a password!': 'Please input a password!',
+          'Please input a email!': 'Please input a email!',
+          'Please input a name!': 'Please input a name!',
+          'Phone number is too long!': 'Phone number is too long!',
+          'Phone number is not long enough!':
+              'Phone number is not long enough!',
+          'Password doesn\'t match': 'Password doesn\'t match',
+          'Password too short!': 'Password too short!',
+          'Email format wrong!': 'Email format wrong!',
+          'Input customer information': 'Input customer information',
+          'confirm password': 'Confirm password',
           'Selected Date': 'Selected Date',
           'Open calendar': 'Open calendar',
           'Online Method': 'Online Method',
           'Payment Method': 'Payment Method',
           'Cash': 'Cash',
+          'Please choose again!': 'Please choose again!',
+          'Our bussiness hour is from': 'Our bussiness hour is from',
+          'Our restaurant close at': 'Our restaurant close at',
+          'Our restaurant open at': 'Our restaurant open at',
           'A staff will come and checked-out the order for you! Please wait and don\'t push any button!':
               'A staff will come and checked-out the order for you! Please wait and don\'t push any button!',
           'Your order has already completed! please choose payment method to continue proceed.':
@@ -95,8 +122,8 @@ class LocaleString extends Translations {
               'Do you want to pre-order food with this reservation?',
           'Are you really want to cancel this reservation?':
               'Are you really want to cancel this reservation?',
-          'You can only checkin before / after 30 minutes of the start time of the reservation':
-              'You can only checkin before / after 30 minutes of the start time of the reservation',
+          'You can checkin before 15 minutes of the start time of the reservation':
+              'You can checkin before 15 minutes of the start time of the reservation',
           'This table have no occupied reservation!':
               'This table have no occupied reservation!',
           'The time you choose is already occupied, Please choose again!':
@@ -117,8 +144,8 @@ class LocaleString extends Translations {
               'Please remember, any overcharged money won\'t be refund!',
           'If you choose a different table type, table information might be changed':
               'If you choose a different table type, table information might be changed',
-          'You need to pay for your reservation 30 minutes after making a reservation or your reservation will be cancel!':
-              'You need to pay for your reservation 30 minutes after making a reservation or your reservation will be cancel!',
+          'You need to pay for your reservation 15 minutes after making a reservation or your reservation will be cancel!':
+              'You need to pay for your reservation 15 minutes after making a reservation or your reservation will be cancel!',
           'Pre-order food will be include in this reservation':
               'Pre-order food will be include in this reservation',
           'Your reservation is changed. Process to the menu to check your reservation!':
@@ -127,6 +154,10 @@ class LocaleString extends Translations {
           'Selection End Time': 'Selection End Time',
           'Selection Start Time': 'Selection Start Time',
           'Invalid Time': 'Invalid Time',
+          'Invalid': 'Invalid',
+          'Reservation for others?': 'Reservation for others?',
+          'Your password or email doesn\'t right. Please try again!':
+              'Your password or email doesn\'t right. Please try again!',
           'Cancel': 'Cancel',
           'None': 'Wait for checking-In',
           'I understand': 'I understand',
@@ -141,6 +172,7 @@ class LocaleString extends Translations {
           'order food': 'Order Food',
           'Order': 'Order',
           'Add to cart': 'Add to cart',
+          'This field is empty': 'This field is empty',
           'Your cart is empty. Please add some foods!':
               'Your cart is empty. Please add some foods!',
           'Cart': 'Cart',
@@ -160,7 +192,14 @@ class LocaleString extends Translations {
               'Hope we can see each other another day!',
         },
         'vi_VN': {
+          'Reason': 'Lý do',
+          'Cancel Reason': 'Lý do hủy',
+          'QR CODE': 'MÃ QR',
+          'Start time must be greater than time at the moment 30 minutes!':
+              'Thời gian bắt đầu phải lớn hơn thời gian hiện tại tối thiểu 30 phút!',
           "hello": "Xin chào",
+          'Homescreen': 'Màn hình chính',
+          'Logout': 'Đăng xuất',
           "bye": "Tạm biệt",
           'Profile': 'Hồ Sơ',
           'hello customer': "Xin chào khách hàng",
@@ -174,6 +213,8 @@ class LocaleString extends Translations {
           'Login here!': 'Đăng nhập tại đây!',
           'register': 'Đăng ký',
           'phone number': 'Số điện thoại',
+          'phone number for': 'Số điện thoại đặt hộ',
+          'full name for': 'Họ & Tên đặt hộ',
           'full name': 'Họ & Tên',
           'password': "Mật khẩu",
           'login': 'Đăng nhập',
@@ -233,15 +274,33 @@ class LocaleString extends Translations {
           'Start Time': 'Giờ bắt đầu',
           'End Time': 'Giờ kết thúc',
           'Remind': 'Thông báo',
+          "Your account has been created! Please check your email to confirm!":
+              "Tài khoản của bạn đã được tạo! Vui lòng kiểm tra email của bạn!",
           'Business Hours': 'Giờ hoạt động',
           'Guest Amount': 'Số lượng khách',
           'Input number of guest': 'Nhập số lượng',
+          'Input phone number for': 'Nhập số điện thoại',
+          'Input fullname': 'Nhập họ và tên',
           'Please input a number!': 'Vui lòng nhập số!',
+          'Please input a password!': 'Vui lòng nhập mật khẩu!',
+          'Please input a email!': 'Vui lòng nhập email!',
+          'Please input a name!': 'Vui lòng nhập tên!',
+          'Phone number is not long enough!': 'Số điện thoại không đủ dài!',
+          'Password doesn\'t match': 'Mật khẩu không khớp!',
+          'Password too short!': 'Mật khẩu quá ngắn!',
+          'Email format wrong!': 'Email không đúng!',
+          'Input customer information': 'Bổ sung thông tin',
+          'confirm password': 'Nhập lại mật khẩu',
+          'Phone number is too long!': 'Số điện thoại quá dài!',
           'Selected Date': 'Ngày',
           'Open calendar': 'Mở lịch',
           'Online Method': 'Thanh toán online',
           'Payment Method': 'Phương thức thanh toán',
           'Cash': 'Tiền mặt',
+          'Please choose again!': 'Vui lòng chọn lại!',
+          'Our restaurant close at': 'Nhà hàng đóng cửa lúc',
+          'Our restaurant open at': 'Nhà hàng mở cửa lúc',
+          'Our bussiness hour is from': 'Giờ hoạt động của nhà hàng là từ',
           'A staff will come and checked-out the order for you! Please wait and don\'t push any button!':
               'Nhân viên sẽ đến bàn và thu tiền cho quý khách! Vui lòng đợi và không nhấn thêm nút lần nữa!',
           'Your order has already completed! please choose payment method to continue proceed.':
@@ -250,8 +309,8 @@ class LocaleString extends Translations {
               'Bạn có muốn đặt trước món ăn hay không?',
           'Are you really want to cancel this reservation?':
               'Bạn có chắc là muốn hủy đơn đặt bàn này không?',
-          'You can only checkin before / after 30 minutes of the start time of the reservation':
-              'Bạn chỉ có thể check in trước / sau 30 phút kẻ từ thời gian bắt đầu',
+          'You can checkin before 15 minutes of the start time of the reservation':
+              'Bạn có thể check in trước 15 phút kẻ từ thời gian bắt đầu',
           'This table have no occupied reservation!': 'Bàn này chưa được đặt!',
           'The time you choose is already occupied, Please choose again!':
               'Giờ bạn chọn bị trùng với giờ của người khác, Vui lòng chọn lại',
@@ -271,8 +330,8 @@ class LocaleString extends Translations {
               'Nếu bạn thay đổi loại bàn, số tiền có thể thay đổi tùy theo loại bàn',
           'Choose reservation information you want to edit':
               'Chọn thông tin mà bạn muốn điều chỉnh',
-          'You need to pay for your reservation 30 minutes after making a reservation or your reservation will be cancel!':
-              'Bạn cần phải trả tiền cho đơn đặt bàn này trong vòng 30 phút nếu không đơn này sẽ bị hủy!',
+          'You need to pay for your reservation 15 minutes after making a reservation or your reservation will be cancel!':
+              'Bạn cần phải trả tiền cho đơn đặt bàn này trong vòng 15 phút nếu không đơn này sẽ bị hủy!',
           'Pre-order food will be include in this reservation':
               'Thức ăn đặt trước sẽ được đính kèm vào trong đơn đặt bàn này',
           'Your reservation is changed. Process to the menu to check your reservation!':
@@ -281,6 +340,10 @@ class LocaleString extends Translations {
           'Selection End Time': 'Giờ kết thúc',
           'Selection Start Time': 'Giờ bắt đầu',
           'Invalid Time': 'Giờ không hợp lệ',
+          'Invalid': 'Không hợp lệ',
+          'Reservation for others?': 'Đặt bàn hộ?',
+          'Your password or email doesn\'t right. Please try again!':
+              'Mật khẩu hoặc email của bạn không hợp lệ. Vui lòng thử lại!',
           'Cancel': 'Hủy',
           'None': 'Chưa checkIn',
           'I understand': 'Tôi đã rõ',
@@ -295,6 +358,7 @@ class LocaleString extends Translations {
           'order food': 'Đặt món',
           'Order': 'Đơn hàng',
           'Add to cart': 'Thêm vào giỏ',
+          'This field is empty': 'Thông tin đang bị trống!',
           'Your cart is empty. Please add some foods!':
               'Giỏ hàng của bạn đang trống. Hãy thêm thức ăn vào!',
           'Cart': 'Giỏ hàng',

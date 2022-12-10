@@ -7,7 +7,8 @@ import 'package:oms_mobile/User%20History/history_page.dart';
 import '../Table reservation/table_reservation.dart';
 
 class homeScreen extends StatefulWidget {
-  const homeScreen({super.key});
+  final String jwtToken;
+  const homeScreen({super.key, required this.jwtToken});
 
   @override
   State<homeScreen> createState() => _homeScreenState();
@@ -41,43 +42,46 @@ class _homeScreenState extends State<homeScreen> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _pages = <Widget>[
-      reservationList(),
-      tableReservation(),
-      historyPage(),
+      reservationList(jwtToken: widget.jwtToken),
+      tableReservation(jwtToken: widget.jwtToken),
+      historyPage(jwtToken: widget.jwtToken),
     ];
 
-    return MaterialApp(
-      home: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-            bottomNavigationBar: BottomNavigationBar(
-              showSelectedLabels: true,
-              showUnselectedLabels: false,
-              selectedFontSize: 15,
-              selectedIconTheme: IconThemeData(
-                  color: Color.fromRGBO(232, 192, 125, 100), size: 30),
-              selectedItemColor: Color.fromRGBO(232, 192, 125, 100),
-              selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.table_restaurant_rounded),
-                    label: 'reservation'.tr),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.camera),
-                  label: 'create'.tr,
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.chat),
-                  label: 'history'.tr,
-                ),
-              ],
-              currentIndex: _selectedIndex, //New
-              onTap: _onItemTapped,
-            ),
-            backgroundColor: Colors.grey[200],
-            body: Container(
-              child: _pages.elementAt(_selectedIndex),
-            )),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: MaterialApp(
+        home: DefaultTabController(
+          length: 2,
+          child: Scaffold(
+              bottomNavigationBar: BottomNavigationBar(
+                showSelectedLabels: true,
+                showUnselectedLabels: false,
+                selectedFontSize: 15,
+                selectedIconTheme: IconThemeData(
+                    color: Color.fromRGBO(232, 192, 125, 100), size: 30),
+                selectedItemColor: Color.fromRGBO(232, 192, 125, 100),
+                selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+                items: <BottomNavigationBarItem>[
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.table_restaurant_rounded),
+                      label: 'reservation'.tr),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.camera),
+                    label: 'create'.tr,
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.chat),
+                    label: 'history'.tr,
+                  ),
+                ],
+                currentIndex: _selectedIndex, //New
+                onTap: _onItemTapped,
+              ),
+              backgroundColor: Colors.grey[200],
+              body: Container(
+                child: _pages.elementAt(_selectedIndex),
+              )),
+        ),
       ),
     );
   }

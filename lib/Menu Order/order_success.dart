@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Models/order.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:get/get.dart';
 
 class orderSuccess extends StatefulWidget {
-  const orderSuccess({super.key, required this.orderId});
+  const orderSuccess(
+      {super.key, required this.orderId, required this.jwtToken});
   final String orderId;
+  final String jwtToken;
 
   @override
   State<orderSuccess> createState() => _orderSuccessState();
@@ -19,6 +22,7 @@ class orderSuccess extends StatefulWidget {
 class _orderSuccessState extends State<orderSuccess> {
   Order? currentOrder;
   List<OrderDetail>? details;
+  UserProfile? currentUser;
   var isLoaded = false;
   bool flag = false;
   int count = 0;
@@ -28,6 +32,7 @@ class _orderSuccessState extends State<orderSuccess> {
   void initState() {
     super.initState();
     getData();
+    getUser();
   }
 
   String changeFormat(int number) {
@@ -36,10 +41,16 @@ class _orderSuccessState extends State<orderSuccess> {
     return formated;
   }
 
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
+
   getData() async {
-    currentOrder = await RemoteService().getOrders(widget.orderId);
+    currentOrder =
+        await RemoteService().getOrders(widget.orderId, widget.jwtToken);
     flag = currentOrder?.status.contains("Paid") ?? false;
     details = currentOrder?.orderDetails;
+    getUser();
     if (currentOrder != null) {
       setState(() {
         isLoaded = true;
@@ -286,7 +297,8 @@ class _orderSuccessState extends State<orderSuccess> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const reservationList()),
+                                builder: (context) =>
+                                    reservationList(jwtToken: widget.jwtToken)),
                           );
                         },
                         child: Container(

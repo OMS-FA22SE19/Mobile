@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:oms_mobile/Login/login_page.dart';
 import 'package:oms_mobile/Table%20reservation/table_information.dart';
 
 class tableUser extends StatefulWidget {
@@ -142,18 +143,18 @@ class _tableUserState extends State<tableUser> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => tableInformation(
-                                tableTypeName: "",
-                                deposit: 100,
-                                amount: widget.amount,
-                                numberOfPeople: widget.numberOfPeople,
-                                name: nameController1.text,
-                                phone: phoneController1.text,
-                                date: widget.date,
-                                startTime: widget.startTime,
-                                endTime: widget.endTime,
-                                tableTypeId: widget.tableTypeId,
-                                numberOfSeats: widget.numberOfSeats,
+                          builder: (context) => loginScreen(
+                              // tableTypeName: "",
+                              // deposit: 100,
+                              // amount: widget.amount,
+                              // numberOfPeople: widget.numberOfPeople,
+                              // name: nameController1.text,
+                              // phone: phoneController1.text,
+                              // date: widget.date,
+                              // startTime: widget.startTime,
+                              // endTime: widget.endTime,
+                              // tableTypeId: widget.tableTypeId,
+                              // numberOfSeats: widget.numberOfSeats,
                               )),
                     );
                   },
