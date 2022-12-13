@@ -43,6 +43,7 @@ class _tableReservationState extends State<tableReservation> {
   int deposit = 0;
   int minDuration = 30;
   int maxDuration = 180;
+  int seperateAtLeast = 30;
   String tableTypeName = "";
   Color onSelected = Color.fromRGBO(232, 192, 125, 50);
 
@@ -165,23 +166,12 @@ class _tableReservationState extends State<tableReservation> {
           minDuration = int.parse(element.value);
         });
       }
+      if (element.name.contains("AtLeastDuration")) {
+        setState(() {
+          seperateAtLeast = int.parse(element.value);
+        });
+      }
     });
-    // setState(() {
-    //   // maxDuration = int.parse('${admin_settings?.elementAt(2).value}');
-    //   // minDuration = int.parse('${admin_settings?.elementAt(3).value}');
-
-    //   // int endHour =
-    //   //     int.parse('${admin_settings?.elementAt(0).value.substring(0, 2)}');
-    //   // int startHour =
-    //   //     int.parse('${admin_settings?.elementAt(4).value.substring(0, 2)}');
-
-    //   // int endMinute =
-    //   //     int.parse('${admin_settings?.elementAt(0).value.substring(4, 5)}');
-    //   // int startMinute =
-    //   //     int.parse('${admin_settings?.elementAt(4).value.substring(4, 5)}');
-    //   // _openTime = TimeOfDay(hour: startHour, minute: startMinute);
-    //   // _closeTime = TimeOfDay(hour: endHour, minute: endMinute);
-    // });
   }
 
   double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
@@ -286,12 +276,14 @@ class _tableReservationState extends State<tableReservation> {
                           hiddenFlag = true;
                           getData(1000);
                           chooseIndex = 10000;
+                          getSettings();
                         });
                       } else {
                         setState(() {
                           flagText = false;
                           flag = false;
                           getData(int.parse(inputController.text));
+                          getSettings();
                         });
                       }
                     },
@@ -343,6 +335,7 @@ class _tableReservationState extends State<tableReservation> {
                   //OK
                   setState(() {
                     _selectedDate = newDate;
+                    getSettings();
                   });
                   getTimeAvailableMethod(_selectedDate.toString());
                 },
@@ -620,10 +613,12 @@ class _tableReservationState extends State<tableReservation> {
                         if (currentUser?.userName.contains("defaultCustomer") ??
                             true) {
                         } else {
-                          if (chooseTime < (toDouble(TimeOfDay.now()) + 0.5)) {
+                          if (chooseTime <
+                              (toDouble(TimeOfDay.now()) +
+                                  seperateAtLeast / 60)) {
                             invalidFlag = true;
                             errorText =
-                                'Start time must be greater than time at the moment 30 minutes!'
+                                'Start time must be greater than time at the moment $seperateAtLeast minutes!'
                                     .tr;
                           }
                         }
@@ -904,11 +899,13 @@ class _tableReservationState extends State<tableReservation> {
                       setState(() {
                         flagName = true;
                         nameText = 'Please input a name!'.tr;
+                        getSettings();
                       });
                     } else {
                       setState(() {
                         flagName = false;
                         nameText = "";
+                        getSettings();
                       });
                     }
                   },
@@ -950,21 +947,25 @@ class _tableReservationState extends State<tableReservation> {
                       setState(() {
                         flagPhone = true;
                         phoneText = 'Please input a number!'.tr;
+                        getSettings();
                       });
                     } else if (phoneController.text.length < 10) {
                       setState(() {
                         flagPhone = true;
                         phoneText = 'Phone number is not long enough!'.tr;
+                        getSettings();
                       });
                     } else if (phoneController.text.length > 10) {
                       setState(() {
                         flagPhone = true;
                         phoneText = 'Phone number is too long!'.tr;
+                        getSettings();
                       });
                     } else {
                       setState(() {
                         flagPhone = false;
                         phoneText = "";
+                        getSettings();
                       });
                     }
                   },

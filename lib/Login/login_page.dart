@@ -6,7 +6,6 @@ import 'package:oms_mobile/Login/register_page.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import '../Home/home_screen.dart';
 import 'package:get/get.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 class loginScreen extends StatefulWidget {
   const loginScreen({super.key});
@@ -28,11 +27,7 @@ class _loginScreenState extends State<loginScreen> {
   @override
   void initState() {
     super.initState();
-    // getData();
-  }
-
-  getData() async {
-    getAuth();
+    getData();
   }
 
   getAuth() async {
@@ -48,6 +43,7 @@ class _loginScreenState extends State<loginScreen> {
     }
   }
 
+  getData() {}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -184,46 +180,85 @@ class _loginScreenState extends State<loginScreen> {
                       } else if (passwordController.text.isNotEmpty &&
                           phoneController.text.isNotEmpty) {
                         getAuth();
+                        if (jwttoken == null) {
+                          showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Invalid'.tr,
+                                  style: GoogleFonts.lato(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                content: Text(
+                                  "Your password or email doesn't right. Please try again!"
+                                      .tr,
+                                  style: GoogleFonts.lato(
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, 'Cancel'),
+                                    child: Text('I understand'.tr),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => homeScreen(
+                                      jwtToken: '$jwttoken',
+                                    )),
+                          );
+                        }
                       }
-                      if (jwttoken == null) {
-                        showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text(
-                                'Invalid'.tr,
-                                style: GoogleFonts.lato(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              content: Text(
-                                "Your password or email doesn't right. Please try again!"
-                                    .tr,
-                                style: GoogleFonts.lato(
-                                  color: Colors.black,
-                                ),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, 'Cancel'),
-                                  child: Text('I understand'.tr),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => homeScreen(
-                                    jwtToken: '$jwttoken',
-                                  )),
-                        );
-                      }
+                      // if (jwttoken == null) {
+                      //   showDialog(
+                      //     barrierDismissible: false,
+                      //     context: context,
+                      //     builder: (BuildContext context) {
+                      //       return AlertDialog(
+                      //         title: Text(
+                      //           'Invalid'.tr,
+                      //           style: GoogleFonts.lato(
+                      //             color: Colors.black,
+                      //             fontWeight: FontWeight.bold,
+                      //           ),
+                      //         ),
+                      //         content: Text(
+                      //           "Your password or email doesn't right. Please try again!"
+                      //               .tr,
+                      //           style: GoogleFonts.lato(
+                      //             color: Colors.black,
+                      //           ),
+                      //         ),
+                      //         actions: <Widget>[
+                      //           TextButton(
+                      //             onPressed: () =>
+                      //                 Navigator.pop(context, 'Cancel'),
+                      //             child: Text('I understand'.tr),
+                      //           ),
+                      //         ],
+                      //       );
+                      //     },
+                      //   );
+                      // } else {
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => homeScreen(
+                      //               jwtToken: '$jwttoken',
+                      //             )),
+                      //   );
+                      // }
                     },
                     child: Text(
                       'login'.tr.toUpperCase(),

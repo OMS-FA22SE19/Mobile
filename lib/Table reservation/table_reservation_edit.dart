@@ -9,6 +9,7 @@ import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Models/table.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/Table%20reservation/table_information_edit.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:get/get.dart';
@@ -29,6 +30,9 @@ class _tableReservationEditState extends State<tableReservationEdit> {
   List<availableDate>? dates;
   ReservationNoTable? currentReservation;
   List<adminSettings>? admin_settings;
+  UserProfile? currentUser;
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
   bool checkflag = false;
   int checkId = -1;
 
@@ -64,6 +68,7 @@ class _tableReservationEditState extends State<tableReservationEdit> {
   String errorText = "";
   int minDuration = 30;
   int maxDuration = 180;
+  int seperateAtLeast = 30;
 
   @override
   void dispose() {
@@ -80,8 +85,12 @@ class _tableReservationEditState extends State<tableReservationEdit> {
 
   getData(int people) async {
     tables = await RemoteService().getTablesAvailable(people, widget.jwtToken);
+    getSettings();
+    getUser();
     currentReservation = await RemoteService().getReservationBeforeCheckin(
         widget.reservationId ?? 0, widget.jwtToken);
+    nameController.text = '${currentUser?.fullName}';
+    phoneController.text = '${currentUser?.phoneNumber}';
     int? check = tables?.length;
     if (tables != null) {
       setState(() {
@@ -99,23 +108,46 @@ class _tableReservationEditState extends State<tableReservationEdit> {
     DateTime date2 = DateFormat("hh:mma").parse("6:45PM");
   }
 
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
+
   getSettings() async {
     admin_settings = await RemoteService().getSettings(widget.jwtToken);
-    setState(() {
-      maxDuration = int.parse('${admin_settings?.elementAt(2).value}');
-      minDuration = int.parse('${admin_settings?.elementAt(3).value}');
-
-      int endHour =
-          int.parse('${admin_settings?.elementAt(0).value.substring(0, 2)}');
-      int startHour =
-          int.parse('${admin_settings?.elementAt(4).value.substring(0, 2)}');
-
-      int endMinute =
-          int.parse('${admin_settings?.elementAt(0).value.substring(4, 5)}');
-      int startMinute =
-          int.parse('${admin_settings?.elementAt(4).value.substring(4, 5)}');
-      _openTime = TimeOfDay(hour: startHour, minute: startMinute);
-      _closeTime = TimeOfDay(hour: endHour, minute: endMinute);
+    int endHour = 0;
+    int startHour = 0;
+    int endMinute = 0;
+    int startMinute = 0;
+    admin_settings?.forEach((element) {
+      if (element.name.contains("StartTime")) {
+        setState(() {
+          startHour = int.parse(element.value.substring(0, 2));
+          startMinute = int.parse(element.value.substring(4, 5));
+          _openTime = TimeOfDay(hour: startHour, minute: startMinute);
+        });
+      }
+      if (element.name.contains("EndTime")) {
+        setState(() {
+          endHour = int.parse(element.value.substring(0, 2));
+          endMinute = int.parse(element.value.substring(4, 5));
+          _closeTime = TimeOfDay(hour: endHour, minute: endMinute);
+        });
+      }
+      if (element.name.contains("MaxReservationDuration")) {
+        setState(() {
+          maxDuration = int.parse(element.value);
+        });
+      }
+      if (element.name.contains("MinReservationDuration")) {
+        setState(() {
+          minDuration = int.parse(element.value);
+        });
+      }
+      if (element.name.contains("AtLeastDuration")) {
+        setState(() {
+          seperateAtLeast = int.parse(element.value);
+        });
+      }
     });
   }
 
@@ -574,7 +606,7 @@ class _tableReservationEditState extends State<tableReservationEdit> {
                         builder: (context, childWidget) {
                           return MediaQuery(
                               data: MediaQuery.of(context)
-                                  .copyWith(alwaysUse24HourFormat: true),
+                                  .copyWith(alwaysUse24HourFormat: false),
                               child: childWidget!);
                         });
                     //CANCEL
@@ -622,6 +654,19 @@ class _tableReservationEditState extends State<tableReservationEdit> {
                         } else {
                           errorText =
                               '${'Our bussiness hour is from'.tr} ${_openTime.toString().substring(10, 15)} - ${_closeTime.toString().substring(10, 15)}. ${'Please choose again!'.tr}';
+                        }
+                      } else {
+                        if (currentUser?.userName.contains("defaultCustomer") ??
+                            true) {
+                        } else {
+                          if (chooseTime <
+                              (toDouble(TimeOfDay.now()) +
+                                  seperateAtLeast / 60)) {
+                            invalidFlag = true;
+                            errorText =
+                                'Start time must be greater than time at the moment $seperateAtLeast minutes!'
+                                    .tr;
+                          }
                         }
                       }
                       // else {
@@ -723,7 +768,7 @@ class _tableReservationEditState extends State<tableReservationEdit> {
                         builder: (context, childWidget) {
                           return MediaQuery(
                               data: MediaQuery.of(context)
-                                  .copyWith(alwaysUse24HourFormat: true),
+                                  .copyWith(alwaysUse24HourFormat: false),
                               child: childWidget!);
                         });
                     //CANCEL

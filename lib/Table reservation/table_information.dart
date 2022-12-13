@@ -430,7 +430,7 @@ class _tableInformationState extends State<tableInformation> {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              'User Default',
+                              '${currentUser?.fullName}',
                               textAlign: TextAlign.right,
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
@@ -453,7 +453,7 @@ class _tableInformationState extends State<tableInformation> {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              '0941767748',
+                              '${currentUser?.phoneNumber}',
                               textAlign: TextAlign.right,
                               style: GoogleFonts.roboto(
                                   fontSize: 20,

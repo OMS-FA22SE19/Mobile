@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Models/reservation.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/Table%20reservation/table_reservation_edit.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:get/get.dart';
@@ -49,6 +50,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
   String start = "";
   String end = "";
   bool orderFood = false;
+  UserProfile? currentUser;
 
   @override
   void initState() {
@@ -413,7 +415,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  'User Default',
+                                  '${currentUser?.fullName}',
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
@@ -436,7 +438,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '0941767748',
+                                  '${currentUser?.phoneNumber}',
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
@@ -789,7 +791,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  'User Default',
+                                  '${currentUser?.fullName}',
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
@@ -812,7 +814,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '0941767748',
+                                  '${currentUser?.phoneNumber}',
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,

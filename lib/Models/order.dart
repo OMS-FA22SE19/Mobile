@@ -155,7 +155,7 @@ class responseData15 {
 class Order {
   Order({
     required this.id,
-    required this.userId,
+    // required this.userId,
     required this.fullName,
     required this.phoneNumber,
     required this.date,
@@ -168,7 +168,7 @@ class Order {
 
   Order.withoutReservation({
     required this.id,
-    required this.userId,
+    // required this.userId,
     required this.fullName,
     required this.phoneNumber,
     required this.date,
@@ -179,7 +179,7 @@ class Order {
   }) : reservation = Reservation(id: 1);
 
   String id;
-  String userId;
+  // String userId;
   dynamic fullName;
   String phoneNumber;
   String date;
@@ -191,7 +191,7 @@ class Order {
 
   factory Order.fromJson(Map<String, dynamic> json) => Order(
         id: json["id"],
-        userId: json["userId"],
+        // userId: json["userId"],
         fullName: json["fullName"],
         phoneNumber: json["phoneNumber"],
         date: json["date"],
@@ -206,7 +206,7 @@ class Order {
   factory Order.fromJson2(Map<String, dynamic> json) =>
       Order.withoutReservation(
         id: json["id"],
-        userId: json["userId"],
+        // userId: json["userId"],
         fullName: json["fullName"],
         phoneNumber: json["phoneNumber"],
         date: json["date"],
@@ -219,7 +219,7 @@ class Order {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "userId": userId,
+        // "userId": userId,
         "fullName": fullName,
         "phoneNumber": phoneNumber,
         "date": date,

@@ -174,7 +174,16 @@ class _menuFoodState extends State<menuFood> {
                           Container(
                               height: 150,
                               width: 150,
-                              child: Image.network(foods![index].pictureUrl)),
+                              child: Image.network(
+                                foods![index].pictureUrl,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Text('404');
+                                },
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  return CircularProgressIndicator();
+                                },
+                              )),
                           SizedBox(
                             width: 20,
                           ),

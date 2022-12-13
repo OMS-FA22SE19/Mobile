@@ -202,7 +202,7 @@ class RemoteService {
         return Order(
             reservation: Reservation(id: 0),
             id: "0",
-            userId: "0",
+            // userId: "0",
             phoneNumber: "0",
             fullName: "",
             date: "0",
@@ -214,7 +214,7 @@ class RemoteService {
         return Order(
             reservation: Reservation(id: 0),
             id: "0",
-            userId: "0",
+            // userId: "0",
             phoneNumber: "0",
             fullName: "",
             date: "0",
@@ -243,7 +243,7 @@ class RemoteService {
         return Order(
             reservation: Reservation(id: 0),
             id: "0",
-            userId: "0",
+            // userId: "0",
             date: "0",
             fullName: "0",
             phoneNumber: "0",
@@ -255,7 +255,7 @@ class RemoteService {
         return Order(
             reservation: Reservation(id: 0),
             id: "0",
-            userId: "0",
+            // userId: "0",
             date: "0",
             fullName: "0",
             phoneNumber: "0",
@@ -284,7 +284,7 @@ class RemoteService {
         return Order(
             reservation: Reservation(id: 0),
             id: "0",
-            userId: "0",
+            // userId: "0",
             date: "0",
             fullName: "0",
             phoneNumber: "0",
@@ -296,7 +296,7 @@ class RemoteService {
         return Order(
             reservation: Reservation(id: 0),
             id: "0",
-            userId: "0",
+            // userId: "0",
             date: "0",
             fullName: "0",
             phoneNumber: "0",
@@ -362,7 +362,7 @@ class RemoteService {
         return Order(
             reservation: Reservation(id: 0),
             id: "create Order 1",
-            userId: "0",
+            // userId: "0",
             date: "0",
             fullName: "0",
             phoneNumber: "0",
@@ -374,7 +374,7 @@ class RemoteService {
         return Order(
             reservation: Reservation(id: 0),
             id: "create Order 2",
-            userId: "0",
+            // userId: "0",
             date: "0",
             fullName: "0",
             phoneNumber: "0",
@@ -411,7 +411,7 @@ class RemoteService {
         return Order(
             reservation: Reservation(id: 0),
             id: "Put order",
-            userId: "0",
+            // userId: "0",
             date: "0",
             fullName: "0",
             phoneNumber: "0",
@@ -423,7 +423,7 @@ class RemoteService {
         return Order(
             reservation: Reservation(id: 0),
             id: "Put order",
-            userId: "0",
+            // userId: "0",
             date: "0",
             fullName: "0",
             phoneNumber: "0",
@@ -722,6 +722,7 @@ class RemoteService {
           paid: 0,
           isPriorFoodOrder: false,
           reservationTables: [],
+          numOfEdits: 0,
         );
       } else {
         return ReservationNoTable(
@@ -747,6 +748,7 @@ class RemoteService {
           paid: 0,
           isPriorFoodOrder: false,
           reservationTables: [],
+          numOfEdits: 0,
         );
       }
     }
@@ -768,6 +770,7 @@ class RemoteService {
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         return ReservationNoTable(
+          numOfEdits: 0,
           created: DateTime.now(),
           fullName: "",
           phoneNumber: "",
@@ -793,6 +796,7 @@ class RemoteService {
         );
       } else {
         return ReservationNoTable(
+          numOfEdits: 0,
           created: DateTime.now(),
           fullName: "",
           phoneNumber: "",

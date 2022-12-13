@@ -196,9 +196,9 @@ class _menuStatusState extends State<menuStatus> {
                 child: RefreshIndicator(
                   onRefresh: () async {
                     setState(() {
-                      getDataServed();
-                      getDataProcess();
                       getDataReceived();
+                      getDataProcess();
+                      getDataServed();
                     });
                     return Future<void>.delayed(const Duration(seconds: 1));
                   },
@@ -335,9 +335,9 @@ class _menuStatusState extends State<menuStatus> {
                 child: RefreshIndicator(
                   onRefresh: () async {
                     setState(() {
-                      getDataServed();
-                      getDataProcess();
                       getDataReceived();
+                      getDataProcess();
+                      getDataServed();
                     });
                     return Future<void>.delayed(const Duration(seconds: 1));
                   },
@@ -463,9 +463,9 @@ class _menuStatusState extends State<menuStatus> {
                 child: RefreshIndicator(
                   onRefresh: () async {
                     setState(() {
-                      getDataServed();
-                      getDataProcess();
                       getDataReceived();
+                      getDataProcess();
+                      getDataServed();
                     });
                     return Future<void>.delayed(const Duration(seconds: 1));
                   },

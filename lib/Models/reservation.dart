@@ -371,6 +371,7 @@ class ReservationNoTable {
     required this.phoneNumber,
     required this.created,
     this.reasonForCancel = "empty",
+    required this.numOfEdits,
     this.reservationTables = const [],
     this.orderDetails = const [],
   });
@@ -393,6 +394,7 @@ class ReservationNoTable {
   String phoneNumber;
   DateTime created;
   String reasonForCancel;
+  int numOfEdits;
   List<ReservationTable> reservationTables;
   List<orderDetailss> orderDetails;
 
@@ -412,6 +414,7 @@ class ReservationNoTable {
         paid: json["paid"],
         fullName: json["fullName"],
         phoneNumber: json["phoneNumber"],
+        numOfEdits: json["numOfEdits"],
         created: DateTime.parse(json["created"]),
         isPriorFoodOrder: json["isPriorFoodOrder"],
         user: User.fromJson(json["user"]),
@@ -437,6 +440,7 @@ class ReservationNoTable {
         paid: json["paid"],
         fullName: json["fullName"],
         phoneNumber: json["phoneNumber"],
+        numOfEdits: json["numOfEdits"],
         created: DateTime.parse(json["created"]),
         reasonForCancel: json["reasonForCancel"],
         isPriorFoodOrder: json["isPriorFoodOrder"],
@@ -463,6 +467,7 @@ class ReservationNoTable {
         paid: json["paid"],
         fullName: json["fullName"],
         phoneNumber: json["phoneNumber"],
+        numOfEdits: json["numOfEdits"],
         created: DateTime.parse(json["created"]),
         isPriorFoodOrder: json["isPriorFoodOrder"],
         user: User.fromJson(json["user"]),
@@ -486,6 +491,7 @@ class ReservationNoTable {
         paid: json["paid"],
         fullName: json["fullName"],
         phoneNumber: json["phoneNumber"],
+        numOfEdits: json["numOfEdits"],
         created: DateTime.parse(json["created"]),
         isPriorFoodOrder: json["isPriorFoodOrder"],
         user: User.fromJson(json["user"]),
