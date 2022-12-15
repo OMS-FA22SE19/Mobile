@@ -70,11 +70,11 @@ class _tableReservationEditState extends State<tableReservationEdit> {
   int maxDuration = 180;
   int seperateAtLeast = 30;
 
-  @override
-  void dispose() {
-    inputController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   inputController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   void initState() {

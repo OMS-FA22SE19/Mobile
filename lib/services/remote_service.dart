@@ -23,12 +23,12 @@ import 'package:oms_mobile/main.dart';
 //     final Dio dio = new Dio();
 //     var client = http.Client();
 
-//     var uri = Uri.parse('https://10.0.2.2:7246/api/v1/Categories');
+//     var uri = Uri.parse('https://oms-fa22se19.azurewebsites.net/api/v1/Categories');
 // //10.0.2.2
 
 //     HttpOverrides.global = MyHttpOverrides();
 //     var response = await dio
-//         .get('https://10.0.2.2:7246/api/v1/Categories'); //header, author
+//         .get('https://oms-fa22se19.azurewebsites.net/api/v1/Categories'); //header, author
 
 //     if (response.statusCode == 200) {
 //       // var json = response.data;
@@ -52,14 +52,14 @@ class RemoteService {
     final Dio dio = Dio();
     // var client = http.Client();
 
-    // var uri = Uri.parse('https://10.0.2.2:7246/api/v1/CourseTypes');
+    // var uri = Uri.parse('https://oms-fa22se19.azurewebsites.net/api/v1/CourseTypes');
 
     HttpOverrides.global = MyHttpOverrides();
-    Response response =
-        await dio.get('https://10.0.2.2:7246/api/v1/CourseTypes',
-            options: Options(headers: {
-              HttpHeaders.authorizationHeader: "Bearer $token",
-            })); //header, author
+    Response response = await dio.get(
+        'https://oms-fa22se19.azurewebsites.net/api/v1/CourseTypes',
+        options: Options(headers: {
+          HttpHeaders.authorizationHeader: "Bearer $token",
+        })); //header, author
     var result = responseData.fromJson(response.data);
     List<courseType> courseTypes = result.data;
     return courseTypes;
@@ -88,7 +88,7 @@ class RemoteService {
   //   HttpOverrides.global = MyHttpOverrides();
   //   try {
   //     Response response =
-  //         await dio.get('https://10.0.2.2:7246/api/v1/Types'); //header, author
+  //         await dio.get('https://oms-fa22se19.azurewebsites.net/api/v1/Types'); //header, author
   //     var result = responseData2.fromJson(response.data);
   //     List<foodType> types = result.data;
   //     return types;
@@ -105,13 +105,14 @@ class RemoteService {
     final Dio dio = Dio();
     // var client = http.Client();
 
-    // var uri = Uri.parse('https://10.0.2.2:7246/api/v1/Types');
+    // var uri = Uri.parse('https://oms-fa22se19.azurewebsites.net/api/v1/Types');
 
     HttpOverrides.global = MyHttpOverrides();
-    Response response = await dio.get('https://10.0.2.2:7246/api/v1/Types',
-        options: Options(headers: {
-          HttpHeaders.authorizationHeader: "Bearer $token",
-        })); //header, author
+    Response response =
+        await dio.get('https://oms-fa22se19.azurewebsites.net/api/v1/Types',
+            options: Options(headers: {
+              HttpHeaders.authorizationHeader: "Bearer $token",
+            })); //header, author
     var result = responseData2.fromJson(response.data);
     List<foodType> foodTypes = result.data;
     return foodTypes;
@@ -125,13 +126,13 @@ class RemoteService {
       final response;
       if (isCourse) {
         response = await dio.get(
-            'https://10.0.2.2:7246/api/v1/Menus/$menuId/Food?courseTypeId=$categoryId',
+            'https://oms-fa22se19.azurewebsites.net/api/v1/Menus/$menuId/Food?courseTypeId=$categoryId',
             options: Options(headers: {
               HttpHeaders.authorizationHeader: "Bearer $token",
             }));
       } else {
         response = await dio.get(
-            'https://10.0.2.2:7246/api/v1/Menus/$menuId/Food?typeId=$categoryId',
+            'https://oms-fa22se19.azurewebsites.net/api/v1/Menus/$menuId/Food?typeId=$categoryId',
             options: Options(headers: {
               HttpHeaders.authorizationHeader: "Bearer $token",
             }));
@@ -152,11 +153,11 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.get('https://10.0.2.2:7246/api/v1/Foods/$foodId',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              })); //header, author
+      final response = await dio.get(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Foods/$foodId',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          })); //header, author
       var result = responseData12.fromJson(response.data);
       foodWithoutPrice gotFood = result.data;
       return gotFood;
@@ -189,11 +190,11 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.get('https://10.0.2.2:7246/api/v1/Orders/$orderId',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              })); //header, author
+      final response = await dio.get(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Orders/$orderId',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          })); //header, author
       var result = responseData15.fromJson(response.data);
       Order gotOrder = result.data;
       return gotOrder;
@@ -231,7 +232,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.get(
-          'https://10.0.2.2:7246/api/v1/Orders/Reservation/$reservationId',
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Orders/Reservation/$reservationId',
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
           })); //header, author
@@ -271,11 +272,11 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.get('https://10.0.2.2:7246/api/v1/Orders/$orderId',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              })); //header, author
+      final response = await dio.get(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Orders/$orderId',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          })); //header, author
       var result = responseData15.fromJson(response.data);
       Order gotOrder = result.data;
       return gotOrder;
@@ -314,7 +315,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.get(
-          'https://10.0.2.2:7246/api/v1/OrderDetails?Status=$status&SearchValue=$orderId&SearchBy=OrderId',
+          'https://oms-fa22se19.azurewebsites.net/api/v1/OrderDetails?Status=$status&SearchValue=$orderId&SearchBy=OrderId',
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
           })); //header, author
@@ -322,11 +323,11 @@ class RemoteService {
       List<orderDetail> foods = result.data;
 
       // final response_received = await dio.get(
-      //     'https://10.0.2.2:7246/api/v1/OrderDetails?Status=$status&SearchValue=$orderId');
+      //     'https://oms-fa22se19.azurewebsites.net/api/v1/OrderDetails?Status=$status&SearchValue=$orderId');
       // final response_processing = await dio.get(
-      //     'https://10.0.2.2:7246/api/v1/OrderDetails?Status=$status&SearchValue=$orderId');
+      //     'https://oms-fa22se19.azurewebsites.net/api/v1/OrderDetails?Status=$status&SearchValue=$orderId');
       // final response_served = await dio.get(
-      //     'https://10.0.2.2:7246/api/v1/OrderDetails?Status=Served&SearchValue=$orderId');
+      //     'https://oms-fa22se19.azurewebsites.net/api/v1/OrderDetails?Status=Served&SearchValue=$orderId');
       return foods;
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
@@ -348,11 +349,12 @@ class RemoteService {
     var formData =
         PostFood(reservationId: reservationId, orderDetails: map1).toJson();
     try {
-      final response = await dio.post('https://10.0.2.2:7246/api/v1/Orders',
-          options: Options(headers: {
-            HttpHeaders.authorizationHeader: "Bearer $token",
-          }),
-          data: formData);
+      final response =
+          await dio.post('https://oms-fa22se19.azurewebsites.net/api/v1/Orders',
+              options: Options(headers: {
+                HttpHeaders.authorizationHeader: "Bearer $token",
+              }),
+              data: formData);
       var result = responseData15.fromJson2(response.data);
       Order orders = result.data;
       return orders;
@@ -396,12 +398,12 @@ class RemoteService {
     };
     var formData = PutFood(orderId: orderId, orderDetails: map1).toJson();
     try {
-      final response =
-          await dio.put('https://10.0.2.2:7246/api/v1/Orders/AddDishes',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              }),
-              data: formData);
+      final response = await dio.put(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Orders/AddDishes',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          }),
+          data: formData);
       var result = responseData15.fromJson(response.data);
       Order orders = result.data;
       return orders;
@@ -439,11 +441,11 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.put('https://10.0.2.2:7246/api/v1/Orders/$id/Check',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              })); //header, author
+      final response = await dio.put(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Orders/$id/Check',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          })); //header, author
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         return null;
@@ -457,8 +459,8 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.put('https://10.0.2.2:7246/api/v1/OrderDetails/$id',
+      final response = await dio
+          .put('https://oms-fa22se19.azurewebsites.net/api/v1/OrderDetails/$id',
               options: Options(headers: {
                 HttpHeaders.authorizationHeader: "Bearer $token",
               }),
@@ -476,10 +478,11 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response = await dio.get('https://10.0.2.2:7246/api/v1/Menus',
-          options: Options(headers: {
-            HttpHeaders.authorizationHeader: "Bearer $token",
-          })); //header, author
+      final response =
+          await dio.get('https://oms-fa22se19.azurewebsites.net/api/v1/Menus',
+              options: Options(headers: {
+                HttpHeaders.authorizationHeader: "Bearer $token",
+              })); //header, author
       var result = responseData8.fromJson(response.data);
       List<menu> menus = result.data;
       return menus;
@@ -498,7 +501,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.get(
-          'https://10.0.2.2:7246/api/v1/Tables/People/$numberOfPeople',
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Tables/People/$numberOfPeople',
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
           })); //header, author
@@ -518,11 +521,11 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.get('https://10.0.2.2:7246/api/v1/TableTypes/$typeId',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              })); //header, author
+      final response = await dio.get(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/TableTypes/$typeId',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          })); //header, author
       var result = responseTableType.fromJson(response.data);
       int chargePerSeat = result.data.chargePerSeat;
       return chargePerSeat;
@@ -539,11 +542,11 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.get('https://10.0.2.2:7246/api/v1/TableTypes/$typeId',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              })); //header, author
+      final response = await dio.get(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/TableTypes/$typeId',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          })); //header, author
       var result = responseTableType.fromJson(response.data);
       String name = result.data.name;
       return name;
@@ -562,7 +565,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.get(
-          'https://10.0.2.2:7246/api/v1/Reservations/BusyDate?date=$date&NumOfSeats=$numberOfSeats&TableTypeId=$tableTypeId&Quantity=$quantity',
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations/BusyDate?date=$date&NumOfSeats=$numberOfSeats&TableTypeId=$tableTypeId&Quantity=$quantity',
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
           })); //header, author
@@ -582,16 +585,16 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.get('https://10.0.2.2:7246/api/v1/Orders?Status=Paid',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              })); //header, author
+      final response = await dio.get(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Orders?Status=Paid',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          })); //header, author
       var result = ResponseOrder.fromJson(response.data);
       List<Order> orderList = result.data;
 
       // final response_2 =
-      //     await dio.get('https://10.0.2.2:7246/api/v1/Orders?Status=Processing',
+      //     await dio.get('https://oms-fa22se19.azurewebsites.net/api/v1/Orders?Status=Processing',
       //         options: Options(headers: {
       //           HttpHeaders.authorizationHeader: "Bearer $token",
       //         })); //header, author
@@ -599,7 +602,7 @@ class RemoteService {
       // List<Order> orderList_2 = result_2.data;
 
       // final response_3 =
-      //     await dio.get('https://10.0.2.2:7246/api/v1/Orders?Status=Checking',
+      //     await dio.get('https://oms-fa22se19.azurewebsites.net/api/v1/Orders?Status=Checking',
       //         options: Options(headers: {
       //           HttpHeaders.authorizationHeader: "Bearer $token",
       //         })); //header, author
@@ -620,7 +623,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.get(
-          'https://10.0.2.2:7246/api/v1/Reservations/?Status=Cancelled',
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations/?Status=Cancelled',
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
           })); //header, author
@@ -642,7 +645,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.get(
-        'https://10.0.2.2:7246/api/v1/Reservations?Status=$status',
+        'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations?Status=$status',
         options: Options(headers: {
           HttpHeaders.authorizationHeader: "Bearer $token",
         }),
@@ -666,7 +669,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.get(
-        'https://10.0.2.2:7246/api/v1/Reservations?Status=Cancelled',
+        'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations?Status=Cancelled',
         options: Options(headers: {
           HttpHeaders.authorizationHeader: "Bearer $token",
         }),
@@ -689,11 +692,11 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.get('https://10.0.2.2:7246/api/v1/Reservations/$id',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              })); //header, author
+      final response = await dio.get(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations/$id',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          })); //header, author
       var result = responseOneReservation.fromJsonFor(response.data);
       ReservationNoTable reservation = result.data;
       return reservation;
@@ -759,11 +762,11 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.get('https://10.0.2.2:7246/api/v1/Reservations/$id',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              })); //header, author
+      final response = await dio.get(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations/$id',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          })); //header, author
       var result = responseOneReservation.fromJson(response.data);
       ReservationNoTable reservation = result.data;
       return reservation;
@@ -829,12 +832,12 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.delete('https://10.0.2.2:7246/api/v1/Reservations/$id',
-              data: {"id": id, "reasonForCancel": reason},
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              })); //header, author
+      final response = await dio.delete(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations/$id',
+          data: {"id": id, "reasonForCancel": reason},
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          })); //header, author
       // var result = responseData20.fromJson(response.data);
       // paymentURL returnURL = result.data;
 
@@ -852,12 +855,12 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.post('https://10.0.2.2:7246/api/v1/Billings/Reservation',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              }),
-              data: {"amount": money, "reservationId": reserId});
+      final response = await dio.post(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Billings/Reservation',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          }),
+          data: {"amount": money, "reservationId": reserId});
       return; //header, author
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
@@ -873,13 +876,14 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.post('https://10.0.2.2:7246/api/v1/Users/Register', data: {
-        "fullName": fullname,
-        "email": email,
-        "phoneNumber": phonenumber,
-        "password": password
-      });
+      final response = await dio.post(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Users/Register',
+          data: {
+            "fullName": fullname,
+            "email": email,
+            "phoneNumber": phonenumber,
+            "password": password
+          });
       return response.statusMessage; //header, author
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
@@ -895,7 +899,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.get(
-          'https://10.0.2.2:7246/api/v1/Reservations/$reserId/Checkin',
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations/$reserId/Checkin',
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
           })); //header, author
@@ -921,21 +925,21 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.post('https://10.0.2.2:7246/api/v1/Reservations',
-              data: {
-                "startTime": start,
-                "endTime": end,
-                "numOfPeople": numberOfPeople,
-                "numOfSeats": numberOfSeats,
-                "tableTypeId": tableTypeId,
-                "quantity": quantity,
-                "fullName": fullname,
-                "phoneNumber": phoneNumber
-              },
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              }));
+      final response = await dio.post(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations',
+          data: {
+            "startTime": start,
+            "endTime": end,
+            "numOfPeople": numberOfPeople,
+            "numOfSeats": numberOfSeats,
+            "tableTypeId": tableTypeId,
+            "quantity": quantity,
+            "fullName": fullname,
+            "phoneNumber": phoneNumber
+          },
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          }));
       var result = responseReservationPreorder.fromJson(response.data);
       ReservationNoTable reservation = result.data;
       return reservation.id;
@@ -983,7 +987,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.put(
-          'https://10.0.2.2:7246/api/v1/Reservations/$reservationId',
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations/$reservationId',
           data: {
             "id": reservationId,
             "startTime": start,
@@ -1019,12 +1023,12 @@ class RemoteService {
     var formData =
         PostFood(reservationId: reservationId, orderDetails: map1).toJson();
     try {
-      final response =
-          await dio.post('https://10.0.2.2:7246/api/v1/Orders/PriorFood',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              }),
-              data: formData);
+      final response = await dio.post(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Orders/PriorFood',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          }),
+          data: formData);
       var result = responseData15.fromJson(response.data);
       result.data;
     } on DioError catch (e) {
@@ -1048,7 +1052,7 @@ class RemoteService {
         PostFood(reservationId: reservationId, orderDetails: map1).toJson();
     try {
       final response = await dio.put(
-          'https://10.0.2.2:7246/api/v1/Orders/PriorFood/$reservationId',
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Orders/PriorFood/$reservationId',
           data: formData,
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
@@ -1069,8 +1073,8 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.post('https://10.0.2.2:7246/api/v1/VNPay/Order',
+      final response = await dio
+          .post('https://oms-fa22se19.azurewebsites.net/api/v1/VNPay/Order',
               options: Options(headers: {
                 HttpHeaders.authorizationHeader: "Bearer $token",
               }),
@@ -1093,7 +1097,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.post(
-          'https://10.0.2.2:7246/api/v1/VNPay/Reservation',
+          'https://oms-fa22se19.azurewebsites.net/api/v1/VNPay/Reservation',
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
           }),
@@ -1117,16 +1121,16 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.get('https://10.0.2.2:7246/api/v1/Reservations/$id',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              })); //header, author
+      final response = await dio.get(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations/$id',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          })); //header, author
       var result = responseOneReservation.fromJson(response.data);
       ReservationNoTable reservation = result.data;
 
       final response2 = await dio.post(
-          'https://10.0.2.2:7246/api/v1/Billings/Reservation',
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Billings/Reservation',
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
           }),
@@ -1136,7 +1140,7 @@ class RemoteService {
           });
 
       final response3 = await dio.get(
-          'https://10.0.2.2:7246/api/v1/Reservations/${reservation.id}/Checkin',
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations/${reservation.id}/Checkin',
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
           }));
@@ -1155,11 +1159,11 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.get('https://10.0.2.2:7246/api/v1/AdminSettings',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              })); //header, author
+      final response = await dio.get(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/AdminSettings',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          })); //header, author
       var result = responseSettings.fromJson(response.data);
       List<adminSettings> settingsList = result.data;
       return settingsList;
@@ -1176,11 +1180,11 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      final response =
-          await dio.get('https://10.0.2.2:7246/api/v1/Authentication',
-              options: Options(headers: {
-                HttpHeaders.authorizationHeader: "Bearer $token",
-              }));
+      final response = await dio.get(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Authentication',
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: "Bearer $token",
+          }));
       var result = responseUser.fromJson(response.data);
       UserProfile user_auth = result.data;
       return user_auth;
@@ -1198,7 +1202,7 @@ class RemoteService {
     HttpOverrides.global = MyHttpOverrides();
     try {
       final response = await dio.post(
-          'https://10.0.2.2:7246/api/v1/Authentication',
+          'https://oms-fa22se19.azurewebsites.net/api/v1/Authentication',
           data: {"email": email, "password": password});
       var result = responseAuth.fromJson(response.data);
       AuthToken auth = result.data;
@@ -1217,10 +1221,12 @@ class RemoteService {
     final Dio dio = Dio();
     HttpOverrides.global = MyHttpOverrides();
     try {
-      await dio.post('https://10.0.2.2:7246/api/v1/UserDeviceTokens', data: {
-        "userId": userId,
-        "deviceToken": deviceToken,
-      }); //header, author
+      await dio.post(
+          'https://oms-fa22se19.azurewebsites.net/api/v1/UserDeviceTokens',
+          data: {
+            "userId": userId,
+            "deviceToken": deviceToken,
+          }); //header, author
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         return null;

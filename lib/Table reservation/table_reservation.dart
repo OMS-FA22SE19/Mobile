@@ -67,11 +67,11 @@ class _tableReservationState extends State<tableReservation> {
   String nameText = "";
   String phoneText = "";
 
-  @override
-  void dispose() {
-    inputController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   inputController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   void initState() {
@@ -91,14 +91,18 @@ class _tableReservationState extends State<tableReservation> {
     int? check = tables?.length;
     bool? checkb = tables?.isEmpty;
     if (tables != null) {
-      setState(() {
-        isLoaded = true;
-      });
+      if (mounted) {
+        setState(() {
+          isLoaded = true;
+        });
+      }
     }
     if (check == 0) {
-      setState(() {
-        isLoaded = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoaded = false;
+        });
+      }
     }
   }
 
@@ -116,14 +120,18 @@ class _tableReservationState extends State<tableReservation> {
     int? check = dates?.length;
     bool? checkb = dates?.isEmpty;
     if (dates != null) {
-      setState(() {
-        isLoadedTime = true;
-      });
+      if (mounted) {
+        setState(() {
+          isLoadedTime = true;
+        });
+      }
     }
     if (check == 0) {
-      setState(() {
-        isLoadedTime = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoadedTime = false;
+        });
+      }
     }
   }
 
@@ -143,33 +151,43 @@ class _tableReservationState extends State<tableReservation> {
     int startMinute = 0;
     admin_settings?.forEach((element) {
       if (element.name.contains("StartTime")) {
-        setState(() {
-          startHour = int.parse(element.value.substring(0, 2));
-          startMinute = int.parse(element.value.substring(4, 5));
-          _openTime = TimeOfDay(hour: startHour, minute: startMinute);
-        });
+        if (mounted) {
+          setState(() {
+            startHour = int.parse(element.value.substring(0, 2));
+            startMinute = int.parse(element.value.substring(4, 5));
+            _openTime = TimeOfDay(hour: startHour, minute: startMinute);
+          });
+        }
       }
       if (element.name.contains("EndTime")) {
-        setState(() {
-          endHour = int.parse(element.value.substring(0, 2));
-          endMinute = int.parse(element.value.substring(4, 5));
-          _closeTime = TimeOfDay(hour: endHour, minute: endMinute);
-        });
+        if (mounted) {
+          setState(() {
+            endHour = int.parse(element.value.substring(0, 2));
+            endMinute = int.parse(element.value.substring(4, 5));
+            _closeTime = TimeOfDay(hour: endHour, minute: endMinute);
+          });
+        }
       }
       if (element.name.contains("MaxReservationDuration")) {
-        setState(() {
-          maxDuration = int.parse(element.value);
-        });
+        if (mounted) {
+          setState(() {
+            maxDuration = int.parse(element.value);
+          });
+        }
       }
       if (element.name.contains("MinReservationDuration")) {
-        setState(() {
-          minDuration = int.parse(element.value);
-        });
+        if (mounted) {
+          setState(() {
+            minDuration = int.parse(element.value);
+          });
+        }
       }
       if (element.name.contains("AtLeastDuration")) {
-        setState(() {
-          seperateAtLeast = int.parse(element.value);
-        });
+        if (mounted) {
+          setState(() {
+            seperateAtLeast = int.parse(element.value);
+          });
+        }
       }
     });
   }

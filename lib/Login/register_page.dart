@@ -36,14 +36,14 @@ class _registerPageState extends State<registerPage> {
   bool checkBool = false;
 
   @override
-  void dispose() {
-    phoneController.dispose();
-    nameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    re_passwordController.dispose();
-    super.dispose();
-  }
+  // void dispose() {
+  //   phoneController.dispose();
+  //   nameController.dispose();
+  //   emailController.dispose();
+  //   passwordController.dispose();
+  //   re_passwordController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   void initState() {
