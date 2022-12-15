@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Login/register_page.dart';
+import 'package:oms_mobile/Table%20reservation/qr_image.dart';
+import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import '../Home/home_screen.dart';
 import 'package:get/get.dart';
@@ -23,6 +25,7 @@ class _loginScreenState extends State<loginScreen> {
   bool flagPassword = false;
   bool loginFailed = false;
   String? jwttoken;
+  bool flagcheck = false;
 
   @override
   void initState() {
@@ -56,7 +59,13 @@ class _loginScreenState extends State<loginScreen> {
               // ignore: prefer_const_literals_to_create_immutables
               children: [
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => QRPage(jwtToken: "", id: 11)),
+                    // );
+                  },
                   child: Icon(
                     Icons.restaurant_menu_rounded,
                     size: 100,
@@ -100,7 +109,7 @@ class _loginScreenState extends State<loginScreen> {
                               phone = phoneController.text;
                             });
                           }
-                          getAuth();
+                          // getAuth();
                         },
                         controller: phoneController,
                         scrollPhysics: const BouncingScrollPhysics(),
@@ -136,7 +145,7 @@ class _loginScreenState extends State<loginScreen> {
                               password = passwordController.text;
                             });
                           }
-                          getAuth();
+                          // getAuth();
                         },
                         controller: passwordController,
                         scrollPhysics: const BouncingScrollPhysics(),
@@ -169,96 +178,89 @@ class _loginScreenState extends State<loginScreen> {
                     onPressed: () {
                       if (phoneController.text.isEmpty) {
                         setState(() {
-                          getAuth();
+                          // getAuth();
                           flagPhone = true;
                         });
                       } else if (passwordController.text.isEmpty) {
                         setState(() {
-                          getAuth();
+                          // getAuth();
                           flagPassword = true;
                         });
                       } else if (passwordController.text.isNotEmpty &&
                           phoneController.text.isNotEmpty) {
                         getAuth();
-                        if (jwttoken == null) {
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text(
-                                  'Invalid'.tr,
-                                  style: GoogleFonts.lato(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text(
+                                'Remind'.tr,
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                content: Text(
-                                  "Your password or email doesn't right. Please try again!"
-                                      .tr,
-                                  style: GoogleFonts.lato(
-                                    color: Colors.black,
-                                  ),
+                              ),
+                              content: Text(
+                                "Please wait while we confirm your account".tr,
+                                style: GoogleFonts.lato(
+                                  color: Colors.black,
                                 ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, 'Cancel'),
-                                    child: Text('I understand'.tr),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => homeScreen(
-                                      jwtToken: '$jwttoken',
-                                    )),
-                          );
-                        }
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context, 'Cancel');
+                                    if (jwttoken == null) {
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text(
+                                              'Invalid'.tr,
+                                              style: GoogleFonts.lato(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            content: Text(
+                                              "Your password or email doesn't right. Please try again!"
+                                                  .tr,
+                                              style: GoogleFonts.lato(
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                    context, 'Cancel'),
+                                                child: Text('I understand'.tr),
+                                              ),
+                                            ],
+                                            actionsAlignment:
+                                                MainAxisAlignment.center,
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => homeScreen(
+                                                  jwtToken: '$jwttoken',
+                                                )),
+                                      );
+                                    }
+                                  },
+                                  child: Text('I understand'.tr),
+                                ),
+                              ],
+                              actionsAlignment: MainAxisAlignment.center,
+                            );
+                          },
+                        );
                       }
-                      // if (jwttoken == null) {
-                      //   showDialog(
-                      //     barrierDismissible: false,
-                      //     context: context,
-                      //     builder: (BuildContext context) {
-                      //       return AlertDialog(
-                      //         title: Text(
-                      //           'Invalid'.tr,
-                      //           style: GoogleFonts.lato(
-                      //             color: Colors.black,
-                      //             fontWeight: FontWeight.bold,
-                      //           ),
-                      //         ),
-                      //         content: Text(
-                      //           "Your password or email doesn't right. Please try again!"
-                      //               .tr,
-                      //           style: GoogleFonts.lato(
-                      //             color: Colors.black,
-                      //           ),
-                      //         ),
-                      //         actions: <Widget>[
-                      //           TextButton(
-                      //             onPressed: () =>
-                      //                 Navigator.pop(context, 'Cancel'),
-                      //             child: Text('I understand'.tr),
-                      //           ),
-                      //         ],
-                      //       );
-                      //     },
-                      //   );
-                      // } else {
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => homeScreen(
-                      //               jwtToken: '$jwttoken',
-                      //             )),
-                      //   );
-                      // }
                     },
                     child: Text(
                       'login'.tr.toUpperCase(),
@@ -272,7 +274,6 @@ class _loginScreenState extends State<loginScreen> {
                 SizedBox(
                   height: 20,
                 ),
-
                 //Register button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

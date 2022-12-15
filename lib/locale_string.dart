@@ -150,6 +150,8 @@ class LocaleString extends Translations {
               'Pre-order food will be include in this reservation',
           'Your reservation is changed. Process to the menu to check your reservation!':
               'Your reservation is changed. Process to the menu to check your reservation!',
+          "Please wait while we confirm your account":
+              "Please wait while we confirm your account",
           'Occupied Time': 'Occupied Time',
           'Selection End Time': 'Selection End Time',
           'Selection Start Time': 'Selection Start Time',
@@ -336,6 +338,8 @@ class LocaleString extends Translations {
               'Thức ăn đặt trước sẽ được đính kèm vào trong đơn đặt bàn này',
           'Your reservation is changed. Process to the menu to check your reservation!':
               'Đơn đã được thay đổi, vui lòng về màn hình chính để kiểm tra lại!',
+          "Please wait while we confirm your account":
+              "Vui lòng đợi trong khi chúng tôi xác thực tài khoản của bạn",
           'Occupied Time': 'Giờ bận',
           'Selection End Time': 'Giờ kết thúc',
           'Selection Start Time': 'Giờ bắt đầu',

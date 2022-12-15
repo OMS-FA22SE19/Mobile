@@ -188,7 +188,7 @@ class ReservationTable {
     required this.table,
   });
 
-  int tableId;
+  String tableId;
   TableModel table;
 
   factory ReservationTable.fromJson(Map<String, dynamic> json) =>

@@ -60,8 +60,7 @@ class _QRPageState extends State<QRPage> {
         // decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
         alignment: Alignment.center,
         child: QrImage(
-          data:
-              'https://localhost:7246/api/v1/Reservations/${widget.id}/Checkin',
+          data: '${widget.id}',
           size: 300,
         ),
       ),
