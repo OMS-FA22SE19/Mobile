@@ -46,6 +46,7 @@ class _reservationDetailState extends State<reservationDetail> {
   bool flagCancel = true;
   String errorCancel = "";
   String? check;
+  bool checkQR = false;
 
   @override
   void initState() {
@@ -90,6 +91,47 @@ class _reservationDetailState extends State<reservationDetail> {
     }
   }
 
+  check15MinutesCheckin() {
+    setState(() {
+      checkQR = false;
+    });
+    TimeOfDay nowTime = TimeOfDay.now();
+    String startdHour =
+        '${reservation?.startTime.toString().substring(11, 13)}';
+    String startMinute =
+        '${reservation?.startTime.toString().substring(14, 16)}';
+    TimeOfDay startResTime =
+        TimeOfDay(hour: int.parse(startdHour), minute: int.parse(startMinute));
+
+    double doubleStartTime = toDouble(startResTime);
+    double doubleNowTime = toDouble(nowTime);
+
+    String startYear = '${reservation?.startTime.toString().substring(0, 4)}';
+    String startMonth = '${reservation?.startTime.toString().substring(5, 7)}';
+    String startDate = '${reservation?.startTime.toString().substring(8, 11)}';
+    int intYear = int.parse(startYear);
+    int intMonth = int.parse(startMonth);
+    int intDate = int.parse(startDate);
+
+    int nowDate = DateTime.now().day;
+    int nowMonth = DateTime.now().month;
+    int nowYear = DateTime.now().year;
+
+    if (reservation?.status.contains("Reserved") ?? false) {
+      if (nowYear >= intYear) {
+        if (nowMonth >= intMonth) {
+          if (nowDate >= intDate) {
+            if (doubleNowTime >= (doubleStartTime - 0.25)) {
+              setState(() {
+                checkQR = true;
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
   cancelRes() async {
     check = await RemoteService().cancelReservation(
         reservation?.id, cancelController.text, widget.jwtToken);
@@ -102,6 +144,7 @@ class _reservationDetailState extends State<reservationDetail> {
         .getOrderByReservation(reservation?.id, widget.jwtToken);
     getVNPAYurl();
     getUser();
+    check15MinutesCheckin();
     // cancelReservation();
     depositController.text = '${reservation?.prePaid}';
     if (reservation != null) {
@@ -165,7 +208,10 @@ class _reservationDetailState extends State<reservationDetail> {
     if (reservation?.status.contains("Cancelled") ?? true) {
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(232, 192, 125, 100),
+          backgroundColor:
+              (currentUser?.userName.contains("defaultCustomer") ?? false)
+                  ? const Color.fromRGBO(232, 192, 125, 100)
+                  : Colors.blue[600],
           centerTitle: true,
           title: Text('detail'.tr,
               style: GoogleFonts.bebasNeue(
@@ -204,7 +250,10 @@ class _reservationDetailState extends State<reservationDetail> {
     } else {
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromRGBO(232, 192, 125, 100),
+          backgroundColor:
+              (currentUser?.userName.contains("defaultCustomer") ?? false)
+                  ? const Color.fromRGBO(232, 192, 125, 100)
+                  : Colors.blue[600],
           centerTitle: true,
           title: Text('detail'.tr,
               style: GoogleFonts.bebasNeue(
@@ -226,6 +275,193 @@ class _reservationDetailState extends State<reservationDetail> {
               )),
           automaticallyImplyLeading: false,
           actions: [
+            (((reservation?.numOfEdits ?? 0) < 3) &&
+                    ((reservation?.status.contains("Reserved") ?? false) ||
+                        (reservation?.status.contains("Available") ?? false)))
+                ? IconButton(
+                    onPressed: () {
+                      (reservation?.orderDetails.length != 0)
+                          ? showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    'Remind'.tr,
+                                    style: GoogleFonts.lato(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  content: Text(
+                                    'Choose reservation information you want to edit'
+                                        .tr,
+                                    style: GoogleFonts.lato(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, 'Cancel');
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  tableReservationEdit(
+                                                    jwtToken: widget.jwtToken,
+                                                    reservationId: widget.id,
+                                                  )),
+                                        );
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              alignment: Alignment.center,
+                                              icon: const Icon(
+                                                  Icons.info_outline_rounded),
+                                              title: Text(
+                                                'Remind'.tr,
+                                                style: GoogleFonts.lato(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              content: SizedBox(
+                                                height: 150,
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      'Please remember, any overcharged money won\'t be refund!'
+                                                          .tr
+                                                          .toUpperCase(),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: GoogleFonts.lato(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    Text(
+                                                      'If you choose a different table type, table information might be changed'
+                                                          .tr,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: GoogleFonts.lato(
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          context, 'Cancel'),
+                                                  child:
+                                                      Text('I understand'.tr),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Text('table'.tr),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, 'Cancel');
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  menuCategory(
+                                                      jwtToken: widget.jwtToken,
+                                                      edit: true,
+                                                      orderFood: true,
+                                                      reservationId:
+                                                          widget.id)),
+                                        );
+                                      },
+                                      child: Text('food'.tr),
+                                    ),
+                                  ],
+                                );
+                              },
+                            )
+                          : showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  alignment: Alignment.center,
+                                  icon: const Icon(Icons.info_outline_rounded),
+                                  title: Text(
+                                    'Remind'.tr,
+                                    style: GoogleFonts.lato(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  content: SizedBox(
+                                    height: 150,
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'Please remember, any overcharged money won\'t be refund!'
+                                              .tr
+                                              .toUpperCase(),
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.lato(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          'If you choose a different table type, table information might be changed'
+                                              .tr,
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.lato(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context, 'Cancel');
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  tableReservationEdit(
+                                                    jwtToken: widget.jwtToken,
+                                                    reservationId: widget.id,
+                                                  )),
+                                        );
+                                      },
+                                      child: Text('I understand'.tr),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                    },
+                    icon: const Icon(
+                      Icons.edit,
+                      size: 30,
+                    ))
+                : ((reservation?.status.contains("CheckIn") ?? false))
+                    ? const SizedBox.shrink()
+                    : const SizedBox.shrink(),
             IconButton(
                 onPressed: () {
                   setState(() {
@@ -265,224 +501,6 @@ class _reservationDetailState extends State<reservationDetail> {
                   Icons.info_outline_rounded,
                   size: 30,
                 )),
-            (reservation?.status.contains("Reserved") ?? false)
-                ? IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => QRPage(
-                                  id: widget.id,
-                                  jwtToken: widget.jwtToken,
-                                )),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.qr_code_rounded,
-                      size: 30,
-                    ))
-                : ((reservation?.numOfEdits ?? 0) < 3)
-                    ? IconButton(
-                        onPressed: () {
-                          (reservation?.orderDetails.length != 0)
-                              ? showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                        'Remind'.tr,
-                                        style: GoogleFonts.lato(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      content: Text(
-                                        'Choose reservation information you want to edit'
-                                            .tr,
-                                        style: GoogleFonts.lato(
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, 'Cancel');
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      tableReservationEdit(
-                                                        jwtToken:
-                                                            widget.jwtToken,
-                                                        reservationId:
-                                                            widget.id,
-                                                      )),
-                                            );
-                                            showDialog(
-                                              barrierDismissible: false,
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  alignment: Alignment.center,
-                                                  icon: const Icon(Icons
-                                                      .info_outline_rounded),
-                                                  title: Text(
-                                                    'Remind'.tr,
-                                                    style: GoogleFonts.lato(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  content: SizedBox(
-                                                    height: 150,
-                                                    child: Column(
-                                                      children: [
-                                                        Text(
-                                                          'Please remember, any overcharged money won\'t be refund!'
-                                                              .tr
-                                                              .toUpperCase(),
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style:
-                                                              GoogleFonts.lato(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold),
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        Text(
-                                                          'If you choose a different table type, table information might be changed'
-                                                              .tr,
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style:
-                                                              GoogleFonts.lato(
-                                                            color: Colors.black,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  actions: <Widget>[
-                                                    TextButton(
-                                                      onPressed: () =>
-                                                          Navigator.pop(context,
-                                                              'Cancel'),
-                                                      child: Text(
-                                                          'I understand'.tr),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: Text('table'.tr),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, 'Cancel');
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      menuCategory(
-                                                          jwtToken:
-                                                              widget.jwtToken,
-                                                          edit: true,
-                                                          orderFood: true,
-                                                          reservationId:
-                                                              widget.id)),
-                                            );
-                                          },
-                                          child: Text('food'.tr),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                )
-                              : showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      alignment: Alignment.center,
-                                      icon: const Icon(
-                                          Icons.info_outline_rounded),
-                                      title: Text(
-                                        'Remind'.tr,
-                                        style: GoogleFonts.lato(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      content: SizedBox(
-                                        height: 150,
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              'Please remember, any overcharged money won\'t be refund!'
-                                                  .tr
-                                                  .toUpperCase(),
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.lato(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              'If you choose a different table type, table information might be changed'
-                                                  .tr,
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.lato(
-                                                color: Colors.black,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context, 'Cancel');
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      tableReservationEdit(
-                                                        jwtToken:
-                                                            widget.jwtToken,
-                                                        reservationId:
-                                                            widget.id,
-                                                      )),
-                                            );
-                                          },
-                                          child: Text('I understand'.tr),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                        },
-                        icon: const Icon(
-                          Icons.edit,
-                          size: 30,
-                        ))
-                    :
-                    // IconButton(
-                    //     isSelected: false,
-                    //     onPressed: () {},
-                    //     icon: const Icon(
-                    //       Icons.info_outline_rounded,
-                    //       size: 30,
-                    //     )),
-                    const SizedBox.shrink(),
           ],
         ),
         backgroundColor: Colors.grey[200],
@@ -529,55 +547,72 @@ class _reservationDetailState extends State<reservationDetail> {
                 Container(
                   color: Colors.grey[200],
                   child: Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: ((reservation?.status ?? "")
-                                      .contains("Reserved"))
-                                  ? Colors.yellow[600]
-                                  : ((reservation?.status ?? "")
-                                          .contains("Available"))
-                                      ? Colors.blueAccent
-                                      : Colors.greenAccent,
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Icon(
-                                Icons.restaurant_menu_rounded,
-                                size: 40,
-                                color: Colors.white,
-                              ),
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: ((reservation?.status ?? "")
+                                    .contains("Reserved"))
+                                ? Colors.yellow[600]
+                                : ((reservation?.status ?? "")
+                                        .contains("Available"))
+                                    ? Colors.blueAccent
+                                    : Colors.greenAccent,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Icon(
+                              Icons.restaurant_menu_rounded,
+                              size: 40,
+                              color: Colors.white,
                             ),
                           ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${'status'.tr}:',
-                                style: GoogleFonts.cabin(
-                                    fontSize: 20, color: Colors.black),
-                              ),
-                              Text(
-                                reservation?.status.tr ?? "",
-                                textAlign: TextAlign.right,
-                                style: GoogleFonts.cabin(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: Colors.black),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${'status'.tr}:',
+                              style: GoogleFonts.cabin(
+                                  fontSize: 20, color: Colors.black),
+                            ),
+                            Text(
+                              reservation?.status.tr ?? "",
+                              textAlign: TextAlign.right,
+                              style: GoogleFonts.cabin(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        ((reservation?.status.contains("Reserved") ?? false) &&
+                                checkQR)
+                            ? IconButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => QRPage(
+                                              id: widget.id,
+                                              jwtToken: widget.jwtToken,
+                                            )),
+                                  );
+                                },
+                                icon: const Icon(
+                                  Icons.qr_code_rounded,
+                                  size: 50,
+                                ))
+                            : const SizedBox.shrink(),
+                      ],
                     ),
                   ),
                 ),
@@ -588,23 +623,6 @@ class _reservationDetailState extends State<reservationDetail> {
                 const SizedBox(
                   height: 10,
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     const SizedBox(
-                //       width: 10,
-                //     ),
-                //     Text(
-                //       'Reservation information',
-                //       textAlign: TextAlign.center,
-                //       maxLines: 2,
-                //       style: GoogleFonts.cabin(fontSize: 30, color: Colors.black),
-                //     ),
-                //     const SizedBox(
-                //       width: 10,
-                //     ),
-                //   ],
-                // ),
                 const SizedBox(
                   height: 5,
                 ),
@@ -615,7 +633,7 @@ class _reservationDetailState extends State<reservationDetail> {
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Row(
                           children: [
                             Container(
@@ -716,7 +734,7 @@ class _reservationDetailState extends State<reservationDetail> {
                         height: 10,
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Row(
                           children: [
                             Container(
@@ -826,7 +844,7 @@ class _reservationDetailState extends State<reservationDetail> {
                                                 color: Colors.black),
                                           ),
                                           Text(
-                                            '${reservation?.reservationTables.elementAt(0).tableId}',
+                                            '${reservation?.reservationTables.elementAt(0).table.tableType.name} - ${reservation?.reservationTables.elementAt(0).tableId}',
                                             textAlign: TextAlign.right,
                                             style: GoogleFonts.cabin(
                                                 fontSize: 20,
@@ -868,7 +886,7 @@ class _reservationDetailState extends State<reservationDetail> {
                   height: 10,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
                     children: [
                       Container(
@@ -1216,7 +1234,6 @@ class _reservationDetailState extends State<reservationDetail> {
                     } else {
                       setState(() {
                         Navigator.pop(context, 'Cancel');
-                        cancelRes();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -1286,61 +1303,60 @@ class _reservationDetailState extends State<reservationDetail> {
     );
   }
 
-  conditionalButtonCheckin(DateTime dateTime) {
-    TimeOfDay startTime = TimeOfDay(
-        hour: int.parse(dateTime.toString().substring(11, 16).split(":")[0]),
-        minute: int.parse(dateTime.toString().substring(11, 16).split(":")[1]));
+  // conditionalButtonCheckin(DateTime dateTime) {
+  //   // TimeOfDay startTime = TimeOfDay(
+  //   //     hour: int.parse(dateTime.toString().substring(11, 16).split(":")[0]),
+  //   //     minute: int.parse(dateTime.toString().substring(11, 16).split(":")[1]));
 
-    double nowDouble = toDouble(nowTime);
-    double startDouble = toDouble(startTime);
-    // startDouble + 0.5;
-    // startDouble - 0.5;
-    if (nowDouble >= startDouble - 0.25 &&
-        (reservation?.status ?? "Reserved").contains("Reserved")) {
-      return ElevatedButton(
-        onPressed: () async {
-          RemoteService().checkinReservation(widget.id, widget.jwtToken);
-          reservation = await RemoteService()
-              .getReservationBeforeCheckin(widget.id, widget.jwtToken);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => reservationDetail(
-                      id: widget.id,
-                      jwtToken: widget.jwtToken,
-                    )),
-          );
-          // setState(() {
-          //   tableId = reservation?.reservationTables.elementAt(0).tableId;
-          // });
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.greenAccent,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-        ),
-        child: Text(
-          'Check In',
-          style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
-        ),
-      );
-    } else {
-      return ElevatedButton(
-        onPressed: null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.greenAccent,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-        ),
-        child: Text(
-          'Check In',
-          style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
-        ),
-      );
-    }
-  }
+  //   // double nowDouble = toDouble(nowTime);
+  //   // double startDouble = toDouble(startTime);
+  //   // startDouble + 0.5;
+  //   // startDouble - 0.5;
+  //   if ((reservation?.status.contains("Reserved") ?? false) && checkQR) {
+  //     return ElevatedButton(
+  //       onPressed: () async {
+  //         RemoteService().checkinReservation(widget.id, widget.jwtToken);
+  //         reservation = await RemoteService()
+  //             .getReservationBeforeCheckin(widget.id, widget.jwtToken);
+  //         Navigator.push(
+  //           context,
+  //           MaterialPageRoute(
+  //               builder: (context) => reservationDetail(
+  //                     id: widget.id,
+  //                     jwtToken: widget.jwtToken,
+  //                   )),
+  //         );
+  //         // setState(() {
+  //         //   tableId = reservation?.reservationTables.elementAt(0).tableId;
+  //         // });
+  //       },
+  //       style: ElevatedButton.styleFrom(
+  //         backgroundColor: Colors.greenAccent,
+  //         shape: const RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.all(Radius.circular(10)),
+  //         ),
+  //       ),
+  //       child: Text(
+  //         'Check In',
+  //         style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+  //       ),
+  //     );
+  //   } else {
+  //     return ElevatedButton(
+  //       onPressed: null,
+  //       style: ElevatedButton.styleFrom(
+  //         backgroundColor: Colors.greenAccent,
+  //         shape: const RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.all(Radius.circular(10)),
+  //         ),
+  //       ),
+  //       child: Text(
+  //         'Check In',
+  //         style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
+  //       ),
+  //     );
+  //   }
+  // }
 
   conditionalExpansionTile(bool flag) {
     if (flag) {
@@ -1503,7 +1519,7 @@ class _reservationDetailState extends State<reservationDetail> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           conditionalButtonCancel(),
-          conditionalButtonCheckin(reservation?.startTime ?? DateTime.now()),
+          // conditionalButtonCheckin(reservation?.startTime ?? DateTime.now()),
         ],
       );
     } else {

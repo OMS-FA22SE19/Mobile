@@ -2,10 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:get/get.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/User%20History/history_page.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
@@ -25,11 +25,17 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
   ReservationNoTable? currentReservation;
   var isloaded = false;
   int total = 0;
+  UserProfile? currentUser;
 
   @override
   void initState() {
     super.initState();
     getData();
+    getUser();
+  }
+
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
   }
 
   getData() async {
@@ -68,19 +74,19 @@ class _historyDetailOrderState extends State<historyDetailOrder> {
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
-        leading: IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        historyPage(jwtToken: widget.jwtToken)),
-              );
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 30,
-            )),
+        // leading: IconButton(
+        //     onPressed: () {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //             builder: (context) =>
+        //                 historyPage(jwtToken: widget.jwtToken)),
+        //       );
+        //     },
+        //     icon: Icon(
+        //       Icons.arrow_back_ios_new_rounded,
+        //       size: 30,
+        //     )),
         automaticallyImplyLeading: false,
       ),
       backgroundColor: Colors.grey[200],

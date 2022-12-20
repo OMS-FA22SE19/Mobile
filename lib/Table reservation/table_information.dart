@@ -14,8 +14,6 @@ import 'package:get/get.dart';
 class tableInformation extends StatefulWidget {
   final String jwtToken;
   final int numberOfPeople;
-  final String name;
-  final String phone;
   final DateTime date;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
@@ -28,8 +26,6 @@ class tableInformation extends StatefulWidget {
   final String phoneNumber;
   const tableInformation(
       {super.key,
-      required this.name,
-      required this.phone,
       required this.date,
       required this.startTime,
       required this.endTime,
@@ -76,6 +72,7 @@ class _tableInformationState extends State<tableInformation> {
 
   getUser() async {
     currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+    setState(() {});
   }
 
   // getReservation(int? reservationId) async {
@@ -102,7 +99,10 @@ class _tableInformationState extends State<tableInformation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         centerTitle: true,
         title: Text('reservation'.tr,
             style: GoogleFonts.bebasNeue(
@@ -133,7 +133,10 @@ class _tableInformationState extends State<tableInformation> {
             // height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width - 20,
             decoration: BoxDecoration(
-              color: Color.fromRGBO(232, 192, 125, 100),
+              color:
+                  (currentUser?.userName.contains("defaultCustomer") ?? false)
+                      ? const Color.fromRGBO(232, 192, 125, 100)
+                      : Colors.blue[600],
               borderRadius: BorderRadius.circular(20),
             ),
             child: Column(
@@ -430,7 +433,8 @@ class _tableInformationState extends State<tableInformation> {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              '${currentUser?.fullName}',
+                              // '${currentUser?.fullName}',
+                              widget.fullName,
                               textAlign: TextAlign.right,
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
@@ -453,7 +457,8 @@ class _tableInformationState extends State<tableInformation> {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              '${currentUser?.phoneNumber}',
+                              // '${currentUser?.phoneNumber}',
+                              widget.phoneNumber,
                               textAlign: TextAlign.right,
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
@@ -540,8 +545,6 @@ class _tableInformationState extends State<tableInformation> {
                       TimeOfDay nowTime = TimeOfDay.now();
                       double nowTimeDouble = toDouble(nowTime);
                       double startTimeDouble = toDouble(widget.startTime);
-                      print(nowTimeDouble);
-                      print(startTimeDouble);
                       if (currentUser?.fullName.contains("Default Customer") ??
                           false) {
                         if ((nowTimeDouble >= (startTimeDouble - 0.25)) &&
@@ -550,7 +553,6 @@ class _tableInformationState extends State<tableInformation> {
                           // addBilling(
                           //     returnReservId, currentReservation?.prePaid);
                           // CheckInReservation(returnReservId ?? 0);
-                          print("abc");
                           checkInDefault(returnReservId);
                         }
                       }
@@ -667,7 +669,11 @@ class _tableInformationState extends State<tableInformation> {
                     child: Text(
                       'Finish'.tr.toUpperCase(),
                       style: TextStyle(
-                          color: Color.fromRGBO(232, 192, 125, 100),
+                          color: (currentUser?.userName
+                                      .contains("defaultCustomer") ??
+                                  false)
+                              ? const Color.fromRGBO(232, 192, 125, 100)
+                              : Colors.blue[600],
                           fontSize: 15,
                           fontWeight: FontWeight.bold),
                     ),

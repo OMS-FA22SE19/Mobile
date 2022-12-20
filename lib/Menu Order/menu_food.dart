@@ -9,6 +9,7 @@ import 'package:oms_mobile/Menu%20Order/menu_food_detaiil.dart';
 import 'package:oms_mobile/Menu%20Order/search_page.dart';
 import 'package:oms_mobile/Models/food.dart';
 import 'package:oms_mobile/Models/menu.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:get/get.dart';
@@ -45,10 +46,16 @@ class _menuFoodState extends State<menuFood> {
   int menuId = 0;
   var isLoaded = false;
 
+  UserProfile? currentUser;
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
+
   @override
   void initState() {
     super.initState();
     getData();
+    getUser();
   }
 
   String changeFormat(int number) {
@@ -83,7 +90,10 @@ class _menuFoodState extends State<menuFood> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         centerTitle: true,
         title: Text('Menu'.tr,
             style: GoogleFonts.bebasNeue(
@@ -161,7 +171,10 @@ class _menuFoodState extends State<menuFood> {
                   width: 300,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Color.fromRGBO(232, 192, 125, 100),
+                    color: (currentUser?.userName.contains("defaultCustomer") ??
+                            false)
+                        ? const Color.fromRGBO(232, 192, 125, 100)
+                        : Colors.blue[600],
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -179,10 +192,10 @@ class _menuFoodState extends State<menuFood> {
                                 errorBuilder: (context, error, stackTrace) {
                                   return Text('404');
                                 },
-                                loadingBuilder:
-                                    (context, child, loadingProgress) {
-                                  return CircularProgressIndicator();
-                                },
+                                // loadingBuilder:
+                                //     (context, child, loadingProgress) {
+                                //   return CircularProgressIndicator();
+                                // },
                               )),
                           SizedBox(
                             width: 20,
@@ -257,7 +270,10 @@ class _menuFoodState extends State<menuFood> {
         // ),
       ),
       floatingActionButton: FloatingActionButton.large(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         onPressed: () {
           Navigator.push(
             context,

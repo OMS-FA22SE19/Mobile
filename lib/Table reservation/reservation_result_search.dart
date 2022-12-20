@@ -7,21 +7,24 @@ import 'package:get/get.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_detail.dart';
-import 'package:oms_mobile/Table%20reservation/reservation_result_search.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 
-class searchReservation extends StatefulWidget {
+class searchReservationResult extends StatefulWidget {
+  final String searchValue;
   final String jwtToken;
-  const searchReservation({super.key, required this.jwtToken});
+  // final List<ReservationNoTable>? reservationsCheckIn;
+  const searchReservationResult(
+      {super.key, required this.jwtToken, required this.searchValue});
 
   @override
-  State<searchReservation> createState() => _searchReservationState();
+  State<searchReservationResult> createState() =>
+      _searchReservationResultState();
 }
 
-class _searchReservationState extends State<searchReservation> {
-  final textController = TextEditingController();
-  // bool isLoaded = false;
+class _searchReservationResultState extends State<searchReservationResult> {
+  bool isLoaded = false;
   List<ReservationNoTable>? reservationsCheckIn;
+
   UserProfile? currentUser;
   getUser() async {
     currentUser = await RemoteService().getUserProfile(widget.jwtToken);
@@ -30,18 +33,21 @@ class _searchReservationState extends State<searchReservation> {
   @override
   void initState() {
     super.initState();
+    getData();
     getUser();
   }
 
-  // getData() async {
-  //   reservationsCheckIn = await RemoteService()
-  //       .getReservationsSearch(textController.text, widget.jwtToken);
-  //   if (reservationsCheckIn != null || (reservationsCheckIn?.length != 0)) {
-  //     setState(() {
-  //       // isLoaded = true;
-  //     });
-  //   }
-  // }
+  getData() async {
+    reservationsCheckIn = await RemoteService()
+        .getReservationsSearch(widget.searchValue, widget.jwtToken);
+    if (reservationsCheckIn != null) {
+      if (mounted) {
+        setState(() {
+          isLoaded = true;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,66 +72,40 @@ class _searchReservationState extends State<searchReservation> {
             (currentUser?.userName.contains("defaultCustomer") ?? false)
                 ? const Color.fromRGBO(232, 192, 125, 100)
                 : Colors.blue[600],
-        title: Container(
-          height: 45,
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            border: Border.all(color: Colors.white),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(5),
-            child: TextField(
-              onChanged: (value) {},
-              onSubmitted: (value) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => searchReservationResult(
-                            searchValue: textController.text,
-                            // reservationsCheckIn: reservationsCheckIn,
-                            jwtToken: widget.jwtToken,
-                          )),
-                );
-              },
-              controller: textController,
-              scrollPhysics: const BouncingScrollPhysics(),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Input your phone number'.tr,
-                // errorText: false ? "This field is empty".tr : null
-              ),
-            ),
-          ),
+        centerTitle: true,
+        title: Text(
+          'Result'.tr.toUpperCase(),
+          textAlign: TextAlign.center,
+          style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
         ),
       ),
-      // body:
-      // Visibility(
-      //     replacement: Center(
-      //       child: CircularProgressIndicator(),
-      //     ),
-      //     visible: isLoaded,
-      //     child: ListView.builder(
-      //       itemBuilder: (context, index) {
-      //         return Padding(
-      //           padding: const EdgeInsets.all(10),
-      //           child: InkWell(
-      //             onTap: () {
-      //               Navigator.push(
-      //                 context,
-      //                 MaterialPageRoute(
-      //                     builder: (context) => reservationDetail(
-      //                           id: reservationsCheckIn![index].id,
-      //                           jwtToken: widget.jwtToken,
-      //                         )),
-      //               );
-      //             },
-      //             child: ReservationCheckIn(
-      //                 reservationsCheckIn![index].status, index),
-      //           ),
-      //         );
-      //       },
-      //     )),
+      body: Visibility(
+          replacement: Center(
+            child: CircularProgressIndicator(),
+          ),
+          visible: isLoaded,
+          child: ListView.builder(
+            itemCount: reservationsCheckIn?.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(10),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => reservationDetail(
+                                id: reservationsCheckIn![index].id,
+                                jwtToken: widget.jwtToken,
+                              )),
+                    );
+                  },
+                  child: ReservationCheckIn(
+                      reservationsCheckIn![index].status, index),
+                ),
+              );
+            },
+          )),
     );
   }
 

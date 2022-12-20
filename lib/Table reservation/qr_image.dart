@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_detail.dart';
 import 'package:get/get.dart';
+import 'package:oms_mobile/services/remote_service.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class QRPage extends StatefulWidget {
@@ -14,11 +16,26 @@ class QRPage extends StatefulWidget {
 }
 
 class _QRPageState extends State<QRPage> {
+  UserProfile? currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    getUser();
+  }
+
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         centerTitle: true,
         title: Text('QR CODE'.tr,
             style: GoogleFonts.bebasNeue(

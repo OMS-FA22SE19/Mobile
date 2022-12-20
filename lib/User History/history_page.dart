@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:get/get.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/User%20History/history_order_detail.dart';
 import 'package:oms_mobile/User%20History/history_reservation_detail.dart';
 import 'package:oms_mobile/services/remote_service.dart';
@@ -22,12 +23,18 @@ class _historyPageState extends State<historyPage> {
   List<Order>? orderList;
   var isLoadedOrder = false;
   var isLoadedReservation = false;
+  UserProfile? currentUser;
+
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
 
   @override
   void initState() {
     super.initState();
     getReservationData();
     getOrderData();
+    getUser();
   }
 
   getReservationData() async {
@@ -68,7 +75,10 @@ class _historyPageState extends State<historyPage> {
           length: 2,
           child: Scaffold(
               appBar: AppBar(
-                backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                backgroundColor:
+                    (currentUser?.userName.contains("defaultCustomer") ?? false)
+                        ? const Color.fromRGBO(232, 192, 125, 100)
+                        : Colors.blue[600],
                 centerTitle: true,
                 title: Text('history'.tr,
                     style: GoogleFonts.bebasNeue(
@@ -76,7 +86,11 @@ class _historyPageState extends State<historyPage> {
                     )),
                 automaticallyImplyLeading: false,
                 bottom: TabBar(
-                  indicatorColor: Color.fromRGBO(232, 192, 125, 100),
+                  indicatorColor:
+                      (currentUser?.userName.contains("defaultCustomer") ??
+                              false)
+                          ? const Color.fromRGBO(232, 192, 125, 100)
+                          : Colors.blue[600],
                   indicatorWeight: 2.5,
                   indicatorSize: TabBarIndicatorSize.label,
                   tabs: [
@@ -138,8 +152,13 @@ class _historyPageState extends State<historyPage> {
                                           child: Container(
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
-                                              color: Color.fromRGBO(
-                                                  232, 192, 125, 100),
+                                              color: (currentUser?.userName
+                                                          .contains(
+                                                              "defaultCustomer") ??
+                                                      false)
+                                                  ? const Color.fromRGBO(
+                                                      232, 192, 125, 100)
+                                                  : Colors.blue[600],
                                             ),
                                             child: Padding(
                                               padding:
@@ -264,8 +283,13 @@ class _historyPageState extends State<historyPage> {
                                           child: Container(
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
-                                              color: Color.fromRGBO(
-                                                  232, 192, 125, 100),
+                                              color: (currentUser?.userName
+                                                          .contains(
+                                                              "defaultCustomer") ??
+                                                      false)
+                                                  ? const Color.fromRGBO(
+                                                      232, 192, 125, 100)
+                                                  : Colors.blue[600],
                                             ),
                                             child: Padding(
                                               padding:

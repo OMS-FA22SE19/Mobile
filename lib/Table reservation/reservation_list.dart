@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/person_page.dart';
 import 'package:oms_mobile/Models/reservation.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_detail.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_search.dart';
 import 'package:oms_mobile/services/remote_service.dart';
@@ -27,12 +28,18 @@ class _reservationListState extends State<reservationList> {
   bool isLoaded_3 = false;
   bool flag = false;
 
+  UserProfile? currentUser;
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
+
   @override
   void initState() {
     super.initState();
     getCheckin();
     getReserved();
     getAvailable();
+    getUser();
   }
 
   getCheckin() async {
@@ -80,7 +87,10 @@ class _reservationListState extends State<reservationList> {
           length: 3,
           child: Scaffold(
             appBar: AppBar(
-              backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+              backgroundColor:
+                  (currentUser?.userName.contains("defaultCustomer") ?? false)
+                      ? const Color.fromRGBO(232, 192, 125, 100)
+                      : Colors.blue[600],
               centerTitle: true,
               title: Text('Restaurant A',
                   style: GoogleFonts.bebasNeue(
@@ -117,7 +127,10 @@ class _reservationListState extends State<reservationList> {
                     )),
               ],
               bottom: TabBar(
-                indicatorColor: Color.fromRGBO(232, 192, 125, 100),
+                indicatorColor:
+                    (currentUser?.userName.contains("defaultCustomer") ?? false)
+                        ? const Color.fromRGBO(232, 192, 125, 100)
+                        : Colors.blue[600],
                 indicatorWeight: 2.5,
                 indicatorSize: TabBarIndicatorSize.label,
                 tabs: [
@@ -255,7 +268,6 @@ class _reservationListState extends State<reservationList> {
 
   ReservationCheckIn(String status, int index) {
     return Container(
-      height: 250,
       width: MediaQuery.of(context).size.width - 20,
       decoration: BoxDecoration(
         color: (status.contains("Reserved"))
@@ -363,11 +375,7 @@ class _reservationListState extends State<reservationList> {
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
                     ),
                     Text(
-                      reservationsCheckIn![index]
-                          .reservationTables
-                          .elementAt(0)
-                          .tableId
-                          .toString(),
+                      '${reservationsCheckIn![index].reservationTables.elementAt(0).table.tableType.name} - ${reservationsCheckIn![index].reservationTables.elementAt(0).tableId}',
                       textAlign: TextAlign.right,
                       style:
                           GoogleFonts.cabin(fontSize: 20, color: Colors.white),
@@ -382,7 +390,6 @@ class _reservationListState extends State<reservationList> {
 
   ReservationReserved(String status, int index) {
     return Container(
-      height: 230,
       width: MediaQuery.of(context).size.width - 20,
       decoration: BoxDecoration(
         color: Colors.yellow[600],
@@ -491,7 +498,6 @@ class _reservationListState extends State<reservationList> {
 
   ReservationAvailable(String status, int index) {
     return Container(
-      height: 230,
       width: MediaQuery.of(context).size.width - 20,
       decoration: BoxDecoration(
         color: Colors.blueAccent,

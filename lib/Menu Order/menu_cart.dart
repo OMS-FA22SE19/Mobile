@@ -7,6 +7,7 @@ import 'package:oms_mobile/Menu%20Order/menu_status.dart';
 import 'package:oms_mobile/Models/food.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Models/order.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_preorder_food.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/services/remote_service.dart';
@@ -42,6 +43,11 @@ class _menuCartState extends State<menuCart> {
   Order? currentOrder;
   bool check = false;
 
+  UserProfile? currentUser;
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
+
   String changeFormat(int number) {
     String formated =
         intl.NumberFormat.decimalPattern().format(number).toString();
@@ -52,6 +58,7 @@ class _menuCartState extends State<menuCart> {
   void initState() {
     totalMoney();
     super.initState();
+    getUser();
   }
 
   void totalMoney() {
@@ -79,7 +86,10 @@ class _menuCartState extends State<menuCart> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         centerTitle: true,
         title: Text('Cart'.tr,
             style: GoogleFonts.bebasNeue(
@@ -136,7 +146,11 @@ class _menuCartState extends State<menuCart> {
                       height: 100,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: Color.fromRGBO(232, 192, 125, 100),
+                        color: (currentUser?.userName
+                                    .contains("defaultCustomer") ??
+                                false)
+                            ? const Color.fromRGBO(232, 192, 125, 100)
+                            : Colors.blue[600],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -193,8 +207,13 @@ class _menuCartState extends State<menuCart> {
                                         alignment: Alignment.center,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: Color.fromRGBO(
-                                              232, 192, 125, 100),
+                                          color: (currentUser?.userName
+                                                      .contains(
+                                                          "defaultCustomer") ??
+                                                  false)
+                                              ? const Color.fromRGBO(
+                                                  232, 192, 125, 100)
+                                              : Colors.blue[600],
                                         ),
                                         child: Icon(
                                           Icons.remove_circle_outline_rounded,
@@ -229,8 +248,13 @@ class _menuCartState extends State<menuCart> {
                                         alignment: Alignment.center,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: Color.fromRGBO(
-                                              232, 192, 125, 100),
+                                          color: (currentUser?.userName
+                                                      .contains(
+                                                          "defaultCustomer") ??
+                                                  false)
+                                              ? const Color.fromRGBO(
+                                                  232, 192, 125, 100)
+                                              : Colors.blue[600],
                                         ),
                                         child: Icon(
                                           Icons.add_circle_outline_rounded,
@@ -352,8 +376,13 @@ class _menuCartState extends State<menuCart> {
                                         alignment: Alignment.center,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: Color.fromRGBO(
-                                              232, 192, 125, 100),
+                                          color: (currentUser?.userName
+                                                      .contains(
+                                                          "defaultCustomer") ??
+                                                  false)
+                                              ? const Color.fromRGBO(
+                                                  232, 192, 125, 100)
+                                              : Colors.blue[600],
                                         ),
                                         child: Icon(
                                           Icons.highlight_remove_rounded,
@@ -464,7 +493,10 @@ class _menuCartState extends State<menuCart> {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+            backgroundColor:
+                (currentUser?.userName.contains("defaultCustomer") ?? false)
+                    ? const Color.fromRGBO(232, 192, 125, 100)
+                    : Colors.blue[600],
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(15)),
             ),
@@ -493,7 +525,10 @@ class _menuCartState extends State<menuCart> {
             );
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+            backgroundColor:
+                (currentUser?.userName.contains("defaultCustomer") ?? false)
+                    ? const Color.fromRGBO(232, 192, 125, 100)
+                    : Colors.blue[600],
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(15)),
             ),
@@ -534,7 +569,10 @@ class _menuCartState extends State<menuCart> {
               }
             : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+          backgroundColor:
+              (currentUser?.userName.contains("defaultCustomer") ?? false)
+                  ? const Color.fromRGBO(232, 192, 125, 100)
+                  : Colors.blue[600],
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(15)),
           ),

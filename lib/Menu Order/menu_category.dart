@@ -7,6 +7,8 @@ import 'package:oms_mobile/Menu%20Order/menu_food.dart';
 import 'package:oms_mobile/Menu%20Order/menu_status.dart';
 import 'package:oms_mobile/Models/course_type.dart';
 import 'package:oms_mobile/Models/food_type.dart';
+import 'package:oms_mobile/Models/reservation.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:get/get.dart';
 
@@ -35,10 +37,16 @@ class _menuCategoryState extends State<menuCategory> {
   List<foodType>? foodTypes;
   var isLoaded = false;
 
+  UserProfile? currentUser;
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
+
   @override
   void initState() {
     super.initState();
     getData();
+    getUser();
   }
 
   getData() async {
@@ -51,6 +59,15 @@ class _menuCategoryState extends State<menuCategory> {
     }
   }
 
+  NotifyStaff() async {
+    ReservationNoTable? currentReservation = await RemoteService()
+        .getReservationBeforeCheckin(widget.reservationId, widget.jwtToken);
+    RemoteService().postNotificationChecking(
+        currentReservation?.reservationTables.elementAt(0).tableId.toString(),
+        "e0ysZAelsc0wpu3gshn-lU:APA91bFOTjAqLagOakF2_w0bV81HsEiFJroE0jPzuUEVdanFPW8WK7Ge8wRaS1aW9-bAFwV-895d6kjOnHZIaiXfI41dlG-hyx71X6JtT6AjNGtI4Mw4slz5TEjfSle17nHk3ZL3lsSh",
+        widget.jwtToken);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -58,25 +75,28 @@ class _menuCategoryState extends State<menuCategory> {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+            backgroundColor:
+                (currentUser?.userName.contains("defaultCustomer") ?? false)
+                    ? const Color.fromRGBO(232, 192, 125, 100)
+                    : Colors.blue[600],
             centerTitle: true,
             title: Text('Menu'.tr,
                 style: GoogleFonts.bebasNeue(
                   fontSize: 25,
                 )),
-            leading: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            homeScreen(jwtToken: widget.jwtToken)),
-                  );
-                },
-                icon: Icon(
-                  Icons.home_rounded,
-                  size: 30,
-                )),
+            // leading: IconButton(
+            //     onPressed: () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //             builder: (context) =>
+            //                 homeScreen(jwtToken: widget.jwtToken)),
+            //       );
+            //     },
+            //     icon: Icon(
+            //       Icons.home_rounded,
+            //       size: 30,
+            //     )),
             automaticallyImplyLeading: false,
             bottom: TabBar(
               indicatorColor: Colors.brown,
@@ -129,7 +149,11 @@ class _menuCategoryState extends State<menuCategory> {
                           width: 300,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Color.fromRGBO(232, 192, 125, 100),
+                            color: (currentUser?.userName
+                                        .contains("defaultCustomer") ??
+                                    false)
+                                ? const Color.fromRGBO(232, 192, 125, 100)
+                                : Colors.blue[600],
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
@@ -207,7 +231,11 @@ class _menuCategoryState extends State<menuCategory> {
                           width: 300,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: Color.fromRGBO(232, 192, 125, 100),
+                            color: (currentUser?.userName
+                                        .contains("defaultCustomer") ??
+                                    false)
+                                ? const Color.fromRGBO(232, 192, 125, 100)
+                                : Colors.blue[600],
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
@@ -260,6 +288,7 @@ class _menuCategoryState extends State<menuCategory> {
                 heroTag: "btn1",
                 child: const Icon(Icons.notifications_active_rounded),
                 onPressed: () {
+                  NotifyStaff();
                   showDialog(
                     barrierDismissible: false,
                     context: context,
@@ -280,7 +309,9 @@ class _menuCategoryState extends State<menuCategory> {
                         ),
                         actions: <Widget>[
                           TextButton(
-                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                            onPressed: () {
+                              Navigator.pop(context, 'Cancel');
+                            },
                             child: const Text('I understand'),
                           ),
                         ],
@@ -289,11 +320,11 @@ class _menuCategoryState extends State<menuCategory> {
                   );
                 },
               ),
-              FloatingActionButton.small(
-                heroTag: "btn2",
-                child: const Icon(Icons.abc),
-                onPressed: () {},
-              ),
+              // FloatingActionButton.small(
+              //   heroTag: "btn2",
+              //   child: const Icon(Icons.abc),
+              //   onPressed: () {},
+              // ),
               FloatingActionButton.small(
                 heroTag: "btn3",
                 child: const Icon(Icons.shopping_bag_rounded),

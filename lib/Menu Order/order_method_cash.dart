@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/order_success.dart';
 import 'package:oms_mobile/Models/order.dart';
+import 'package:oms_mobile/Models/reservation.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:get/get.dart';
@@ -33,10 +35,25 @@ class _orderMethodState extends State<orderMethod> {
   var isLoaded = false;
   int total = 0;
 
+  UserProfile? currentUser;
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
+
   @override
   void initState() {
     super.initState();
     getData();
+    getUser();
+  }
+
+  NotifyStaff() async {
+    ReservationNoTable? currentReservation = await RemoteService()
+        .getReservationBeforeCheckin(widget.reservationId, widget.jwtToken);
+    RemoteService().postNotification(
+        currentReservation?.reservationTables.elementAt(0).tableId.toString(),
+        "e0ysZAelsc0wpu3gshn-lU:APA91bFOTjAqLagOakF2_w0bV81HsEiFJroE0jPzuUEVdanFPW8WK7Ge8wRaS1aW9-bAFwV-895d6kjOnHZIaiXfI41dlG-hyx71X6JtT6AjNGtI4Mw4slz5TEjfSle17nHk3ZL3lsSh",
+        widget.jwtToken);
   }
 
   String changeFormat(int number) {
@@ -66,7 +83,10 @@ class _orderMethodState extends State<orderMethod> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         centerTitle: true,
         title: Text("Order".tr,
             style: GoogleFonts.bebasNeue(
@@ -115,7 +135,10 @@ class _orderMethodState extends State<orderMethod> {
                   width: 300,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Color.fromRGBO(232, 192, 125, 100),
+                    color: (currentUser?.userName.contains("defaultCustomer") ??
+                            false)
+                        ? const Color.fromRGBO(232, 192, 125, 100)
+                        : Colors.blue[600],
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -302,12 +325,14 @@ class _orderMethodState extends State<orderMethod> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => orderSuccess(
+                                        reservationId: widget.reservationId,
                                         jwtToken: widget.jwtToken,
                                         orderId: widget.orderId ?? "",
                                       )),
                             );
                           } else {
                             checkingOrder();
+                            NotifyStaff();
                             showDialog(
                               barrierDismissible: false,
                               context: context,
@@ -341,7 +366,11 @@ class _orderMethodState extends State<orderMethod> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Color.fromRGBO(232, 192, 125, 100),
+                              color: (currentUser?.userName
+                                          .contains("defaultCustomer") ??
+                                      false)
+                                  ? const Color.fromRGBO(232, 192, 125, 100)
+                                  : Colors.blue[600],
                               borderRadius: BorderRadius.circular(15)),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
@@ -362,7 +391,7 @@ class _orderMethodState extends State<orderMethod> {
   conditionalButton() {
     if (flag) {
       return Text(
-        'Continue'.tr,
+        'View Bill'.tr,
         overflow: TextOverflow.ellipsis,
         style: GoogleFonts.cabin(
           fontSize: 20,

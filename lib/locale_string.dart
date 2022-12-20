@@ -5,6 +5,7 @@ class LocaleString extends Translations {
   Map<String, Map<String, String>> get keys => {
         'en_US': {
           "hello": "hello",
+          'Result': 'Result',
           'Reason': 'Reason',
           'Cancel Reason': 'Cancel Reason',
           'Start time must be greater than time at the moment 30 minutes!':
@@ -192,9 +193,11 @@ class LocaleString extends Translations {
               'Your reservation has been cancelled!',
           'Hope we can see each other another day!':
               'Hope we can see each other another day!',
+          'View Bill': 'View Bill',
         },
         'vi_VN': {
           'Reason': 'Lý do',
+          'Result': 'Kết quả',
           'Cancel Reason': 'Lý do hủy',
           'QR CODE': 'MÃ QR',
           'Start time must be greater than time at the moment 30 minutes!':
@@ -380,6 +383,7 @@ class LocaleString extends Translations {
               'Đơn đặt bàn của bạn đã được hủy!',
           'Hope we can see each other another day!':
               'Mong rằng chúng ta sẽ sớm gặp lại!',
+          'View Bill': 'Xem hóa đơn',
         },
       };
 }

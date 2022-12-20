@@ -113,8 +113,12 @@ class _menuFoodDetailState extends State<menuFoodDetail> {
                       bottomLeft: Radius.circular(40),
                       bottomRight: Radius.circular(40),
                     ),
-                    child:
-                        Image.network(requiredFood?.pictureUrl ?? "https://"),
+                    child: Image.network(
+                      requiredFood?.pictureUrl ?? "https://",
+                      errorBuilder: (context, error, stackTrace) {
+                        return Text('404');
+                      },
+                    ),
                   ),
                 ),
                 Padding(

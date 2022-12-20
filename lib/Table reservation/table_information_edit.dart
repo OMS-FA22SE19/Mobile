@@ -13,8 +13,6 @@ import 'package:get/get.dart';
 class tableInformationEdit extends StatefulWidget {
   final String jwtToken;
   final int numberOfPeople;
-  final String name;
-  final String phone;
   final DateTime date;
   final TimeOfDay startTime;
   final TimeOfDay endTime;
@@ -27,8 +25,6 @@ class tableInformationEdit extends StatefulWidget {
   final int overcharged;
   const tableInformationEdit(
       {super.key,
-      required this.name,
-      required this.phone,
       required this.date,
       required this.startTime,
       required this.endTime,
@@ -52,9 +48,14 @@ class _tableInformationEditState extends State<tableInformationEdit> {
   bool orderFood = false;
   UserProfile? currentUser;
 
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
+
   @override
   void initState() {
     super.initState();
+    getUser();
   }
 
   String changeFormat(int number) {
@@ -67,7 +68,10 @@ class _tableInformationEditState extends State<tableInformationEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         centerTitle: true,
         title: Text('reservation'.tr,
             style: GoogleFonts.bebasNeue(
@@ -100,7 +104,10 @@ class _tableInformationEditState extends State<tableInformationEdit> {
               child: Container(
                 width: MediaQuery.of(context).size.width - 20,
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(232, 192, 125, 100),
+                  color: (currentUser?.userName.contains("defaultCustomer") ??
+                          false)
+                      ? const Color.fromRGBO(232, 192, 125, 100)
+                      : Colors.blue[600],
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
@@ -415,7 +422,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${currentUser?.fullName}',
+                                  '${widget.currentReservation?.fullName}',
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
@@ -438,7 +445,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${currentUser?.phoneNumber}',
+                                  '${widget.currentReservation?.phoneNumber}',
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
@@ -468,7 +475,10 @@ class _tableInformationEditState extends State<tableInformationEdit> {
               child: Container(
                 width: MediaQuery.of(context).size.width - 20,
                 decoration: BoxDecoration(
-                  color: Color.fromRGBO(232, 192, 125, 100),
+                  color: (currentUser?.userName.contains("defaultCustomer") ??
+                          false)
+                      ? const Color.fromRGBO(232, 192, 125, 100)
+                      : Colors.blue[600],
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
@@ -791,7 +801,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${currentUser?.fullName}',
+                                  '${widget.currentReservation?.fullName}',
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
@@ -814,7 +824,7 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${currentUser?.phoneNumber}',
+                                  '${widget.currentReservation?.phoneNumber}',
                                   textAlign: TextAlign.right,
                                   style: GoogleFonts.roboto(
                                       fontSize: 20,
@@ -1014,7 +1024,11 @@ class _tableInformationEditState extends State<tableInformationEdit> {
                         child: Text(
                           'Finish'.tr.toUpperCase(),
                           style: TextStyle(
-                              color: Color.fromRGBO(232, 192, 125, 100),
+                              color: (currentUser?.userName
+                                          .contains("defaultCustomer") ??
+                                      false)
+                                  ? const Color.fromRGBO(232, 192, 125, 100)
+                                  : Colors.blue[600],
                               fontSize: 15,
                               fontWeight: FontWeight.bold),
                         ),

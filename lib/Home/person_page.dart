@@ -23,6 +23,11 @@ class _PersonPageState extends State<PersonPage> {
   bool isLoaded = false;
   UserProfile? current_user;
 
+  UserProfile? currentUser;
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
+
   @override
   void initState() {
     // TODO: implement initState

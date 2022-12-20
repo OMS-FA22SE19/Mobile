@@ -5,6 +5,7 @@ import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/menu_category.dart';
 import 'package:oms_mobile/Menu%20Order/order_confirm.dart';
 import 'package:oms_mobile/Models/orderDetail.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:get/get.dart';
@@ -37,11 +38,16 @@ class _menuStatusState extends State<menuStatus> {
   var isLoaded_3 = false;
   var flag = true;
   var isCancel = false;
+  UserProfile? currentUser;
+
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
 
   @override
   void initState() {
     super.initState();
-
+    getUser();
     // getData();
     getDataReceived();
     getDataProcess();
@@ -128,25 +134,29 @@ class _menuStatusState extends State<menuStatus> {
       length: 3,
       child: Scaffold(
           appBar: AppBar(
-            backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+            backgroundColor:
+                (currentUser?.userName.contains("defaultCustomer") ?? false)
+                    ? const Color.fromRGBO(232, 192, 125, 100)
+                    : Colors.blue[600],
+
             centerTitle: true,
             title: Text('Order'.tr,
                 style: GoogleFonts.bebasNeue(
                   fontSize: 25,
                 )),
-            leading: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            homeScreen(jwtToken: widget.jwtToken)),
-                  );
-                },
-                icon: Icon(
-                  Icons.home_rounded,
-                  size: 30,
-                )),
+            // leading: IconButton(
+            //     onPressed: () {
+            //       Navigator.push(
+            //         context,
+            //         MaterialPageRoute(
+            //             builder: (context) =>
+            //                 homeScreen(jwtToken: widget.jwtToken)),
+            //       );
+            //     },
+            //     icon: Icon(
+            //       Icons.home_rounded,
+            //       size: 30,
+            //     )),
             automaticallyImplyLeading: false,
             actions: [
               IconButton(
@@ -168,7 +178,10 @@ class _menuStatusState extends State<menuStatus> {
                   )),
             ],
             bottom: TabBar(
-              indicatorColor: Color.fromRGBO(232, 192, 125, 100),
+              indicatorColor:
+                  (currentUser?.userName.contains("defaultCustomer") ?? false)
+                      ? const Color.fromRGBO(232, 192, 125, 100)
+                      : Colors.blue[600],
               indicatorWeight: 2.5,
               indicatorSize: TabBarIndicatorSize.label,
               tabs: [
@@ -235,7 +248,11 @@ class _menuStatusState extends State<menuStatus> {
                             width: 300,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: Color.fromRGBO(232, 192, 125, 100),
+                              color: (currentUser?.userName
+                                          .contains("defaultCustomer") ??
+                                      false)
+                                  ? const Color.fromRGBO(232, 192, 125, 100)
+                                  : Colors.blue[600],
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),
@@ -374,7 +391,11 @@ class _menuStatusState extends State<menuStatus> {
                             width: 300,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: Color.fromRGBO(232, 192, 125, 100),
+                              color: (currentUser?.userName
+                                          .contains("defaultCustomer") ??
+                                      false)
+                                  ? const Color.fromRGBO(232, 192, 125, 100)
+                                  : Colors.blue[600],
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),
@@ -502,7 +523,11 @@ class _menuStatusState extends State<menuStatus> {
                             width: 300,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: Color.fromRGBO(232, 192, 125, 100),
+                              color: (currentUser?.userName
+                                          .contains("defaultCustomer") ??
+                                      false)
+                                  ? const Color.fromRGBO(232, 192, 125, 100)
+                                  : Colors.blue[600],
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),
@@ -590,7 +615,10 @@ class _menuStatusState extends State<menuStatus> {
   conditionalFloatingActionButton(String? id) {
     if (flag) {
       return FloatingActionButton.extended(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         label: Text(
           'Reload'.tr,
           style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),
@@ -610,7 +638,10 @@ class _menuStatusState extends State<menuStatus> {
       );
     } else {
       return FloatingActionButton.extended(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         label: Text(
           'CONFIRM'.tr,
           style: GoogleFonts.cabin(fontSize: 20, color: Colors.white),

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Models/food.dart';
 import 'package:oms_mobile/Models/payment_url.dart';
 import 'package:oms_mobile/Models/reservation.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
@@ -30,11 +31,17 @@ class _testPriorState extends State<testPrior> {
   int total = 0;
   paymentURL? payment;
   bool isDone = false;
+  UserProfile? currentUser;
 
   @override
   void initState() {
     super.initState();
     getData();
+    getUser();
+  }
+
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
   }
 
   getData() async {
@@ -75,7 +82,10 @@ class _testPriorState extends State<testPrior> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.greenAccent,
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         centerTitle: true,
         title: Text('reservation'.tr,
             style: GoogleFonts.bebasNeue(
@@ -165,9 +175,13 @@ class _testPriorState extends State<testPrior> {
                         Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: Container(
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.greenAccent,
+                              color: (currentUser?.userName
+                                          .contains("defaultCustomer") ??
+                                      false)
+                                  ? const Color.fromRGBO(232, 192, 125, 100)
+                                  : Colors.blue[600],
                             ),
                             child: const Padding(
                               padding: EdgeInsets.all(10.0),
@@ -236,9 +250,13 @@ class _testPriorState extends State<testPrior> {
                         Padding(
                           padding: const EdgeInsets.all(5.0),
                           child: Container(
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.greenAccent,
+                              color: (currentUser?.userName
+                                          .contains("defaultCustomer") ??
+                                      false)
+                                  ? const Color.fromRGBO(232, 192, 125, 100)
+                                  : Colors.blue[600],
                             ),
                             child: const Padding(
                               padding: EdgeInsets.all(10.0),
@@ -343,9 +361,14 @@ class _testPriorState extends State<testPrior> {
                                 Padding(
                                   padding: const EdgeInsets.all(5.0),
                                   child: Container(
-                                    decoration: const BoxDecoration(
+                                    decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Colors.greenAccent,
+                                      color: (currentUser?.userName.contains(
+                                                  "defaultCustomer") ??
+                                              false)
+                                          ? const Color.fromRGBO(
+                                              232, 192, 125, 100)
+                                          : Colors.blue[600],
                                     ),
                                     child: const Padding(
                                       padding: EdgeInsets.all(10.0),
@@ -630,8 +653,12 @@ class _testPriorState extends State<testPrior> {
                   width: 100,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.greenAccent),
+                    borderRadius: BorderRadius.circular(10),
+                    color: (currentUser?.userName.contains("defaultCustomer") ??
+                            false)
+                        ? const Color.fromRGBO(232, 192, 125, 100)
+                        : Colors.blue[600],
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(10),
                     child: conditionalText(isDone),

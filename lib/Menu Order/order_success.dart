@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Models/order.dart';
+import 'package:oms_mobile/Models/reservation.dart';
 import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/Table%20reservation/reservation_list.dart';
 import 'package:oms_mobile/services/remote_service.dart';
@@ -11,8 +12,12 @@ import 'package:get/get.dart';
 
 class orderSuccess extends StatefulWidget {
   const orderSuccess(
-      {super.key, required this.orderId, required this.jwtToken});
+      {super.key,
+      required this.orderId,
+      required this.jwtToken,
+      required this.reservationId});
   final String orderId;
+  final int reservationId;
   final String jwtToken;
 
   @override
@@ -21,6 +26,7 @@ class orderSuccess extends StatefulWidget {
 
 class _orderSuccessState extends State<orderSuccess> {
   Order? currentOrder;
+  ReservationNoTable? currentReservation;
   List<OrderDetail>? details;
   UserProfile? currentUser;
   var isLoaded = false;
@@ -33,6 +39,7 @@ class _orderSuccessState extends State<orderSuccess> {
     super.initState();
     getData();
     getUser();
+    getReservation();
   }
 
   String changeFormat(int number) {
@@ -51,6 +58,7 @@ class _orderSuccessState extends State<orderSuccess> {
     flag = currentOrder?.status.contains("Paid") ?? false;
     details = currentOrder?.orderDetails;
     getUser();
+    getReservation();
     if (currentOrder != null) {
       setState(() {
         isLoaded = true;
@@ -59,11 +67,19 @@ class _orderSuccessState extends State<orderSuccess> {
     }
   }
 
+  getReservation() async {
+    currentReservation = await RemoteService()
+        .getReservationBeforeCheckin(widget.reservationId, widget.jwtToken);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         centerTitle: true,
         title: Text("Order".tr,
             style: GoogleFonts.bebasNeue(
@@ -79,7 +95,6 @@ class _orderSuccessState extends State<orderSuccess> {
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Container(
-                height: 450,
                 decoration: BoxDecoration(
                   color: Colors.greenAccent,
                   borderRadius: BorderRadius.circular(10),
@@ -256,7 +271,7 @@ class _orderSuccessState extends State<orderSuccess> {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              'User Default',
+                              '${currentReservation?.fullName}',
                               textAlign: TextAlign.right,
                               style: GoogleFonts.roboto(
                                   fontSize: 20,
@@ -279,7 +294,7 @@ class _orderSuccessState extends State<orderSuccess> {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              '0941767748',
+                              '${currentReservation?.phoneNumber}',
                               textAlign: TextAlign.right,
                               style: GoogleFonts.roboto(
                                   fontSize: 20,

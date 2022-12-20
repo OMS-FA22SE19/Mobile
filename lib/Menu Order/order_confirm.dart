@@ -7,6 +7,8 @@ import 'package:oms_mobile/Menu%20Order/menu_category.dart';
 import 'package:oms_mobile/Menu%20Order/order_method_cash.dart';
 import 'package:oms_mobile/Menu%20Order/order_method_online.dart';
 import 'package:get/get.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
+import 'package:oms_mobile/services/remote_service.dart';
 
 class orderConfirm extends StatefulWidget {
   final String jwtToken;
@@ -23,11 +25,25 @@ class orderConfirm extends StatefulWidget {
 }
 
 class _orderConfirmState extends State<orderConfirm> {
+  UserProfile? currentUser;
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         centerTitle: true,
         title: Text('Order'.tr,
             style: GoogleFonts.bebasNeue(
@@ -117,7 +133,11 @@ class _orderConfirmState extends State<orderConfirm> {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromRGBO(159, 192, 136, 80),
+                      color:
+                          (currentUser?.userName.contains("defaultCustomer") ??
+                                  false)
+                              ? const Color.fromRGBO(232, 192, 125, 100)
+                              : Colors.blue[600],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -129,7 +149,7 @@ class _orderConfirmState extends State<orderConfirm> {
                             color: Colors.grey,
                           ),
                           Text(
-                            'Cash'.tr,
+                            'Cash Method'.tr,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.cabin(
                                 fontSize: 20,
@@ -150,6 +170,7 @@ class _orderConfirmState extends State<orderConfirm> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => orderMethodOnline(
+                              reservationId: widget.reservationId,
                               jwtToken: widget.jwtToken,
                               tableId: widget.reservationId,
                               orderId: widget.orderId,
@@ -165,7 +186,11 @@ class _orderConfirmState extends State<orderConfirm> {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: const Color.fromRGBO(159, 192, 136, 80),
+                      color:
+                          (currentUser?.userName.contains("defaultCustomer") ??
+                                  false)
+                              ? const Color.fromRGBO(232, 192, 125, 100)
+                              : Colors.blue[600],
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),

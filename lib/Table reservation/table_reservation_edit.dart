@@ -81,6 +81,7 @@ class _tableReservationEditState extends State<tableReservationEdit> {
     super.initState();
     getData(2);
     getSettings();
+    getUser();
   }
 
   getData(int people) async {
@@ -188,7 +189,10 @@ class _tableReservationEditState extends State<tableReservationEdit> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         centerTitle: true,
         title: Text('reservation'.tr,
             style: GoogleFonts.bebasNeue(
@@ -331,7 +335,10 @@ class _tableReservationEditState extends State<tableReservationEdit> {
             padding: const EdgeInsets.symmetric(horizontal: 100),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                backgroundColor:
+                    (currentUser?.userName.contains("defaultCustomer") ?? false)
+                        ? const Color.fromRGBO(232, 192, 125, 100)
+                        : Colors.blue[600],
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(15)),
                 ),
@@ -479,7 +486,10 @@ class _tableReservationEditState extends State<tableReservationEdit> {
           Container(
             width: MediaQuery.of(context).size.width - 50,
             decoration: BoxDecoration(
-              color: Color.fromRGBO(232, 192, 125, 100),
+              color:
+                  (currentUser?.userName.contains("defaultCustomer") ?? false)
+                      ? const Color.fromRGBO(232, 192, 125, 100)
+                      : Colors.blue[600],
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
@@ -594,7 +604,11 @@ class _tableReservationEditState extends State<tableReservationEdit> {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                    backgroundColor:
+                        (currentUser?.userName.contains("defaultCustomer") ??
+                                false)
+                            ? const Color.fromRGBO(232, 192, 125, 100)
+                            : Colors.blue[600],
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
@@ -756,7 +770,11 @@ class _tableReservationEditState extends State<tableReservationEdit> {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                    backgroundColor:
+                        (currentUser?.userName.contains("defaultCustomer") ??
+                                false)
+                            ? const Color.fromRGBO(232, 192, 125, 100)
+                            : Colors.blue[600],
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
@@ -907,7 +925,10 @@ class _tableReservationEditState extends State<tableReservationEdit> {
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+            backgroundColor:
+                (currentUser?.userName.contains("defaultCustomer") ?? false)
+                    ? const Color.fromRGBO(232, 192, 125, 100)
+                    : Colors.blue[600],
             minimumSize: Size(double.infinity, 35),
             padding: EdgeInsets.symmetric(horizontal: 16),
             shape: const RoundedRectangleBorder(
@@ -928,8 +949,6 @@ class _tableReservationEditState extends State<tableReservationEdit> {
                               deposit: deposit,
                               amount: quantity,
                               numberOfPeople: int.parse(inputController.text),
-                              name: "Default User",
-                              phone: "0941767748",
                               date: _selectedDate,
                               startTime: _selectedStartTime,
                               endTime: _selectedEndTime,

@@ -1,12 +1,9 @@
 // ignore_for_file: camel_case_types, prefer_const_constructors, no_leading_underscores_for_local_identifiers
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Login/login_page.dart';
 import 'package:oms_mobile/Models/available_date.dart';
-import 'package:oms_mobile/Table%20reservation/table_information.dart';
 import 'package:oms_mobile/Table%20reservation/table_picker.dart';
-import 'package:oms_mobile/services/remote_service.dart';
 
 class datePickers extends StatefulWidget {
   final int tableTypeId;

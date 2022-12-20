@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:oms_mobile/Models/payment_url.dart';
 import 'package:oms_mobile/Models/reservation.dart';
-import 'package:oms_mobile/services/remote_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class Test extends StatefulWidget {

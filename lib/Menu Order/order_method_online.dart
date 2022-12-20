@@ -5,6 +5,7 @@ import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Menu%20Order/order_success.dart';
 import 'package:oms_mobile/Models/order.dart';
 import 'package:oms_mobile/Models/payment_url.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:url_launcher/url_launcher.dart';
@@ -15,12 +16,14 @@ class orderMethodOnline extends StatefulWidget {
   final String? orderId;
   final String method;
   final int tableId;
+  final int reservationId;
   const orderMethodOnline(
       {super.key,
       this.orderId,
       required this.method,
       required this.tableId,
-      required this.jwtToken});
+      required this.jwtToken,
+      required this.reservationId});
 
   @override
   State<orderMethodOnline> createState() => _orderMethodOnlineState();
@@ -33,11 +36,16 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
   var isLoaded = false;
   bool flag = false;
   int total = 0;
+  UserProfile? currentUser;
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
 
   @override
   void initState() {
     super.initState();
     getData();
+    getUser();
   }
 
   String changeFormat(int number) {
@@ -69,7 +77,10 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+        backgroundColor:
+            (currentUser?.userName.contains("defaultCustomer") ?? false)
+                ? const Color.fromRGBO(232, 192, 125, 100)
+                : Colors.blue[600],
         centerTitle: true,
         title: Text("Order".tr,
             style: GoogleFonts.bebasNeue(
@@ -118,7 +129,10 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                   width: 300,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Color.fromRGBO(232, 192, 125, 100),
+                    color: (currentUser?.userName.contains("defaultCustomer") ??
+                            false)
+                        ? const Color.fromRGBO(232, 192, 125, 100)
+                        : Colors.blue[600],
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -305,6 +319,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => orderSuccess(
+                                        reservationId: widget.reservationId,
                                         jwtToken: widget.jwtToken,
                                         orderId: widget.orderId ?? "",
                                       )),
@@ -318,7 +333,11 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Color.fromRGBO(232, 192, 125, 100),
+                              color: (currentUser?.userName
+                                          .contains("defaultCustomer") ??
+                                      false)
+                                  ? const Color.fromRGBO(232, 192, 125, 100)
+                                  : Colors.blue[600],
                               borderRadius: BorderRadius.circular(15)),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
@@ -339,7 +358,7 @@ class _orderMethodOnlineState extends State<orderMethodOnline> {
   conditionalButton() {
     if (flag) {
       return Text(
-        'Continue'.tr,
+        'View Bill'.tr,
         overflow: TextOverflow.ellipsis,
         style: GoogleFonts.cabin(
           fontSize: 20,

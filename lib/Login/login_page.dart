@@ -23,7 +23,7 @@ class _loginScreenState extends State<loginScreen> {
   String? password;
   bool flagPhone = false;
   bool flagPassword = false;
-  bool loginFailed = false;
+  bool? loginFailed = true;
   String? jwttoken;
   bool flagcheck = false;
 
@@ -31,6 +31,10 @@ class _loginScreenState extends State<loginScreen> {
   void initState() {
     super.initState();
     getData();
+  }
+
+  Future<String?> getToken() async {
+    return RemoteService().getAuthToken(phone, password);
   }
 
   getAuth() async {
@@ -44,6 +48,27 @@ class _loginScreenState extends State<loginScreen> {
         loginFailed = false;
       });
     }
+  }
+
+  getAuth2() async {
+    final token = getToken();
+    token.then((value) => {
+          if (value != null)
+            {
+              print('this is token $value'),
+              setState(() {
+                jwttoken = token.toString();
+                loginFailed = false;
+              })
+            }
+          else
+            {
+              print('this is not a token $value'),
+              setState(() {
+                loginFailed = true;
+              })
+            }
+        });
   }
 
   getData() {}
@@ -114,6 +139,9 @@ class _loginScreenState extends State<loginScreen> {
                         controller: phoneController,
                         scrollPhysics: const BouncingScrollPhysics(),
                         decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                                onPressed: phoneController.clear,
+                                icon: Icon(Icons.clear)),
                             border: InputBorder.none,
                             hintText: 'Input your phone number'.tr,
                             errorText:
@@ -151,6 +179,9 @@ class _loginScreenState extends State<loginScreen> {
                         scrollPhysics: const BouncingScrollPhysics(),
                         obscureText: true,
                         decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                                onPressed: passwordController.clear,
+                                icon: Icon(Icons.clear)),
                             border: InputBorder.none,
                             hintText: 'Input your password'.tr,
                             errorText:
@@ -188,78 +219,49 @@ class _loginScreenState extends State<loginScreen> {
                         });
                       } else if (passwordController.text.isNotEmpty &&
                           phoneController.text.isNotEmpty) {
-                        getAuth();
-                        showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text(
-                                'Remind'.tr,
-                                style: GoogleFonts.lato(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              content: Text(
-                                "Please wait while we confirm your account".tr,
-                                style: GoogleFonts.lato(
-                                  color: Colors.black,
-                                ),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context, 'Cancel');
-                                    if (jwttoken == null) {
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text(
-                                              'Invalid'.tr,
-                                              style: GoogleFonts.lato(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            content: Text(
-                                              "Your password or email doesn't right. Please try again!"
-                                                  .tr,
-                                              style: GoogleFonts.lato(
-                                                color: Colors.black,
-                                              ),
-                                            ),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(
-                                                    context, 'Cancel'),
-                                                child: Text('I understand'.tr),
-                                              ),
-                                            ],
-                                            actionsAlignment:
-                                                MainAxisAlignment.center,
-                                          );
-                                        },
-                                      );
-                                    } else {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => homeScreen(
-                                                  jwtToken: '$jwttoken',
-                                                )),
-                                      );
-                                    }
-                                  },
-                                  child: Text('I understand'.tr),
-                                ),
-                              ],
-                              actionsAlignment: MainAxisAlignment.center,
+                        setState(() {
+                          getAuth();
+                          if (loginFailed ?? true) {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text(
+                                    'Invalid'.tr,
+                                    style: GoogleFonts.lato(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  content: Text(
+                                    "Your password or email doesn't right. Please try again!"
+                                        .tr,
+                                    style: GoogleFonts.lato(
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, 'Cancel'),
+                                      child: Text('I understand'.tr),
+                                    ),
+                                  ],
+                                  actionsAlignment: MainAxisAlignment.center,
+                                );
+                              },
                             );
-                          },
-                        );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => homeScreen(
+                                        jwtToken: '$jwttoken',
+                                      )),
+                            );
+                          }
+                        });
                       }
                     },
                     child: Text(

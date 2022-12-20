@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:oms_mobile/Home/home_screen.dart';
 import 'package:oms_mobile/Models/reservation.dart';
 import 'package:get/get.dart';
+import 'package:oms_mobile/Models/user_profile.dart';
 import 'package:oms_mobile/User%20History/history_page.dart';
 import 'package:oms_mobile/services/remote_service.dart';
 import 'package:intl/intl.dart' as intl;
@@ -25,11 +26,17 @@ class _historyDetailReservationState extends State<historyDetailReservation> {
   ReservationNoTable? currentReservation;
   var isloaded = false;
   // int total = 0;
+  UserProfile? currentUser;
+
+  getUser() async {
+    currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+  }
 
   @override
   void initState() {
     super.initState();
     getData();
+    getUser();
   }
 
   getData() async {
@@ -68,19 +75,19 @@ class _historyDetailReservationState extends State<historyDetailReservation> {
             style: GoogleFonts.bebasNeue(
               fontSize: 25,
             )),
-        leading: IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        historyPage(jwtToken: widget.jwtToken)),
-              );
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              size: 30,
-            )),
+        // leading: IconButton(
+        //     onPressed: () {
+        //       Navigator.push(
+        //         context,
+        //         MaterialPageRoute(
+        //             builder: (context) =>
+        //                 historyPage(jwtToken: widget.jwtToken)),
+        //       );
+        //     },
+        //     icon: Icon(
+        //       Icons.arrow_back_ios_new_rounded,
+        //       size: 30,
+        //     )),
         automaticallyImplyLeading: false,
       ),
       backgroundColor: Colors.grey[200],
@@ -175,44 +182,42 @@ class _historyDetailReservationState extends State<historyDetailReservation> {
             padding: const EdgeInsets.symmetric(horizontal: 5.0),
             child: Container(
               height: 100,
-              child: Flexible(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${'Cancel Reason'.tr}:',
-                        style: GoogleFonts.cabin(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Flexible(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                '${currentReservation?.reasonForCancel}',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                style: GoogleFonts.roboto(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.black),
-                              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${'Cancel Reason'.tr}:',
+                      style: GoogleFonts.cabin(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Flexible(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              '${currentReservation?.reasonForCancel}',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                              style: GoogleFonts.roboto(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

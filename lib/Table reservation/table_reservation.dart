@@ -86,8 +86,12 @@ class _tableReservationState extends State<tableReservation> {
     tables = await RemoteService().getTablesAvailable(people, widget.jwtToken);
     getSettings();
     getUser();
-    nameController.text = '${currentUser?.fullName}';
-    phoneController.text = '${currentUser?.phoneNumber}';
+    if (mounted) {
+      setState(() {
+        nameController.text = '${currentUser?.fullName}';
+        phoneController.text = '${currentUser?.phoneNumber}';
+      });
+    }
     int? check = tables?.length;
     bool? checkb = tables?.isEmpty;
     if (tables != null) {
@@ -108,6 +112,12 @@ class _tableReservationState extends State<tableReservation> {
 
   getUser() async {
     currentUser = await RemoteService().getUserProfile(widget.jwtToken);
+    if (mounted) {
+      setState(() {
+        nameController.text = '${currentUser?.fullName}';
+        phoneController.text = '${currentUser?.phoneNumber}';
+      });
+    }
   }
 
   getdab() {
@@ -200,7 +210,10 @@ class _tableReservationState extends State<tableReservation> {
       onWillPop: () async => false,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+          backgroundColor:
+              (currentUser?.userName.contains("defaultCustomer") ?? false)
+                  ? const Color.fromRGBO(232, 192, 125, 100)
+                  : Colors.blue[600],
           centerTitle: true,
           title: Text('reservation'.tr,
               style: GoogleFonts.bebasNeue(
@@ -337,7 +350,11 @@ class _tableReservationState extends State<tableReservation> {
               padding: const EdgeInsets.symmetric(horizontal: 100),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                  backgroundColor:
+                      (currentUser?.userName.contains("defaultCustomer") ??
+                              false)
+                          ? const Color.fromRGBO(232, 192, 125, 100)
+                          : Colors.blue[600],
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
@@ -404,9 +421,22 @@ class _tableReservationState extends State<tableReservation> {
                           width: 300,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: chooseIndex == index
-                                ? Colors.green
-                                : Color.fromRGBO(232, 192, 125, 50),
+                            color: (chooseIndex == index &&
+                                    (currentUser?.userName
+                                            .contains("defaultCustomer") ??
+                                        false))
+                                ? Color.fromARGB(156, 255, 162, 0)
+                                : (chooseIndex == index &&
+                                        !(currentUser?.userName
+                                                .contains("defaultCustomer") ??
+                                            false))
+                                    ? Colors.indigo[900]
+                                    : (currentUser?.userName
+                                                .contains("defaultCustomer") ??
+                                            false)
+                                        ? const Color.fromRGBO(
+                                            232, 192, 125, 100)
+                                        : Colors.blue[600],
                           ),
                           child: Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -564,7 +594,11 @@ class _tableReservationState extends State<tableReservation> {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                    backgroundColor:
+                        (currentUser?.userName.contains("defaultCustomer") ??
+                                false)
+                            ? const Color.fromRGBO(232, 192, 125, 100)
+                            : Colors.blue[600],
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
@@ -728,7 +762,11 @@ class _tableReservationState extends State<tableReservation> {
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+                    backgroundColor:
+                        (currentUser?.userName.contains("defaultCustomer") ??
+                                false)
+                            ? const Color.fromRGBO(232, 192, 125, 100)
+                            : Colors.blue[600],
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
@@ -927,6 +965,7 @@ class _tableReservationState extends State<tableReservation> {
                       });
                     }
                   },
+                  // initialValue: '${currentUser?.fullName}',
                   controller: nameController,
                   keyboardType: TextInputType.text,
                   autofocus: false,
@@ -987,6 +1026,7 @@ class _tableReservationState extends State<tableReservation> {
                       });
                     }
                   },
+                  // initialValue: '${currentUser?.phoneNumber}',
                   controller: phoneController,
                   keyboardType: TextInputType.number,
                   inputFormatters: <TextInputFormatter>[
@@ -1018,7 +1058,10 @@ class _tableReservationState extends State<tableReservation> {
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color.fromRGBO(232, 192, 125, 100),
+            backgroundColor:
+                (currentUser?.userName.contains("defaultCustomer") ?? false)
+                    ? const Color.fromRGBO(232, 192, 125, 100)
+                    : Colors.blue[600],
             minimumSize: Size(double.infinity, 35),
             padding: EdgeInsets.symmetric(horizontal: 16),
             shape: const RoundedRectangleBorder(
@@ -1047,8 +1090,6 @@ class _tableReservationState extends State<tableReservation> {
                               deposit: deposit,
                               amount: quantity,
                               numberOfPeople: int.parse(inputController.text),
-                              name: "Default User",
-                              phone: "0941767748",
                               date: _selectedDate,
                               startTime: _selectedStartTime,
                               endTime: _selectedEndTime,

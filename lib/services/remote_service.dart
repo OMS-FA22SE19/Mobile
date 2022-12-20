@@ -663,6 +663,42 @@ class RemoteService {
     }
   }
 
+  Future<List<ReservationNoTable>?> getReservationsSearch(
+      String value, String token) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      final responsePhone = await dio.get(
+        'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations?SearchBy=PhoneNumber&Status=CheckIn&SearchValue=$value',
+        options: Options(headers: {
+          HttpHeaders.authorizationHeader: "Bearer $token",
+        }),
+      ); //header, author
+      var resultPhone = responseReservation.fromJson(responsePhone.data);
+      List<ReservationNoTable> reservationListPhone = resultPhone.data;
+      var list_1 = reservationListPhone;
+
+      final responseName = await dio.get(
+        'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations?SearchBy=FullName&Status=CheckIn&SearchValue=$value',
+        options: Options(headers: {
+          HttpHeaders.authorizationHeader: "Bearer $token",
+        }),
+      ); //header, author
+      var resultName = responseReservation.fromJson(responseName.data);
+      List<ReservationNoTable> reservationListName = resultName.data;
+      var list_2 = reservationListName;
+
+      var finalList = list_2 + list_1;
+      return finalList;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      } else {
+        return null;
+      }
+    }
+  }
+
   Future<List<ReservationNoTable>?> getReservationsCancelled(
       String token) async {
     final Dio dio = Dio();
@@ -1134,10 +1170,7 @@ class RemoteService {
           options: Options(headers: {
             HttpHeaders.authorizationHeader: "Bearer $token",
           }),
-          data: {
-            "amount": reservation.prePaid,
-            "reservationId": reservation.id
-          });
+          data: {"amount": 0, "reservationId": reservation.id});
 
       final response3 = await dio.get(
           'https://oms-fa22se19.azurewebsites.net/api/v1/Reservations/${reservation.id}/Checkin',
@@ -1208,6 +1241,56 @@ class RemoteService {
       AuthToken auth = result.data;
       String returnString = auth.jwtToken;
       return returnString;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  void postNotification(
+      String? tableId, String deviceToken, String token) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      await dio
+          .post('https://oms-fa22se19.azurewebsites.net/api/v1/Notification',
+              options: Options(headers: {
+                HttpHeaders.authorizationHeader: "Bearer $token",
+              }),
+              data: {
+            "token":
+                "cWJj1yFK8_litSzqwFLVT8:APA91bEVtpTC5RZguTfy0GCDkNnB5sptwZIPUxc7C7kj36nuTvsK8Ck8QbaGSd8oLSd2Q-C283-27MkA7Y6u9AdWaEmPDPMjr1T2jTx52MWXe9YKmXFNCYDFqz6MsPjt5hFrjhOIhZI3",
+            "title": "Need Help",
+            "body": "Need staff to help with table: $tableId"
+          }); //header, author
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 404) {
+        return null;
+      } else {
+        return null;
+      }
+    }
+  }
+
+  void postNotificationChecking(
+      String? tableId, String deviceToken, String token) async {
+    final Dio dio = Dio();
+    HttpOverrides.global = MyHttpOverrides();
+    try {
+      await dio
+          .post('https://oms-fa22se19.azurewebsites.net/api/v1/Notification',
+              options: Options(headers: {
+                HttpHeaders.authorizationHeader: "Bearer $token",
+              }),
+              data: {
+            "token":
+                "cWJj1yFK8_litSzqwFLVT8:APA91bEVtpTC5RZguTfy0GCDkNnB5sptwZIPUxc7C7kj36nuTvsK8Ck8QbaGSd8oLSd2Q-C283-27MkA7Y6u9AdWaEmPDPMjr1T2jTx52MWXe9YKmXFNCYDFqz6MsPjt5hFrjhOIhZI3",
+            "title": "Checking Require",
+            "body": "Need staff to help customer checking with table: $tableId"
+          }); //header, author
     } on DioError catch (e) {
       if (e.response?.statusCode == 404) {
         return null;
